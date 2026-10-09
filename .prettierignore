@@ -1,0 +1,8 @@
+node_modules/
+dist/
+outputs/
+test-results/
+playwright-report/
+schemas/
+*.xml
+*_v1.0.0_*

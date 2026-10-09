@@ -32,41 +32,87 @@ command 'npx tsx cli.ts …' or 'npm run --silent cli -- …' for clean stdout.
 Files are local, and comparisons never contact a bank or AI service.
 `;
 async function save(path: string, content: string) {
-  await mkdir(dirname(resolve(path)), { recursive: true }); await writeFile(path, content, 'utf8');
+  await mkdir(dirname(resolve(path)), { recursive: true });
+  await writeFile(path, content, 'utf8');
 }
 async function main() {
-  const { values: v, positionals } = parseArgs({ allowPositionals: true, options: {
-    scenario: { type: 'string' }, banks: { type: 'string' }, format: { type: 'string', default: 'json' },
-    output: { type: 'string' }, graph: { type: 'string' }, help: { type: 'boolean' }, version: { type: 'boolean' },
-  } });
-  if (v.help) { process.stdout.write(help); return; }
-  if (v.version) { process.stdout.write(VERSION + '\n'); return; }
+  const { values: v, positionals } = parseArgs({
+    allowPositionals: true,
+    options: {
+      scenario: { type: 'string' },
+      banks: { type: 'string' },
+      format: { type: 'string', default: 'json' },
+      output: { type: 'string' },
+      graph: { type: 'string' },
+      help: { type: 'boolean' },
+      version: { type: 'boolean' },
+    },
+  });
+  if (v.help) {
+    process.stdout.write(help);
+    return;
+  }
+  if (v.version) {
+    process.stdout.write(VERSION + '\n');
+    return;
+  }
   const command = positionals[0] ?? 'compare';
-  if (positionals.length > 1 || !['compare', 'validate', 'banks'].includes(command)) throw new Error('Unknown command. Use --help.');
+  if (positionals.length > 1 || !['compare', 'validate', 'banks'].includes(command))
+    throw new Error('Unknown command. Use --help.');
   if (!['json', 'csv'].includes(v.format!)) throw new Error('--format must be json or csv');
   if (!v.banks) throw new Error('--banks is required');
-  const pathKey = (p: string) => process.platform === 'win32' ? resolve(p).toLowerCase() : resolve(p);
+  const pathKey = (p: string) =>
+    process.platform === 'win32' ? resolve(p).toLowerCase() : resolve(p);
   const targets = [v.output, v.graph].filter((p): p is string => !!p).map(pathKey);
   const inputs = [v.scenario, v.banks].filter((p): p is string => !!p).map(pathKey);
-  if (new Set(targets).size !== targets.length || targets.some(p => inputs.includes(p))) throw new Error('Output paths must be distinct and cannot overwrite input files.');
-  if (v.graph && !v.graph.toLowerCase().endsWith('.svg')) throw new Error('--graph must end in .svg');
-  const bankText = await readFile(v.banks, 'utf8'), catalog = readCatalog(bankText);
-  let output: string, exitCode = 0;
+  if (new Set(targets).size !== targets.length || targets.some((p) => inputs.includes(p)))
+    throw new Error('Output paths must be distinct and cannot overwrite input files.');
+  if (v.graph && !v.graph.toLowerCase().endsWith('.svg'))
+    throw new Error('--graph must end in .svg');
+  const bankText = await readFile(v.banks, 'utf8'),
+    catalog = readCatalog(bankText);
+  let output: string,
+    exitCode = 0;
   if (command === 'banks') output = JSON.stringify(catalog, null, 2);
   else {
     if (!v.scenario) throw new Error('--scenario is required');
-    const scenarioText = await readFile(v.scenario, 'utf8'), scenario = readScenario(scenarioText);
+    const scenarioText = await readFile(v.scenario, 'utf8'),
+      scenario = readScenario(scenarioText);
     const result = compare(scenario, catalog);
     const sha = (s: string) => createHash('sha256').update(s).digest('hex');
-    output = command === 'validate' ? JSON.stringify({ valid: true, scenarioId: scenario.id, catalogId: catalog.id, eligibleBanks: result.ranked.length, excludedBanks: result.excluded.length }, null, 2)
-      : v.format === 'csv' ? toCsv(result) : JSON.stringify({ ...result, provenance: { scenarioSha256: sha(scenarioText), banksSha256: sha(bankText) } }, null, 2);
+    output =
+      command === 'validate'
+        ? JSON.stringify(
+            {
+              valid: true,
+              scenarioId: scenario.id,
+              catalogId: catalog.id,
+              eligibleBanks: result.ranked.length,
+              excludedBanks: result.excluded.length,
+            },
+            null,
+            2,
+          )
+        : v.format === 'csv'
+          ? toCsv(result)
+          : JSON.stringify(
+              {
+                ...result,
+                provenance: { scenarioSha256: sha(scenarioText), banksSha256: sha(bankText) },
+              },
+              null,
+              2,
+            );
     if (v.graph) await save(v.graph, toSvg(result));
     if (!result.ranked.length) exitCode = 3;
   }
-  if (v.output) await save(v.output, output + '\n'); else process.stdout.write(output + '\n');
+  if (v.output) await save(v.output, output + '\n');
+  else process.stdout.write(output + '\n');
   process.exitCode = exitCode;
 }
-main().catch(error => {
-  process.stderr.write(JSON.stringify({ error: 'invalid_input', message: readableError(error) }) + '\n');
+main().catch((error) => {
+  process.stderr.write(
+    JSON.stringify({ error: 'invalid_input', message: readableError(error) }) + '\n',
+  );
   process.exitCode = 2;
 });
