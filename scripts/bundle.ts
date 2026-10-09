@@ -48,8 +48,8 @@ const paths = [
   'schemas/scenario.schema.json',
   'schemas/banks.schema.json',
   'schemas/fact-inventory.json',
-  `data/banks_verified_${BUILD_DATE}_tool-v${VERSION}.xml`,
-  `data/banks-${BUILD_DATE}-v3.yaml`,
+  `data/banks_verified_${BUILD_DATE}_tool-v${VERSION}-r2.xml`,
+  `data/banks-${BUILD_DATE}-v3-r2.yaml`,
   `examples/scenario_example_${BUILD_DATE}_tool-v${VERSION}.xml`,
   'examples/working-person-v3.yaml',
 ];

@@ -12,8 +12,8 @@ for (const path of [
   'data/banks-2026-10-09.yaml',
   'examples/working-person-v3.yaml',
   'examples/scenario_example_2026-10-09_tool-v3.0.0.xml',
-  'data/banks-2026-10-09-v3.yaml',
-  'data/banks_verified_2026-10-09_tool-v3.0.0.xml',
+  'data/banks-2026-10-09-v3-r2.yaml',
+  'data/banks_verified_2026-10-09_tool-v3.0.0-r2.xml',
 ]) {
   const dest = `dist/${path}`;
   await mkdir(dest.slice(0, dest.lastIndexOf('/')), { recursive: true });

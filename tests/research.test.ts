@@ -14,7 +14,7 @@ import {
 import { compare } from '../lib/engine';
 import { auditCatalog } from '../lib/audit';
 
-const catalog = readCatalog(readFileSync('data/banks-2026-10-09-v3.yaml', 'utf8'));
+const catalog = readCatalog(readFileSync('data/banks-2026-10-09-v3-r2.yaml', 'utf8'));
 const example = readScenario(readFileSync('examples/working-person-v3.yaml', 'utf8'));
 const profile = (values: Record<string, Fact['value']> = {}): Profile =>
   ProfileSchema.parse({
@@ -41,7 +41,7 @@ const profile = (values: Record<string, Fact['value']> = {}): Profile =>
 test('modern XML round trips every bank fact, source, review, conflict and scenario input', () => {
   assert.deepEqual(readCatalog(toXml(catalog)), catalog);
   assert.deepEqual(
-    readCatalog(readFileSync('data/banks_verified_2026-10-09_tool-v3.0.0.xml', 'utf8')),
+    readCatalog(readFileSync('data/banks_verified_2026-10-09_tool-v3.0.0-r2.xml', 'utf8')),
     catalog,
   );
   const s = structuredClone(example);
@@ -302,6 +302,7 @@ test('Axos facts and discoveries distinguish checking, qualified savings, fallba
   assert.equal(b.profile!.facts.qualifiedApy.value, 4.21);
   assert.equal(b.profile!.facts.headlineBalanceCap.value, 49999.99);
   assert.ok(catalog.banks.every((b) => b.profile!.discoveries.length > 0));
+  assert.equal(catalog.banks.find(b=>b.id==='everbank')!.profile!.facts.outgoingAchTransactionsDaily.unit,'transactions');
   assert.ok(
     auditCatalog(catalog, '2026-10-09').banks.every((b) => b.calculationMismatches.length === 0),
   );

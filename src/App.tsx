@@ -35,7 +35,7 @@ import { compare, type BankResult, type Comparison } from '../lib/engine';
 import { readCatalog, readScenario, readableError, toYaml, toXml } from '../lib/files';
 import { money, toCsv, toSvg } from '../lib/export';
 import { VERSION, BUILD_DATE, type Bank, type Scenario } from '../lib/schema';
-import catalogText from '../data/banks-2026-10-09-v3.yaml?raw';
+import catalogText from '../data/banks-2026-10-09-v3-r2.yaml?raw';
 import exampleText from '../examples/working-person-v3.yaml?raw';
 import promptsText from '../docs/LLM_PROMPTS_v3.0.0_2026-10-09.md?raw';
 import xmlGuideText from '../docs/XML_GUIDE_v3.0.0_2026-10-09.md?raw';
@@ -1096,8 +1096,9 @@ function AgentGuide() {
         <pre>
           <code>
             npx tsx cli.ts compare \{'\n'} --scenario examples/working-person-v3.yaml \{'\n'}{' '}
-            --banks data/banks-2026-10-09-v3.yaml \{'\n'} --output outputs/comparison.json \{'\n'}{' '}
-            --graph outputs/comparison.svg{'\n\n'}# Also: --format csv, validate, banks, --help
+            --banks data/banks-2026-10-09-v3-r2.yaml \{'\n'} --output outputs/comparison.json \
+            {'\n'} --graph outputs/comparison.svg{'\n\n'}# Also: --format csv, validate, banks,
+            --help
           </code>
         </pre>
       </section>

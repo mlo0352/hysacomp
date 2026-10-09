@@ -1,6 +1,6 @@
 # Source policy — Butter 3.0.0 / 2026-10-09
 
-The current dataset is [the v3 snapshot](../data/banks-2026-10-09-v3.yaml).
+The current dataset is [the v3 snapshot](../data/banks-2026-10-09-v3-r2.yaml).
 The [discovery log](BANK_DISCOVERIES_v3.0.0_2026-10-09.md) records product-specific findings,
 their consequences, source links, coverage and manual follow-up for all 25 entries.
 The earlier v2 snapshot and its review are retained as historical artifacts.

@@ -2,6 +2,9 @@
 
 ## v3.0.0 — 2026-10-09
 
+Data revision r2 corrects two transaction-count unit labels. The first published v3
+snapshot is retained unchanged; calculations and source dates are unchanged.
+
 - Versioned bank/scenario XML returns alongside YAML/JSON, with strict metadata checks,
   explicit legacy migration and incompatible-version rejection. Both schemas are 3.0.
 - Research profiles for 25 products: independently sourced facts, explicit unknowns,

@@ -16,7 +16,7 @@ const files = [
   '--scenario',
   'examples/working-person-v3.yaml',
   '--banks',
-  'data/banks-2026-10-09-v3.yaml',
+  'data/banks-2026-10-09-v3-r2.yaml',
 ];
 test('CLI stdout is clean JSON and matches the shared browser engine', () => {
   const out = run('compare', ...files);

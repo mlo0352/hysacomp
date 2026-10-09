@@ -8,11 +8,11 @@ and [tool manifest](../tool-manifest.json). Browser and CLI call the same determ
 
 ```sh
 npm ci
-npx tsx cli.ts validate --scenario examples/working-person-v3.yaml --banks data/banks-2026-10-09-v3.yaml
-npx tsx cli.ts compare --scenario examples/working-person-v3.yaml --banks data/banks-2026-10-09-v3.yaml --as-of 2026-10-09 --output outputs/result.json --graph outputs/result.svg
-npx tsx cli.ts audit --banks data/banks-2026-10-09-v3.yaml --output outputs/audit.json
-npx tsx cli.ts discoveries --banks data/banks-2026-10-09-v3.yaml
-npx tsx cli.ts banks --banks data/banks-2026-10-09-v3.yaml --format xml --output outputs/banks.xml
+npx tsx cli.ts validate --scenario examples/working-person-v3.yaml --banks data/banks-2026-10-09-v3-r2.yaml
+npx tsx cli.ts compare --scenario examples/working-person-v3.yaml --banks data/banks-2026-10-09-v3-r2.yaml --as-of 2026-10-09 --output outputs/result.json --graph outputs/result.svg
+npx tsx cli.ts audit --banks data/banks-2026-10-09-v3-r2.yaml --output outputs/audit.json
+npx tsx cli.ts discoveries --banks data/banks-2026-10-09-v3-r2.yaml
+npx tsx cli.ts banks --banks data/banks-2026-10-09-v3-r2.yaml --format xml --output outputs/banks.xml
 npx tsx cli.ts scenario --scenario examples/working-person-v3.yaml --format xml --output outputs/scenario.xml
 ```
 

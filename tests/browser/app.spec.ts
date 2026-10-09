@@ -15,7 +15,7 @@ test('fresh state is empty; demo shows the same winner and dollars as the CLI en
   await page.getByRole('button', { name: 'Try the working-person example' }).click();
   const expected = compare(
     readScenario(readFileSync('examples/working-person-v3.yaml', 'utf8')),
-    readCatalog(readFileSync('data/banks-2026-10-09-v3.yaml', 'utf8')),
+    readCatalog(readFileSync('data/banks-2026-10-09-v3-r2.yaml', 'utf8')),
   );
   await expect(page.getByRole('region', { name: 'Comparison winner' })).toContainText(
     expected.ranked[0].name,

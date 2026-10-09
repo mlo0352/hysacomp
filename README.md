@@ -41,8 +41,8 @@ Use the browser for the simple route; use the CLI for reproducible research and 
 git clone https://github.com/mlo0352/hysacomp.git
 cd hysacomp
 npm ci
-npx tsx cli.ts compare --scenario examples/working-person-v3.yaml --banks data/banks-2026-10-09-v3.yaml --as-of 2026-10-09 --output outputs/comparison.json --graph outputs/comparison.svg
-npx tsx cli.ts audit --banks data/banks-2026-10-09-v3.yaml
+npx tsx cli.ts compare --scenario examples/working-person-v3.yaml --banks data/banks-2026-10-09-v3-r2.yaml --as-of 2026-10-09 --output outputs/comparison.json --graph outputs/comparison.svg
+npx tsx cli.ts audit --banks data/banks-2026-10-09-v3-r2.yaml
 npx tsx cli.ts scenario --scenario examples/working-person-v3.yaml --format xml --output outputs/scenario.xml
 ```
 

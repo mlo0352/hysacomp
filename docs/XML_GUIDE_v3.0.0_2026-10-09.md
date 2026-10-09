@@ -2,7 +2,7 @@
 
 Canonical full examples:
 [scenario](../examples/scenario_example_2026-10-09_tool-v3.0.0.xml),
-[bank snapshot](../data/banks_verified_2026-10-09_tool-v3.0.0.xml).
+[bank snapshot](../data/banks_verified_2026-10-09_tool-v3.0.0-r2.xml).
 The matching YAML files are easier to edit. Use the CLI to serialize them to XML;
 do not invent a second dialect. [JSON schemas](../schemas/) and runtime validation
 define accepted fields. Unknown keys are rejected.
@@ -137,7 +137,7 @@ silently assigned a reset. See methodology for the lower-bound assumptions.
 
 ```sh
 npx tsx cli.ts scenario --scenario plan.local.yaml --format xml --output outputs/scenario.xml
-npx tsx cli.ts banks --banks data/banks-2026-10-09-v3.yaml --format xml --output outputs/banks.xml
+npx tsx cli.ts banks --banks data/banks-2026-10-09-v3-r2.yaml --format xml --output outputs/banks.xml
 npx tsx cli.ts validate --scenario outputs/scenario.xml --banks outputs/banks.xml
 npx tsx cli.ts audit --banks outputs/banks.xml
 ```
