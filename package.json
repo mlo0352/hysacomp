@@ -1,0 +1,39 @@
+{
+  "name": "butter-hysa-comparator",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Local cash comparisons for people and AI agents. One engine, browser and CLI.",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && npm run schemas && vite build && tsx scripts/public-assets.ts",
+    "preview": "vite preview --host 127.0.0.1",
+    "compare": "tsx cli.ts compare",
+    "cli": "tsx cli.ts",
+    "test": "tsx --test tests/*.test.ts",
+    "test:browser": "playwright test",
+    "schemas": "tsx scripts/schemas.ts"
+  },
+  "dependencies": {
+    "fast-xml-parser": "^5.11.2",
+    "lucide-react": "^1.54.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "recharts": "^3.10.1",
+    "yaml": "^2.9.1",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.0",
+    "@types/node": "^22.20.5",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^5.2.0",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.7"
+  }
+}

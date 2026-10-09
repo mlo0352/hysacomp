@@ -1,0 +1,23 @@
+{
+  "name": "butter_cash_comparison",
+  "version": "2.0.0",
+  "description": "Compare cash accounts against a baseline using dated bank terms and posted cash flows. Local process tool; no network or bank access.",
+  "repository": "https://github.com/mlo0352/hysacomp",
+  "runtime": "Node.js >=22.12",
+  "setup": ["npm", "ci"],
+  "command": ["node", "--import", "tsx", "cli.ts", "compare"],
+  "arguments": {
+    "--scenario": { "required": true, "type": "local-file-path", "schema": "schemas/scenario.schema.json" },
+    "--banks": { "required": true, "type": "local-file-path", "schema": "schemas/banks.schema.json" },
+    "--format": { "enum": ["json", "csv"], "default": "json" },
+    "--output": { "type": "local-file-path", "default": "stdout" },
+    "--graph": { "type": "local-file-path", "extension": ".svg" }
+  },
+  "stdout": "JSON comparison unless --format csv or --output is specified",
+  "stderr": "JSON error with error and message fields",
+  "exitCodes": { "0": "success", "2": "invalid input or I/O error", "3": "no eligible banks; report still emitted" },
+  "resultFields": ["schemaVersion", "toolVersion", "catalogId", "bankDataCheckedOn", "scenario", "bankSnapshot", "assumptions", "winnerIds", "winnerId", "baseline", "ranked", "excluded", "gapToRunnerUp", "cashEvents", "provenance"],
+  "provenance": "CLI includes SHA-256 hashes of both exact input files.",
+  "sideEffects": "Only requested local output files and their parent directories are written.",
+  "network": false
+}

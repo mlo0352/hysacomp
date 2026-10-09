@@ -1,0 +1,8 @@
+node_modules/
+dist/
+outputs/
+test-results/
+playwright-report/
+*.local.*
+scenario_ian_*.xml
+hysa_comparator_v1.0.0_2026-10-09.html

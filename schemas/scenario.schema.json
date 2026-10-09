@@ -1,0 +1,264 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "2.0"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "pattern": "^[a-zA-Z0-9_-]+$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "createdAt": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "startDate": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "endDate": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "startingCash": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1000000000000
+    },
+    "taxRate": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "baseline": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "apy": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "monthlyFee": {
+          "default": 0,
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000000000
+        }
+      },
+      "required": [
+        "name",
+        "apy"
+      ],
+      "additionalProperties": false
+    },
+    "bankIds": {
+      "minItems": 1,
+      "maxItems": 200,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100,
+        "pattern": "^[a-zA-Z0-9_-]+$"
+      }
+    },
+    "eligiblePromotionIds": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100,
+        "pattern": "^[a-zA-Z0-9_-]+$"
+      }
+    },
+    "transfer": {
+      "type": "object",
+      "properties": {
+        "businessDays": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 30
+        },
+        "fee": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000000000
+        },
+        "holdDays": {
+          "default": 0,
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 90
+        }
+      },
+      "required": [
+        "businessDays",
+        "fee"
+      ],
+      "additionalProperties": false
+    },
+    "eStatements": {
+      "default": true,
+      "type": "boolean"
+    },
+    "flows": {
+      "maxItems": 200,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "^[a-zA-Z0-9_-]+$"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "amount": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000000000
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "in",
+              "out"
+            ]
+          },
+          "cadence": {
+            "type": "string",
+            "enum": [
+              "monthly",
+              "weekly"
+            ]
+          },
+          "interval": {
+            "default": 1,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 52
+          },
+          "dayOfMonth": {
+            "default": 1,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 31
+          },
+          "startDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "endDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "qualification": {
+            "default": "none",
+            "type": "string",
+            "enum": [
+              "none",
+              "payroll",
+              "external-deposit"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "amount",
+          "direction",
+          "cadence",
+          "startDate",
+          "endDate"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "events": {
+      "default": [],
+      "maxItems": 1000,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "amount": {
+            "type": "number",
+            "minimum": -1000000000000,
+            "maximum": 1000000000000
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "qualification": {
+            "default": "none",
+            "type": "string",
+            "enum": [
+              "none",
+              "payroll",
+              "external-deposit"
+            ]
+          }
+        },
+        "required": [
+          "date",
+          "amount",
+          "label"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "notes": {
+      "default": [],
+      "maxItems": 100,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 2000
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "id",
+    "name",
+    "createdAt",
+    "startDate",
+    "endDate",
+    "startingCash",
+    "taxRate",
+    "baseline",
+    "bankIds",
+    "transfer",
+    "flows"
+  ],
+  "additionalProperties": false,
+  "$id": "https://mlo0352.github.io/hysacomp/schemas/scenario.schema.json",
+  "title": "Butter scenario schema 2.0",
+  "description": "Also run CLI validate for semantic date, uniqueness, eligibility and cross-file checks."
+}

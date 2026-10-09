@@ -1,0 +1,18 @@
+# Butter HYSA Comparator
+
+> Local, deterministic cash-account comparisons for people and AI agents.
+> Repository: https://github.com/mlo0352/hysacomp
+
+- [Agent instructions](AGENTS.md)
+- [Agent guide and prompts](docs/AGENT_GUIDE.md)
+- [Methodology](docs/METHODOLOGY.md)
+- [Bank research audit](docs/BANK_REVIEW_2026-10-09.md)
+- [Tool manifest](tool-manifest.json)
+- [Scenario schema](schemas/scenario.schema.json)
+- [Bank schema](schemas/banks.schema.json)
+- [Fictional salary scenario](examples/working-person.yaml)
+- [Bank snapshot](data/banks-2026-10-09.yaml)
+
+Install with npm ci. Run npx tsx cli.ts --help. Inputs: YAML/JSON or supported legacy XML.
+Outputs: raw JSON/CSV and SVG image. No API key, remote API or MCP server required.
+Report source dates, baseline-relative earnings, model exclusions and assumptions.

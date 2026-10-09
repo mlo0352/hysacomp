@@ -1,0 +1,400 @@
+# Manually researched official-provider snapshot. Never fetched during a simulation.
+# checkedOn = our retrieval/review date. rateAsOf = provider-stated effective date, if visible.
+schemaVersion: '2.0'
+id: official-provider-review-2026-10-09
+checkedOn: '2026-10-09'
+currency: USD
+policy: Official provider sources checked manually. Unresolved rates and unsupported conditional rules remain visible but excluded. Verification applies only to the modeled scope; see limitations.
+banks:
+  - id: axos_one
+    name: Axos ONE Savings
+    institution: Axos Bank
+    kind: checking-bundle
+    checkedOn: '2026-10-09'
+    rateAsOf: null
+    verification: verified
+    sourceUrl: https://www.axosbank.com/personal/bank/axos-one
+    evidence: Confirmed 1.00% base, qualified 4.21% below $250,000 and 3.50% above; six-cycle offer advertises up to 5.00%. Separate checking balance and cycle qualification need a multi-account model.
+    model: unsupported
+    apy: 1
+    openingMinimum: 0
+    monthlyFee: 0
+    requirements:
+      - Linked checking; $1,500 monthly payroll plus $1,500 checking average daily balance, or $5,000 deposits plus $5,000 checking average daily balance.
+      - Qualifying deposits must post and clear by the 25th. New-customer boost has additional conditions.
+    limitations:
+      - Excluded from rankings until checking opportunity cost and exact statement-cycle rules are modeled.
+  - id: openbank
+    name: Openbank High Yield Savings
+    institution: Santander Bank
+    checkedOn: '2026-10-09'
+    rateAsOf: '2026-10-09'
+    verification: verified
+    sourceUrl: https://www.openbank.us/banking/high-yield-savings-account/
+    evidence: Confirmed 3.80% variable base, $500 opening deposit, no monthly account fee, and a six-month 0.35 percentage-point new-customer boost.
+    model: flat
+    apy: 3.8
+    openingMinimum: 500
+    monthlyFee: 0
+    promotions:
+      - id: openbank-intro
+        name: Openbank new-customer boost
+        startsOn: '2026-09-23'
+        enrollBy: '2026-11-03'
+        durationMonths: 6
+        apyDelta: 0.35
+        conditions: New Openbank customer opening during the offer. Cannot combine with other Santander bonuses. Verify your ZIP-code offer.
+    requirements: [US residence and mobile number; smartphone with the Openbank app.]
+    limitations: [Deposits at Openbank and Santander share insurance limits. Verify geographic offer availability.]
+  - id: wealthfront
+    name: Wealthfront Cash Account
+    institution: Wealthfront Brokerage
+    kind: cash-sweep
+    checkedOn: '2026-10-09'
+    rateAsOf: '2026-10-01'
+    verification: verified
+    sourceUrl: https://www.wealthfront.com/cash
+    evidence: Confirmed 3.55% base APY, no account fees, and a three-month 0.65 point boost on up to $150,000 for new clients.
+    model: flat
+    apy: 3.55
+    openingMinimum: 1
+    monthlyFee: 0
+    promotions:
+      - id: wealthfront-intro
+        name: Wealthfront new-client boost
+        durationMonths: 3
+        apyDelta: 0.65
+        cap: 150000
+        conditions: New eligible client with a funded Cash Account. Confirm boost start and eligibility in the application.
+    limitations:
+      - Brokerage cash sweep, not a bank. Insurance eligibility depends on program banks and other deposits.
+      - Investing-linked and referral boosts are excluded; their stacking and eligibility are not modeled.
+  - id: sofi
+    name: SoFi Savings · standard payroll path
+    institution: SoFi Bank
+    kind: checking-bundle
+    checkedOn: '2026-10-09'
+    rateAsOf: '2026-09-23'
+    verification: verified
+    sourceUrl: https://www.sofi.com/legal/banking-rate-sheet/
+    additionalSources: [https://www.sofi.com/banking/high-yield-savings-account/]
+    evidence: Current rate sheet confirms 0.80% unqualified savings and 3.30% with eligible payroll for non-Plus members; qualification resets for 31 days after payroll.
+    model: rolling-payroll
+    apy: 0.8
+    qualifiedApy: 3.3
+    qualificationDays: 31
+    openingMinimum: 0
+    monthlyFee: 0
+    limitations:
+      - Models the standard non-Plus payroll path only. SoFi Plus tiers, new-member APY boost, cash bonus and $5,000 non-payroll deposit path are excluded.
+      - Checking and savings open together. Cash is assumed held in savings after payroll posts.
+    requirements: [Eligible employer or government payroll; ordinary ACH is not assumed to qualify.]
+  - id: etrade
+    name: E*TRADE Premium Savings
+    institution: Morgan Stanley Private Bank
+    checkedOn: '2026-10-09'
+    rateAsOf: null
+    verification: verified
+    sourceUrl: https://us.etrade.com/bank/premium-savings-account
+    evidence: Confirmed 3.75% base, 4.25% for six months on new accounts, and SAVE800 tiers with 30-day funding, 45-day average-balance maintenance, and payout within 30 days afterward.
+    model: flat
+    apy: 3.75
+    openingMinimum: 0
+    monthlyFee: 0
+    maximumModeledBalance: 10000000
+    promotions:
+      - id: etrade-intro
+        name: E*TRADE six-month APY
+        startsOn: '2026-09-22'
+        enrollBy: '2027-01-10'
+        durationMonths: 6
+        fixedApy: 4.25
+        conditions: New Premium Savings Account opened before 8:45 p.m. ET on the final enrollment date; maximum $10 million.
+    bonuses:
+      - id: etrade-save800
+        name: E*TRADE SAVE800
+        startsOn: '2026-09-15'
+        enrollBy: '2027-01-10'
+        kind: balance
+        fundingDays: 30
+        maintainDays: 45
+        maintenance: average
+        payoutDelayDays: 30
+        tiers:
+          - { minimum: 20000, bonus: 400 }
+          - { minimum: 100000, bonus: 800 }
+        conditions: Apply SAVE800 at opening; all modeled deposits must be new-to-bank external funds. Confirm lifetime bonus limit and eligibility. Keep account open until paid.
+    limitations:
+      - Bonus uses the lower of funding-period net deposits and maintenance average daily balance; payout is modeled at the latest stated date.
+      - Intraday enrollment cutoffs must be checked manually. Net-new-funds origin is an explicit eligibility assumption.
+  - id: everbank
+    name: EverBank Performance Savings
+    institution: EverBank
+    checkedOn: '2026-10-09'
+    rateAsOf: '2026-10-09'
+    verification: verified
+    sourceUrl: https://www.everbank.com/rates
+    additionalSources: [https://www.everbank.com/banking/performance-savings]
+    evidence: Rate sheet confirms 4.20% on all balances for new accounts. Product terms disclose no minimum opening deposit or monthly maintenance fee.
+    model: flat
+    apy: 4.2
+    openingMinimum: 0
+    monthlyFee: 0
+    limitations: [Published APY is for newly opened accounts; existing accounts can have a different rate.]
+  - id: capitalone
+    name: Capital One 360 Performance Savings
+    institution: Capital One
+    checkedOn: '2026-10-09'
+    rateAsOf: '2026-10-08'
+    verification: review
+    sourceUrl: https://www.capitalone.com/bank/savings-accounts/online-performance-savings-account/
+    evidence: The current official page returned NaN for its dynamic APY. Fee-free terms were visible, but a numeric rate could not be verified. Previous snapshot rate is not carried forward.
+    model: unsupported
+    apy: null
+    openingMinimum: 0
+    monthlyFee: 0
+  - id: happen
+    name: Happen Bank LevelUp Savings
+    institution: Happen Bank
+    checkedOn: '2026-10-09'
+    rateAsOf: '2026-10-09'
+    verification: verified
+    sourceUrl: https://www.happen.com/personal-banking/savings/high-yield-savings
+    evidence: Confirmed 4.20% qualified and 3.00% standard APY; $250 deposits in the previous statement cycle. First three cycles receive qualified APY. Rate changes at end of first business day.
+    model: unsupported
+    apy: 3
+    openingMinimum: 0
+    monthlyFee: 0
+    limitations: [Statement-cycle timing is not modeled. Retained for review and excluded from rankings rather than approximating monthly qualification.]
+  - id: cit
+    name: CIT Platinum Savings
+    institution: First Citizens Bank
+    checkedOn: '2026-10-09'
+    rateAsOf: '2026-07-01'
+    verification: verified
+    sourceUrl: https://www.cit.com/cit-bank/bank/savings/platinum-savings-account
+    additionalSources: [https://www.cit.com/cit-bank/platinum-savings/boost]
+    evidence: Product page confirms whole-balance 0.25% below $5,000 and 3.75% at $5,000 or more; $100 opening minimum and no monthly fees.
+    model: whole-balance
+    apy: 0.25
+    tiers: [{ from: 0, apy: 0.25 }, { from: 5000, apy: 3.75 }]
+    openingMinimum: 100
+    monthlyFee: 0
+    limitations: [Legacy boost page did not expose complete current terms; promotional boost excluded.]
+  - id: marcus
+    name: Marcus Online Savings
+    institution: Goldman Sachs Bank USA
+    checkedOn: '2026-10-09'
+    rateAsOf: '2026-10-09'
+    verification: verified
+    sourceUrl: https://www.marcus.com/us/en/savings/high-yield-savings
+    evidence: Confirmed 3.50% APY with no fees or minimum deposit. Referral page describes a three-month 1.00 point boost, excluded until the actual referral start date is known.
+    model: flat
+    apy: 3.5
+    openingMinimum: 0
+    monthlyFee: 0
+    limitations: [Referral boost excluded. Account ownership and maximum deposit limits must be checked with Marcus.]
+  - id: forbright
+    name: Forbright Growth Savings
+    institution: Forbright Bank
+    checkedOn: '2026-10-09'
+    rateAsOf: null
+    verification: verified
+    sourceUrl: https://openaccount.forbrightbank.com/products?customerCategory=personal&productType=savings
+    evidence: Official product selector confirms 3.85% APY, no fees, no minimum opening deposit, and automatic eStatement enrollment. Provider does not show a rate-effective date here.
+    model: flat
+    apy: 3.85
+    openingMinimum: 0
+    monthlyFee: 0
+  - id: westernalliance
+    name: Western Alliance Savings Premier
+    institution: Western Alliance Bank
+    checkedOn: '2026-10-09'
+    rateAsOf: '2026-01-08'
+    verification: verified
+    sourceUrl: https://www.westernalliancebancorporation.com/personal-banking/high-yield-savings-account
+    evidence: Current product page displays 3.80% APY, $500 opening minimum and no account fees; the provider's rate footnote remains dated January 8.
+    model: flat
+    apy: 3.8
+    openingMinimum: 500
+    monthlyFee: 0
+    limitations:
+      - Funding and withdrawals use one linked external account; direct payroll, checks and wires are not supported. Recurring flows here represent transfers from that linked account.
+      - Transfers may take five business days; set posting dates and transfer assumptions accordingly. Single transfers may not exceed $250,000.
+  - id: peak
+    name: Peak Envision Savings
+    institution: Idaho First Bank
+    checkedOn: '2026-10-09'
+    rateAsOf: '2026-10-01'
+    verification: verified
+    sourceUrl: https://www.peak.bank/peak-bank/savings/
+    additionalSources: [https://open.peak.bank/]
+    evidence: Fresh product disclosure resolves stale cached rates. Published tiers are 4.27% below $500,000 and 3.40% at higher balances; $100 opening minimum, no monthly maintenance fee.
+    model: whole-balance
+    apy: 4.27
+    tiers: [{ from: 0, apy: 4.27 }, { from: 500000, apy: 3.4 }]
+    openingMinimum: 100
+    monthlyFee: 0
+    limitations: [New-account rates; opening funds have a five-business-day hold. Set hold assumptions accordingly. Deposits share Idaho First Bank insurance.]
+  - id: bask
+    name: Bask Interest Savings · base rate
+    institution: Texas Capital Bank
+    checkedOn: '2026-10-09'
+    rateAsOf: null
+    verification: verified
+    sourceUrl: https://baskbank.com/products/interest-savings-account
+    additionalSources: [https://baskbank.com/more-ways-disclosures]
+    evidence: Confirmed 3.90% variable savings APY, no monthly fee or minimum opening balance. Reviewed bundle promotion separately.
+    model: flat
+    apy: 3.9
+    openingMinimum: 0
+    monthlyFee: 0
+    limitations: [The checking bundle boost and cash bonuses are excluded; a separate checking balance and statement-cycle model are required. Unfunded accounts may close after 15 business days.]
+  - id: bread
+    name: Bread Savings
+    institution: Comenity Capital Bank
+    checkedOn: '2026-10-09'
+    rateAsOf: null
+    verification: review
+    sourceUrl: https://www.breadfinancial.com/en/bread-savings/high-yield-savings-account.html
+    additionalSources: [https://opensavings.breadfinancial.com/]
+    evidence: Product site and application shell did not expose a current numeric APY in this review. Excluded pending manual verification; legacy rate not treated as current.
+    model: unsupported
+    apy: null
+    openingMinimum: 100
+    monthlyFee: 0
+  - id: liveoak
+    name: Live Oak Personal Savings · base rate
+    institution: Live Oak Bank
+    checkedOn: '2026-10-09'
+    rateAsOf: null
+    verification: verified
+    sourceUrl: https://www.liveoak.bank/personal-savings/
+    evidence: Official savings calculator confirms 4.00%; no monthly maintenance fee or minimum opening balance. Reviewed $300 promotion with October 16 funding deadline and 90-day maintenance.
+    model: flat
+    apy: 4
+    openingMinimum: 0
+    monthlyFee: 0
+    limitations:
+      - The $300 promotion is excluded. Its first-threshold funding date, existing-customer benchmark and up-to-45-day payout need additional modeling.
+      - Bank-initiated ACH pulls may have five-business-day holds; external pushes are available on receipt.
+  - id: barclays
+    name: Barclays Tiered Savings
+    institution: Barclays Bank Delaware
+    checkedOn: '2026-10-09'
+    rateAsOf: null
+    verification: review
+    sourceUrl: https://banking.barclaysus.com/tiered-savings.html
+    evidence: Official product page could not be retrieved during this pass. Exact current tiers and fees remain unresolved; excluded from rankings.
+    model: unsupported
+    apy: null
+    openingMinimum: 0
+    monthlyFee: 0
+  - id: ally
+    name: Ally Bank Savings
+    institution: Ally Bank
+    checkedOn: '2026-10-09'
+    rateAsOf: '2026-10-08'
+    verification: verified
+    sourceUrl: https://www.ally.com/bank/online-savings-account/
+    evidence: Confirmed 3.10% across all current balance tiers, no minimum opening deposit, no monthly maintenance fee and free standard ACH transfers.
+    model: flat
+    apy: 3.1
+    openingMinimum: 0
+    monthlyFee: 0
+    limitations: [Ten limited withdrawals per statement cycle. Repeated excess withdrawals can cause account closure; this operational limit is not enforced by the simulator.]
+  - id: brio
+    name: BrioDirect High-Yield Savings
+    institution: Webster Bank
+    checkedOn: '2026-10-09'
+    rateAsOf: null
+    verification: verified
+    sourceUrl: https://www.briodirectbanking.com/high-yield-savings/
+    evidence: Confirmed 3.75% APY, $5,000 opening minimum, $25 required to earn the disclosed APY, and no monthly maintenance fee.
+    model: whole-balance
+    apy: 3.75
+    tiers: [{ from: 0, apy: 0 }, { from: 25, apy: 3.75 }]
+    openingMinimum: 5000
+    monthlyFee: 0
+    limitations: [Deposits share Webster Bank insurance limits. Below $25 the model accrues no interest.]
+  - id: ivy
+    name: Ivy Bank High-Yield Savings
+    institution: Cambridge Savings Bank
+    checkedOn: '2026-10-09'
+    rateAsOf: '2026-09-22'
+    verification: verified
+    sourceUrl: https://www.ivybank.com/
+    additionalSources: [https://www.ivybank.com/files/2025-06/IVY-0001_Ivy%20Bank%20Fee%20Schedule_20250604.pdf]
+    evidence: Confirmed 4.00% from $2,500 up to $1 million, 0.05% from $10 to $2,499.99, and $2,500 minimum opening deposit.
+    model: whole-balance
+    apy: 4
+    tiers: [{ from: 0, apy: 0 }, { from: 10, apy: 0.05 }, { from: 2500, apy: 4 }]
+    maximumModeledBalance: 1000000
+    openingMinimum: 2500
+    monthlyFee: 0
+    limitations: [Transfers and withdrawals can be limited to six per calendar month. Deposits share Cambridge Savings Bank insurance. Balances above $1 million are excluded.]
+  - id: vio
+    name: Vio Cornerstone Money Market
+    institution: MidFirst Bank
+    checkedOn: '2026-10-09'
+    rateAsOf: '2026-10-09'
+    verification: verified
+    sourceUrl: https://www.viobank.com/cornerstone-money-market-savings
+    evidence: Confirmed 3.40% APY, $100 minimum opening deposit, no monthly service fee with electronic statements, and $5 per month for paper statements.
+    model: flat
+    apy: 3.4
+    openingMinimum: 100
+    monthlyFee: 0
+    paperStatementFee: 5
+    maximumModeledBalance: 250000
+    limitations: [Opening deposits are limited to $250,000; this model conservatively caps the entire forecast there. Deposits typically have five-business-day holds while earning interest.]
+  - id: pibank
+    name: Pibank Savings
+    institution: Intercredit Bank
+    checkedOn: '2026-10-09'
+    rateAsOf: '2026-09-29'
+    verification: verified
+    sourceUrl: https://www.pibank.com/
+    additionalSources: [https://www.pibank.com/pibank-savings/, https://www.pibank.com/schedule-of-fees/]
+    evidence: Current homepage explicitly dates 4.25% APY to September 29, superseding the product subpage's July 2 rate of 4.10%. No minimum balance or account fees.
+    model: flat
+    apy: 4.25
+    openingMinimum: 0
+    monthlyFee: 0
+    limitations: [Savings uses wire transfers; Pibank charges no wire fee but the other bank may. Set fees and posted cash-flow dates accordingly. No bill pay or Zelle.]
+  - id: newtek
+    name: Newtek Personal High Yield Savings
+    institution: Newtek Bank
+    checkedOn: '2026-10-09'
+    rateAsOf: null
+    verification: review
+    sourceUrl: https://www.newtekbank.com/personal/high-yield-savings/
+    evidence: Official page advertises 4.20% but explicitly says new applications are paused. Retained in the catalog, excluded from new-account comparisons.
+    model: unsupported
+    apy: 4.2
+    openingMinimum: 0
+    monthlyFee: 0
+  - id: amex
+    name: American Express High Yield Savings
+    institution: American Express National Bank
+    checkedOn: '2026-10-09'
+    rateAsOf: null
+    verification: review
+    sourceUrl: https://www.americanexpress.com/en-us/banking/online-savings/high-yield-savings-account/
+    evidence: Official page loaded but its dynamic rate was not exposed. No numeric APY asserted; verify manually before ranking.
+    model: unsupported
+    apy: null
+    openingMinimum: 0
+    monthlyFee: 0
+  - id: synchrony
+    name: Synchrony High Yield Savings
+    institution: Synchrony Bank
+    checkedOn: '2026-10-09'
+    rateAsOf: null
+    verification: review
+    sourceUrl: https://www.synchrony.com/banking/products/high-yield-savings
+    evidence: Current official savings page was reviewed but did not expose a numeric APY in retrievable text. Excluded pending a verified rate.
+    model: unsupported
+    apy: null
+    openingMinimum: 0
+    monthlyFee: 0

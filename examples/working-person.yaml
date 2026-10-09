@@ -1,0 +1,45 @@
+# Illustrative take-home salary, not a real person's finances.
+schemaVersion: '2.0'
+id: working-person
+name: A regular paycheck, a smarter home for savings
+createdAt: '2026-10-09'
+startDate: '2026-10-09'
+endDate: '2027-10-08'
+startingCash: 25000
+taxRate: 0.22
+baseline:
+  name: Keep cash at 3.10% APY
+  apy: 3.10
+  monthlyFee: 0
+bankIds: [everbank, openbank, wealthfront, marcus, ally, brio, ivy]
+eligiblePromotionIds: [openbank-intro, wealthfront-intro]
+transfer:
+  businessDays: 2
+  fee: 0
+  holdDays: 0
+eStatements: true
+flows:
+  - id: salary
+    label: Take-home paycheck
+    amount: 2500
+    direction: in
+    cadence: weekly
+    interval: 2
+    startDate: '2026-10-16'
+    endDate: '2027-10-08'
+    qualification: payroll
+  - id: living
+    label: Rent, bills & everyday spending
+    amount: 3500
+    direction: out
+    cadence: monthly
+    dayOfMonth: 1
+    startDate: '2026-11-01'
+    endDate: '2027-10-08'
+    qualification: none
+events: []
+notes:
+  - Fictional example with $25,000 saved, $2,500 take-home pay every two weeks, and $3,500 monthly expenses.
+  - Assumes eligibility for Openbank and Wealthfront new-customer boosts; turn these off if ineligible.
+  - Baseline APY is an editable assumption. A 22% tax estimate applies only to interest and bonuses.
+  - Payroll and expenses are posted cash flows. A separate everyday checking account and its transfer costs are not modeled.
