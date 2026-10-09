@@ -32,11 +32,16 @@ import {
   YAxis,
 } from 'recharts';
 import { compare, type BankResult, type Comparison } from '../lib/engine';
-import { readCatalog, readScenario, readableError, toYaml } from '../lib/files';
+import { readCatalog, readScenario, readableError, toYaml, toXml } from '../lib/files';
 import { money, toCsv, toSvg } from '../lib/export';
-import { type Bank, type Scenario } from '../lib/schema';
-import catalogText from '../data/banks-2026-10-09.yaml?raw';
-import exampleText from '../examples/working-person.yaml?raw';
+import { VERSION, BUILD_DATE, type Bank, type Scenario } from '../lib/schema';
+import catalogText from '../data/banks-2026-10-09-v3.yaml?raw';
+import exampleText from '../examples/working-person-v3.yaml?raw';
+import promptsText from '../docs/LLM_PROMPTS_v3.0.0_2026-10-09.md?raw';
+import xmlGuideText from '../docs/XML_GUIDE_v3.0.0_2026-10-09.md?raw';
+import discoveryText from '../docs/BANK_DISCOVERIES_v3.0.0_2026-10-09.md?raw';
+import { BankResearch, DecisionTable, today } from './Research';
+import { freshness } from '../lib/analysis';
 import styles from './App.module.css';
 
 const repo = 'https://github.com/mlo0352/hysacomp';
@@ -236,6 +241,120 @@ function PlanEditor({
           <input type="date" value={s.endDate} onChange={(e) => set('endDate', e.target.value)} />
         </Field>
       </div>
+      <details className={styles.advanced}>
+        <summary>Insurance & related deposits</summary>
+        <div className={styles.detailsBody}>
+          <Field
+            label="Ownership category"
+            hint="A simplified estimate. Trusts and other categories need manual analysis."
+          >
+            <select
+              value={s.insurance.ownership}
+              onChange={(e) => set('insurance', { ...s.insurance, ownership: e.target.value })}
+            >
+              <option value="single">Single owner</option>
+              <option value="joint">Eligible joint owners</option>
+              <option value="other">Trust / other / unsure</option>
+            </select>
+          </Field>
+          {s.insurance.ownership === 'joint' && (
+            <Field label="Joint owners">
+              <input
+                type="number"
+                min="2"
+                max="10"
+                value={s.insurance.jointOwners}
+                onChange={(e) =>
+                  set('insurance', { ...s.insurance, jointOwners: Number(e.target.value) })
+                }
+              />
+            </Field>
+          )}
+          <p className={styles.muted}>
+            Add other deposits held in the same ownership category at the same legal bank. The
+            accounts being compared are alternatives, not combined holdings.
+          </p>
+          {s.insurance.otherDeposits.map((d, i) => (
+            <div key={i} className={styles.flowEditor}>
+              <Field label="Insurance group">
+                <select
+                  value={d.aggregationGroup}
+                  onChange={(e) =>
+                    set('insurance', {
+                      ...s.insurance,
+                      otherDeposits: s.insurance.otherDeposits.map((v, j) =>
+                        j === i ? { ...v, aggregationGroup: e.target.value } : v,
+                      ),
+                    })
+                  }
+                >
+                  {[
+                    ...new Set([
+                      d.aggregationGroup,
+                      ...banks.flatMap((b) =>
+                        typeof b.profile?.facts.fdicAggregationGroup?.value === 'string'
+                          ? [b.profile.facts.fdicAggregationGroup.value]
+                          : [],
+                      ),
+                    ]),
+                  ].map((g) => (
+                    <option key={g}>{g}</option>
+                  ))}
+                </select>
+              </Field>
+              <Field label="Other same-bank deposits">
+                <input
+                  type="number"
+                  min="0"
+                  value={d.amount}
+                  onChange={(e) =>
+                    set('insurance', {
+                      ...s.insurance,
+                      otherDeposits: s.insurance.otherDeposits.map((v, j) =>
+                        j === i ? { ...v, amount: Number(e.target.value) } : v,
+                      ),
+                    })
+                  }
+                />
+              </Field>
+              <button
+                onClick={() =>
+                  set('insurance', {
+                    ...s.insurance,
+                    otherDeposits: s.insurance.otherDeposits.filter((_, j) => j !== i),
+                  })
+                }
+              >
+                Remove related deposit
+              </button>
+            </div>
+          ))}
+          <button
+            onClick={() =>
+              set('insurance', {
+                ...s.insurance,
+                otherDeposits: [
+                  ...s.insurance.otherDeposits,
+                  {
+                    aggregationGroup: 'santander-bank-na',
+                    amount: 0,
+                    label: 'Other same-category deposits',
+                  },
+                ],
+              })
+            }
+          >
+            Add related deposit
+          </button>
+          <Field label="Focus year">
+            <input
+              type="number"
+              value={s.focusYear ?? Number(s.startDate.slice(0, 4))}
+              onChange={(e) => set('focusYear', Number(e.target.value))}
+            />
+          </Field>
+        </div>
+      </details>
       <div className={styles.divider} />
       <div className={styles.sectionLabel}>
         MONEY IN & OUT{' '}
@@ -681,6 +800,15 @@ function Results({ result: c, inspect }: { result: Comparison; inspect: (r: Bank
           </small>
         </div>
       </section>
+      {c.winnerId !== 'baseline' && (
+        <div className={styles.winnerCautions}>
+          <strong>Yield leader · review the operational tradeoffs</strong>
+          <p>{c.decisions[best.bankId]?.warnings.slice(0, 3).join(' ')}</p>
+          <button className={styles.textButton} onClick={() => inspect(best)}>
+            Inspect exit limits, coverage & discoveries <ArrowUpRight size={14} />
+          </button>
+        </div>
+      )}
       <div className={styles.metricRow}>
         <div>
           <span>Starting savings</span>
@@ -861,6 +989,10 @@ function Results({ result: c, inspect }: { result: Comparison; inspect: (r: Bank
           </details>
         )}
       </section>
+      <DecisionTable
+        comparison={c}
+        inspect={(id) => inspect([...c.ranked, ...c.excluded].find((r) => r.bankId === id)!)}
+      />
       <details className={styles.assumptions}>
         <summary>
           <CircleHelp size={16} /> What this comparison assumes
@@ -898,7 +1030,7 @@ function AgentGuide() {
   const [copied, setCopied] = useState(false),
     [copyError, setCopyError] = useState('');
   const prompt =
-    'Use https://github.com/mlo0352/hysacomp. Read AGENTS.md and docs/AGENT_GUIDE.md. Ask for my starting cash, dates, take-home salary, expenses, baseline APY and tax estimate. Create a schema 2.0 scenario YAML. Verify bank sources and dates without inventing rates or eligibility. Run the local CLI with explicit scenario and bank files. Return the comparison JSON and SVG, explain the gain over baseline, and list excluded offers and assumptions. Never upload my personal scenario to GitHub.';
+    'Use https://github.com/mlo0352/hysacomp. Read AGENTS.md and docs/LLM_PROMPTS_v3.0.0_2026-10-09.md. Ask for cash, dates, income, withdrawals, baseline, taxes, ownership and other same-bank deposits. Create a schema 3.0 scenario XML or YAML. Research each bank at the atomic fact level, preserve sources/conflicts and a discovery log, and mark unknowns. Run the CLI with explicit files and --as-of. Return comparison JSON and SVG, explain earnings over baseline, exit limits, uninsured cash and manual checks. Never upload my personal files.';
   return (
     <div className={styles.agentPage}>
       <span className={styles.eyebrow}>
@@ -963,13 +1095,52 @@ function AgentGuide() {
         </div>
         <pre>
           <code>
-            npx tsx cli.ts compare \{'\n'} --scenario examples/working-person.yaml \{'\n'} --banks
-            data/banks-2026-10-09.yaml \{'\n'} --output outputs/comparison.json \{'\n'} --graph
-            outputs/comparison.svg{'\n\n'}# Also: --format csv, validate, banks, --help
+            npx tsx cli.ts compare \{'\n'} --scenario examples/working-person-v3.yaml \{'\n'}{' '}
+            --banks data/banks-2026-10-09-v3.yaml \{'\n'} --output outputs/comparison.json \{'\n'}{' '}
+            --graph outputs/comparison.svg{'\n\n'}# Also: --format csv, validate, banks, --help
           </code>
         </pre>
       </section>
       <div className={styles.docLinks}>
+        <a href="https://mlo0352.github.io/hysacomp/downloads/butter-v3.0.0-offline.zip" download>
+          <ArrowDownToLine size={15} /> Offline bundle
+        </a>
+        <a
+          href="https://mlo0352.github.io/hysacomp/downloads/hysa_comparator_v3.0.0_2026-10-09.html"
+          download
+        >
+          Standalone HTML
+        </a>
+        <a
+          href="docs/LLM_PROMPTS_v3.0.0_2026-10-09.md"
+          download
+          onClick={(e) => {
+            e.preventDefault();
+            download('LLM_PROMPTS_v3.0.0_2026-10-09.md', promptsText, 'text/markdown');
+          }}
+        >
+          Five agent prompts
+        </a>
+        <a
+          href="docs/XML_GUIDE_v3.0.0_2026-10-09.md"
+          download
+          onClick={(e) => {
+            e.preventDefault();
+            download('XML_GUIDE_v3.0.0_2026-10-09.md', xmlGuideText, 'text/markdown');
+          }}
+        >
+          XML guide
+        </a>
+        <a
+          href="docs/BANK_DISCOVERIES_v3.0.0_2026-10-09.md"
+          download
+          onClick={(e) => {
+            e.preventDefault();
+            download('BANK_DISCOVERIES_v3.0.0_2026-10-09.md', discoveryText, 'text/markdown');
+          }}
+        >
+          Bank discovery log
+        </a>
         <a href={`${repo}/blob/main/AGENTS.md`}>
           AGENTS.md <ArrowUpRight size={15} />
         </a>
@@ -1042,7 +1213,7 @@ export default function App() {
   const importFile = async (file: File | undefined, kind: 'scenario' | 'banks') => {
     if (!file) return;
     try {
-      if (file.size > 2_000_000) throw new Error('File exceeds the 2 MB limit.');
+      if (file.size > 12_000_000) throw new Error('File exceeds the 12 MB limit.');
       const text = await file.text();
       if (kind === 'scenario') {
         setScenario(readScenario(text));
@@ -1114,6 +1285,9 @@ export default function App() {
           <strong>{dateLabel(catalog.checkedOn)}</strong>
           <span className={styles.snapshotDivider}>/</span>
           {catalog.banks.filter(isModeled).length} modeled · {catalog.banks.length} reviewed
+          <span className={styles.snapshotDivider}>/</span>
+          {freshness(catalog.checkedOn, today()).ageDays} days old ·{' '}
+          {freshness(catalog.checkedOn, today()).label}
         </span>
         <button className={styles.textButton} onClick={() => setTab('banks')}>
           View sources <ArrowUpRight size={13} />
@@ -1142,6 +1316,11 @@ export default function App() {
         }}
       />
       <main id="main" className={styles.main}>
+        {freshness(catalog.checkedOn, today()).warning && (
+          <p role="alert" className={styles.winnerCautions}>
+            {freshness(catalog.checkedOn, today()).warning}
+          </p>
+        )}
         {notice && (
           <div role="status" className={styles.notice}>
             <CheckCircle2 size={16} />
@@ -1184,6 +1363,11 @@ export default function App() {
                   onClick={() => download('my-scenario.yaml', toYaml(scenario), 'application/yaml')}
                 >
                   <ArrowDownToLine size={15} /> Save scenario
+                </button>
+                <button
+                  onClick={() => download('my-scenario.xml', toXml(scenario), 'application/xml')}
+                >
+                  <ArrowDownToLine size={15} /> Save XML
                 </button>
                 <button
                   className={styles.iconButton}
@@ -1242,6 +1426,9 @@ export default function App() {
                 <button onClick={() => download('banks.yaml', toYaml(catalog), 'application/yaml')}>
                   <ArrowDownToLine size={15} /> Export banks
                 </button>
+                <button onClick={() => download('banks.xml', toXml(catalog), 'application/xml')}>
+                  Export bank XML
+                </button>
               </div>
             </div>
             <div className={styles.libraryToolbar}>
@@ -1274,8 +1461,9 @@ export default function App() {
               </div>
             </div>
             <p className={styles.libraryNote}>
-              “Verified” covers the modeled rate and terms. Some promotions need extra modeling and
-              are explicitly excluded. Click any account for evidence and limitations.
+              Model verification covers the calculation scope. Open a profile for atomic sources,
+              transfer limits, insurance, reviews and its discovery log. Unknown fields remain
+              visible.
             </p>
             <div className={styles.bankGrid}>
               {catalog.banks
@@ -1314,15 +1502,33 @@ export default function App() {
                       <ArrowUpRight size={15} />
                     </button>
                     <div className={styles.bankRate}>
-                      {rate(b)}
+                      <button
+                        className={styles.rateButton}
+                        onClick={() => setInspected(b.id)}
+                        title="Inspect savings rate evidence"
+                      >
+                        {rate(b)} <ArrowUpRight size={15} />
+                      </button>
                       <span>
                         {b.apy === null
                           ? 'Current rate unresolved'
-                          : b.model === 'whole-balance' || b.model === 'rolling-payroll'
-                            ? 'top modeled APY · conditions apply'
-                            : 'base APY · variable'}
+                          : b.qualifiedApy !== undefined
+                            ? 'qualified savings APY · requirements apply'
+                            : b.model === 'whole-balance'
+                              ? 'highest regular tier · conditions apply'
+                              : 'regular savings APY · variable'}
                       </span>
                     </div>
+                    {b.profile?.facts.promotionalApy.status === 'verified' && (
+                      <p className={styles.bankPromo}>
+                        Intro up to {String(b.profile.facts.promotionalApy.value)}% · inspect caps &
+                        eligibility
+                      </p>
+                    )}
+                    <button className={styles.discoveryLink} onClick={() => setInspected(b.id)}>
+                      {b.profile?.discoveries.length ?? 0} discoveries · liquidity, coverage &
+                      sources <ArrowUpRight size={13} />
+                    </button>
                     <div className={styles.bankCardBottom}>
                       <span>Checked {b.checkedOn}</span>
                       <a href={b.sourceUrl} target="_blank" rel="noreferrer">
@@ -1351,7 +1557,9 @@ export default function App() {
           Local calculations · No account connections ·{' '}
           <a href={`${repo}/blob/main/docs/METHODOLOGY.md`}>Methodology</a>
         </span>
-        <span>Butter v2.0</span>
+        <span>
+          Butter {VERSION} · Build {BUILD_DATE} · Schemas 3.0
+        </span>
       </footer>
       {inspected && (selectedBank || selectedResult) && (
         <div className={styles.modalBackdrop} onClick={() => setInspected(null)}>
@@ -1366,9 +1574,12 @@ export default function App() {
               if (e.key === 'Tab') {
                 const focusable = [
                   ...e.currentTarget.querySelectorAll<HTMLElement>(
-                    'button, a[href], input, [tabindex="0"]',
+                    'button, a[href], input, select, summary, [tabindex="0"]',
                   ),
-                ];
+                ].filter(
+                  (element) =>
+                    element.getClientRects().length > 0 && !element.hasAttribute('disabled'),
+                );
                 const first = focusable[0],
                   last = focusable[focusable.length - 1];
                 if (e.shiftKey && document.activeElement === first) {
@@ -1436,6 +1647,20 @@ export default function App() {
                   <dd>{money(selectedResult.incrementalGain)}</dd>
                   <dt>Minimum liquid cash</dt>
                   <dd>{money(selectedResult.minimumLiquid)}</dd>
+                  <dt>
+                    Focus-year interest ({scenario?.focusYear ?? scenario?.startDate.slice(0, 4)})
+                  </dt>
+                  <dd>{money(selectedResult.focusYearInterest)}</dd>
+                  <dt>Effective APY on earning balances</dt>
+                  <dd>
+                    {selectedResult.effectiveApy === null
+                      ? 'Unknown'
+                      : `${selectedResult.effectiveApy}%`}
+                  </dd>
+                  <dt>Yield lost to tier / promo caps</dt>
+                  <dd>{money(selectedResult.yieldLostToCaps)}</dd>
+                  <dt>Yield lost to qualification failures</dt>
+                  <dd>{money(selectedResult.yieldLostToQualification)}</dd>
                 </dl>
               </>
             )}
@@ -1474,6 +1699,14 @@ export default function App() {
                   ))}
                 </ul>
               </>
+            )}
+            {selectedBank && (
+              <BankResearch
+                key={selectedBank.id}
+                bank={selectedBank}
+                scenario={scenario}
+                comparison={calculation.result}
+              />
             )}
           </section>
         </div>

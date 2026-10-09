@@ -4,7 +4,12 @@
   "properties": {
     "schemaVersion": {
       "type": "string",
-      "const": "2.0"
+      "const": "3.0"
+    },
+    "toolVersion": {
+      "default": "3.0.0",
+      "type": "string",
+      "const": "3.0.0"
     },
     "id": {
       "type": "string",
@@ -20,6 +25,15 @@
     "createdAt": {
       "type": "string",
       "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "dataAsOf": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "focusYear": {
+      "type": "integer",
+      "minimum": 1900,
+      "maximum": 2200
     },
     "startDate": {
       "type": "string",
@@ -115,6 +129,136 @@
     "eStatements": {
       "default": true,
       "type": "boolean"
+    },
+    "insurance": {
+      "default": {
+        "ownership": "single",
+        "jointOwners": 2,
+        "otherDeposits": []
+      },
+      "type": "object",
+      "properties": {
+        "ownership": {
+          "default": "single",
+          "type": "string",
+          "enum": [
+            "single",
+            "joint",
+            "other"
+          ]
+        },
+        "jointOwners": {
+          "default": 2,
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 10
+        },
+        "otherDeposits": {
+          "default": [],
+          "maxItems": 200,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "aggregationGroup": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              },
+              "amount": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1000000000000
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              }
+            },
+            "required": [
+              "aggregationGroup",
+              "amount",
+              "label"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "linkedAccounts": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "bankId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "^[a-zA-Z0-9_-]+$"
+          },
+          "accountType": {
+            "type": "string",
+            "enum": [
+              "checking",
+              "investment"
+            ]
+          },
+          "reservedBalance": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000000000
+          },
+          "averageDailyBalance": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000000000
+          },
+          "qualifyingFlowIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100,
+              "pattern": "^[a-zA-Z0-9_-]+$"
+            }
+          },
+          "newCustomer": {
+            "type": "string",
+            "enum": [
+              "yes",
+              "no",
+              "unknown"
+            ]
+          },
+          "referralEligible": {
+            "type": "string",
+            "enum": [
+              "yes",
+              "no",
+              "unknown"
+            ]
+          },
+          "notes": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "required": [
+          "bankId",
+          "accountType",
+          "reservedBalance",
+          "averageDailyBalance",
+          "qualifyingFlowIds",
+          "newCustomer",
+          "referralEligible",
+          "notes"
+        ],
+        "additionalProperties": false
+      }
     },
     "flows": {
       "maxItems": 200,
@@ -259,6 +403,6 @@
   ],
   "additionalProperties": false,
   "$id": "https://mlo0352.github.io/hysacomp/schemas/scenario.schema.json",
-  "title": "Butter scenario schema 2.0",
+  "title": "Butter scenario schema 3.0",
   "description": "Also run CLI validate for semantic date, uniqueness, eligibility and cross-file checks."
 }

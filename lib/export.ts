@@ -25,11 +25,23 @@ export function toCsv(c: Comparison) {
     'incrementalGain',
     'endingBalance',
     'minimumLiquid',
+    'focusYearInterest',
+    'effectiveApy',
+    'yieldLostToCaps',
+    'yieldLostToQualification',
     'checkedOn',
     'sourceUrl',
     'exclusionReason',
     'warnings',
-  ] as const;
+    'achDailyCap',
+    'achMonthlyCap',
+    'minimumAchInitiationDays',
+    'fullBalanceWireSupported',
+    'estimatedInsured',
+    'potentiallyUninsured',
+    'unknownFrictionChecks',
+    'snapshotAgeDays',
+  ];
   const quote = (v: unknown) => {
     let text = Array.isArray(v) ? v.join(' | ') : String(v ?? '');
     if (typeof v === 'string' && /^[=+\-@\t\r]/.test(text)) text = "'" + text;
@@ -38,9 +50,21 @@ export function toCsv(c: Comparison) {
   return (
     [
       fields.join(','),
-      ...[c.baseline, ...c.ranked, ...c.excluded].map((r) =>
-        fields.map((f) => quote(r[f])).join(','),
-      ),
+      ...[c.baseline, ...c.ranked, ...c.excluded].map((r) => {
+        const d = c.decisions[r.bankId];
+        const row: Record<string, unknown> = {
+          ...r,
+          achDailyCap: d?.exit.ach.dailyCap,
+          achMonthlyCap: d?.exit.ach.monthlyCap,
+          minimumAchInitiationDays: d?.exit.ach.minimumInitiationDays,
+          fullBalanceWireSupported: d?.exit.wire.fullBalanceSupported,
+          estimatedInsured: d?.insurance.insured,
+          potentiallyUninsured: d?.insurance.potentiallyUninsured,
+          unknownFrictionChecks: d?.friction.unknown,
+          snapshotAgeDays: d?.freshness.ageDays,
+        };
+        return fields.map((f) => quote(row[f])).join(',');
+      }),
     ].join('\r\n') + '\r\n'
   );
 }

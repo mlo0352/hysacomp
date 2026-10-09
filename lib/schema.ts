@@ -1,6 +1,9 @@
 import { z } from 'zod';
+import { ProfileSchema } from './profile';
 
-export const VERSION = '2.0.0';
+export const VERSION = '3.0.0';
+export const BUILD_DATE = '2026-10-09';
+export const SCHEMA_VERSION = '3.0';
 export const date = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/, 'Use YYYY-MM-DD')
@@ -43,10 +46,13 @@ export const FlowSchema = z
 
 export const ScenarioSchema = z
   .object({
-    schemaVersion: z.literal('2.0'),
+    schemaVersion: z.literal('3.0'),
+    toolVersion: z.literal(VERSION).default(VERSION),
     id,
     name: text,
     createdAt: date,
+    dataAsOf: date.optional(),
+    focusYear: z.number().int().min(1900).max(2200).optional(),
     startDate: date,
     endDate: date,
     startingCash: cash,
@@ -62,6 +68,33 @@ export const ScenarioSchema = z
       })
       .strict(),
     eStatements: z.boolean().default(true),
+    insurance: z
+      .object({
+        ownership: z.enum(['single', 'joint', 'other']).default('single'),
+        jointOwners: z.number().int().min(2).max(10).default(2),
+        otherDeposits: z
+          .array(z.object({ aggregationGroup: text, amount: cash, label: text }).strict())
+          .max(200)
+          .default([]),
+      })
+      .strict()
+      .default({ ownership: 'single', jointOwners: 2, otherDeposits: [] }),
+    linkedAccounts: z
+      .array(
+        z
+          .object({
+            bankId: id,
+            accountType: z.enum(['checking', 'investment']),
+            reservedBalance: cash,
+            averageDailyBalance: cash,
+            qualifyingFlowIds: z.array(id),
+            newCustomer: z.enum(['yes', 'no', 'unknown']),
+            referralEligible: z.enum(['yes', 'no', 'unknown']),
+            notes: text,
+          })
+          .strict(),
+      )
+      .default([]),
     flows: z.array(FlowSchema).max(200),
     events: z
       .array(
@@ -98,6 +131,18 @@ export const ScenarioSchema = z
           path: ['events', i],
           message: 'Withdrawals cannot qualify as deposits',
         });
+    for (const a of s.linkedAccounts) {
+      if (
+        !s.bankIds.includes(a.bankId) ||
+        a.qualifyingFlowIds.some((id) => !s.flows.some((f) => f.id === id))
+      )
+        ctx.addIssue({
+          code: 'custom',
+          path: ['linkedAccounts'],
+          message:
+            'Linked activity must reference selected banks and existing cash flows; never duplicate income.',
+        });
+    }
   });
 
 const Tier = z.object({ from: cash, apy }).strict();
@@ -160,6 +205,7 @@ export const BankSchema = z
     bonuses: z.array(Bonus).default([]),
     limitations: z.array(text).default([]),
     requirements: z.array(text).default([]),
+    profile: ProfileSchema.optional(),
   })
   .strict()
   .superRefine((b, ctx) => {
@@ -175,10 +221,26 @@ export const BankSchema = z
       fail('Tiers must be strictly increasing');
     if (b.model === 'rolling-payroll' && (b.qualifiedApy === undefined || !b.qualificationDays))
       fail('Payroll model requires qualifiedApy and qualificationDays');
+    for (const [key, f] of Object.entries(b.profile?.facts ?? {})) {
+      if (!key.startsWith('calculation.') || f.status !== 'verified') continue;
+      const path = key.slice('calculation.'.length).split('.');
+      let input: unknown = b;
+      for (const segment of path) {
+        input =
+          input && typeof input === 'object' && Object.hasOwn(input, segment)
+            ? (input as Record<string, unknown>)[segment]
+            : undefined;
+      }
+      if (input !== f.value)
+        fail(`${key}: sourced calculation claim does not match the engine input`);
+    }
+    if (b.profile && b.profile.researchedAt > b.checkedOn)
+      fail('Research date cannot exceed the bank snapshot date');
   });
 export const CatalogSchema = z
   .object({
-    schemaVersion: z.literal('2.0'),
+    schemaVersion: z.literal('3.0'),
+    toolVersion: z.literal(VERSION).default(VERSION),
     id,
     checkedOn: date,
     currency: z.literal('USD'),

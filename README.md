@@ -1,98 +1,109 @@
 # Butter — cash, with clarity
 
-Find the best home for savings using real paydays, expenses and dated bank rules. The winner
-leaves you with the most **after-tax earnings**, with the gain over doing nothing beside it.
-Your baseline can win too.
+Compare what your cash earns, how it can leave, and which conditions need checking.
+**[Open Butter](https://mlo0352.github.io/hysacomp/)** ·
+**[Download the offline bundle](https://mlo0352.github.io/hysacomp/downloads/butter-v3.0.0-offline.zip)** ·
+[GitHub](https://github.com/mlo0352/hysacomp)
 
-[Browser app](https://mlo0352.github.io/hysacomp/) · [Agent guide](docs/AGENT_GUIDE.md) ·
-[Methodology](docs/METHODOLOGY.md) · [Bank review](docs/BANK_REVIEW_2026-10-09.md)
+Butter starts with **no scenario**. Try the optional fictional working-person example,
+enter your own cash flows, or import a YAML, JSON or XML file. Your scenario stays in
+browser memory until you save it. Reloading clears it. No bank login, analytics, API key
+or cloud account is needed.
 
-The browser URL becomes available after the first successful GitHub Pages deployment.
+Version **3.0.0**, build **2026-10-09**, scenario/bank schemas **3.0**.
+The bundled bank research was checked **2026-10-09**. Retrieval dates, provider effective
+dates, source dates and freshness are visible separately; variable rates can change.
 
-## A simple way to start
+## What you can do
 
-Butter opens empty. Choose **Try the working-person example**, **Start from scratch**, or
-import a file. The fictional example has $25,000 saved, $2,500 take-home pay every two weeks,
-$3,500 in monthly expenses and seven real accounts. All assumptions are editable.
+- Compare after-tax interest, bonuses, fees and gain over a mandatory baseline.
+- Model dated salary, expenses, one-time payments and withdrawals using daily balances.
+- Inspect legal-bank identity, related-brand insurance, transfer limits, wires, holds,
+  cards, support, security, reviews and historical rate observations.
+- Stress-test a $50k, $100k, $250k, $500k or custom exit. Unknown limits stay unknown.
+- Read a source and dated discovery log for each bank. Official terms and customer
+  sentiment remain separate.
+- Export raw JSON, CSV, an SVG chart, scenario XML and bank XML.
 
-- Winner summary, dollar advantage over baseline, earnings chart and comparison table.
-- **25 accounts reviewed on October 9, 2026; 17 supported models.** Unresolved rates and
-  complex unmodeled products remain visible, with reasons for exclusion.
-- Official sources, check dates, provider effective dates and model limits on every account.
-- Dated cash flows, tiers, fees, taxes, opening transfer delays and selected opt-in offers.
-- Scenario/bank import and export; raw comparison JSON, spreadsheet CSV and SVG graph images.
-- No login, analytics, bank connections or remote scenario storage. The scenario lives in
-  memory: **save a file before refreshing or clearing**. A fresh page load is always empty.
+The library contains **25 products: 17 earnings models and 8 excluded entries**.
+Excluded entries include unsupported linked-account rules, unavailable products and
+unverified rates. The highlighted winner means highest modeled earnings among selected
+accounts, **not a safety rating**. Liquidity and insurance warnings remain visible.
 
-The original dated XML is retained locally for migration. The old personal scenario and the
-HTML that embeds it are ignored by Git and excluded from the public build.
+## Best with a local AI agent
 
-## Best used locally with an AI agent
-
-Ask your preferred coding agent to prepare your scenario, review bank terms, compare
-alternatives and explain the result. The agent handles context; Butter handles the arithmetic.
+Clone this repo and give your agent [AGENTS.md](AGENTS.md) plus the
+[current copy/paste prompts](docs/LLM_PROMPTS_v3.0.0_2026-10-09.md). The agent can turn
+plain English into a validated scenario, compare local files and return numbers and a chart.
+Use the browser for the simple route; use the CLI for reproducible research and experiments.
 
 ```sh
 git clone https://github.com/mlo0352/hysacomp.git
 cd hysacomp
 npm ci
-npm run dev
+npx tsx cli.ts compare --scenario examples/working-person-v3.yaml --banks data/banks-2026-10-09-v3.yaml --as-of 2026-10-09 --output outputs/comparison.json --graph outputs/comparison.svg
+npx tsx cli.ts audit --banks data/banks-2026-10-09-v3.yaml
+npx tsx cli.ts scenario --scenario examples/working-person-v3.yaml --format xml --output outputs/scenario.xml
 ```
 
-Requires Node.js 22.12+. On Windows, `./Start-Comparator.ps1` installs missing dependencies,
-chooses a local port and opens the browser. Network access is needed for the first install;
-calculation and the local app work offline afterward.
+Requires Node **22.12+**. `npx tsx cli.ts --help` documents all commands. JSON stdout is
+machine-readable; errors are JSON on stderr. Exit 0 = success, 2 = invalid input/I/O,
+3 = no eligible banks (report still emitted). `--as-of` freezes freshness checks; the
+input snapshot freezes bank rules. Exact input SHA-256 hashes accompany CLI results.
 
-```sh
-npx tsx cli.ts compare --scenario examples/working-person.yaml --banks data/banks-2026-10-09.yaml --output outputs/comparison.json --graph outputs/comparison.svg
-```
+Save personal plans as `*.local.yaml`, `*.local.json`, `*.local.xml` or under `outputs/`.
+These paths are ignored by Git. Simulations never contact a bank or an AI provider.
 
-```sh
-# Clean JSON stdout for an agent or another process.
-npx tsx cli.ts compare --scenario my-plan.local.yaml --banks data/banks-2026-10-09.yaml
+## Browser and offline use
 
-# Spreadsheet and portable graph image.
-npx tsx cli.ts compare --scenario my-plan.local.yaml --banks data/banks-2026-10-09.yaml --format csv --output outputs/comparison.csv --graph outputs/comparison.svg
+On Windows, run `Start-Comparator.ps1`, or run `npm run dev` and open the printed address.
+The launcher installs missing dependencies and selects a free localhost port.
 
-# Validate inputs and inspect the catalog.
-npx tsx cli.ts validate --scenario my-plan.local.yaml --banks data/banks-2026-10-09.yaml
-npx tsx cli.ts banks --banks data/banks-2026-10-09.yaml
-npx tsx cli.ts --help
-```
+For a server-free copy, extract the offline ZIP and double-click
+`hysa_comparator_v3.0.0_2026-10-09.html`. All application code, styles, the bank snapshot
+and the opt-in example are embedded. The ZIP also contains editable bank/scenario XML,
+YAML, schemas, documentation, prompts, discovery notes and SHA-256 checksums. Source
+links need internet when you choose to open them; calculations do not.
 
-JSON includes the normalized scenario, ranked accounts, exclusions, daily balances and
-earnings, warnings, tasks, sources and SHA-256 hashes of the exact input files. Browser and
-CLI use one engine. SVG opens directly in a browser or image editor.
+## Evidence and limits
 
-Agent entry points: [AGENTS.md](AGENTS.md), [llms.txt](llms.txt),
-[tool-manifest.json](tool-manifest.json) and [JSON schemas](schemas/).
+See the [bank discovery log](docs/BANK_DISCOVERIES_v3.0.0_2026-10-09.md) for product-specific
+findings and manual checks. Research coverage is recorded per bank; **unknown does not
+mean absent, unlimited, safe or unsafe**. Rates and policies are manually reviewed snapshots,
+not continuous monitoring or an exhaustive regulatory audit.
 
-## GitHub Pages
+Axos ONE is documented as a linked checking/savings product: qualified savings, fallback
+savings, checking APY and the capped introductory boost are separate facts. Its average-
+balance and statement-cycle behavior remains unranked until that model is implemented.
 
-This folder is a standalone repository root for **mlo0352/hysacomp**. When working inside
-the larger Butter repo, do not push the parent repo or its database into hysacomp.
+Exit estimates are lower bounds from known limits, with documented processing shown
+separately. They do not enforce routing capacity on the posted cash-flow forecast.
+Personalized limits, holidays, review delays, already-used limits and actual holds need
+manual confirmation. Insurance estimates use entered ownership and related deposits;
+sweep allocations and complex ownership stay unknown. Sparse historical points are never
+filled forward into invented averages. See [methodology](docs/METHODOLOGY.md).
 
-1. Publish the comparator source at the root of `mlo0352/hysacomp` on `main`.
-2. In **Settings → Pages → Build and deployment**, select **GitHub Actions**.
-3. The [workflow](.github/workflows/pages.yml) runs engine/CLI tests, browser tests and the
-   build, then deploys `dist`.
+## Files and maintenance
 
-Relative assets support the `/hysacomp/` project path. The public build copies only allowed
-documentation, schemas and public samples. Keep personal files in ignored `*.local.yaml`,
-`*.local.json` or `outputs/`. See GitHub's [Pages workflow guide](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
+- [XML guide and compatibility](docs/XML_GUIDE_v3.0.0_2026-10-09.md)
+- [Five research/scenario/audit prompts](docs/LLM_PROMPTS_v3.0.0_2026-10-09.md)
+- [Agent integration guide](docs/AGENT_GUIDE.md), [tool manifest](tool-manifest.json), [llms.txt](llms.txt)
+- [Source policy](docs/DATA_SOURCES.md), [changelog](CHANGELOG.md)
 
-## Development
+New dated snapshots must use a new filename; published snapshots stay intact. Version 2
+YAML/JSON has an explicit migration path; supported v1 XML has a limited migration path.
+Unsupported majors, ambiguous monthly metrics and unsupported product rules are rejected
+or excluded rather than guessed.
 
 ```sh
 npm test
 npx playwright install chromium
 npm run test:browser
 npm run build
-npm run preview
+npm run test:offline
 ```
 
-`lib/`: schemas, parser, calculation, exports. `src/`: React UI. `data/`: dated snapshots.
-`examples/`: fictional plans. `tests/`: engine, CLI and browser checks.
-
-This focused comparator is part of Butter. It does not simulate simultaneous multi-bank
-strategies, travel constraints or every bonus. Read the [model scope](docs/METHODOLOGY.md).
+The Pages workflow runs those checks and deploys the explicit public build from `main`.
+Enable **Settings → Pages → GitHub Actions** for a fork. `npm run build` creates both
+`dist/` and the self-contained downloads. No backend is required; this focused comparator
+is separate from Butter's broader cash-flow strategy/SQLite application.

@@ -4,23 +4,27 @@ import { dirname, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { createHash } from 'node:crypto';
 import { compare } from './lib/engine';
-import { readScenario, readCatalog, readableError } from './lib/files';
+import { readScenario, readCatalog, readableError, toXml } from './lib/files';
+import { auditCatalog } from './lib/audit';
 import { toCsv, toSvg } from './lib/export';
 import { VERSION } from './lib/schema';
 
 const help = `Butter ${VERSION} — deterministic cash comparisons for people and agents
 
 Usage:
-  npm run cli -- compare --scenario examples/working-person.yaml --banks data/banks-2026-10-09.yaml
+  npm run cli -- compare --scenario examples/working-person-v3.yaml --banks data/banks-2026-10-09-v3.yaml
   npm run cli -- compare --scenario plan.yaml --banks banks.yaml --format csv --output outputs/comparison.csv --graph outputs/comparison.svg
   npm run cli -- validate --scenario plan.yaml --banks banks.yaml
-  npm run cli -- banks --banks data/banks-2026-10-09.yaml
+  npm run cli -- audit --banks data/banks-2026-10-09-v3.yaml --as-of 2026-10-09
+  npm run cli -- banks --banks data/banks-2026-10-09-v3.yaml --format xml --output outputs/banks.xml
+  npm run cli -- scenario --scenario plan.yaml --format xml --output outputs/scenario.xml
 
-Commands: compare (default), validate, banks
+Commands: compare (default), validate, audit, discoveries, banks, scenario
 Options:
-  --scenario PATH   Required for compare/validate. YAML, JSON or legacy XML.
-  --banks PATH      Required. YAML, JSON or legacy XML. No hidden live data.
-  --format FORMAT   json (default) or csv. JSON includes the daily series and tasks.
+  --scenario PATH   Required for compare/validate/scenario. YAML, JSON or versioned XML.
+  --banks PATH      Required except for scenario. YAML, JSON or versioned XML.
+  --format FORMAT   json (default); csv for compare; xml for banks/scenario.
+  --as-of DATE      YYYY-MM-DD freshness evaluation date (default: today's UTC date).
   --output PATH     Write result here instead of stdout.
   --graph PATH      Write an accessible, standalone SVG comparison image.
   --help            Show this help.
@@ -44,6 +48,7 @@ async function main() {
       format: { type: 'string', default: 'json' },
       output: { type: 'string' },
       graph: { type: 'string' },
+      'as-of': { type: 'string' },
       help: { type: 'boolean' },
       version: { type: 'boolean' },
     },
@@ -57,10 +62,21 @@ async function main() {
     return;
   }
   const command = positionals[0] ?? 'compare';
-  if (positionals.length > 1 || !['compare', 'validate', 'banks'].includes(command))
+  if (
+    positionals.length > 1 ||
+    !['compare', 'validate', 'banks', 'scenario', 'audit', 'discoveries'].includes(command)
+  )
     throw new Error('Unknown command. Use --help.');
-  if (!['json', 'csv'].includes(v.format!)) throw new Error('--format must be json or csv');
-  if (!v.banks) throw new Error('--banks is required');
+  const formats = ['banks', 'scenario'].includes(command)
+    ? ['json', 'xml']
+    : command === 'compare'
+      ? ['json', 'csv']
+      : ['json'];
+  if (!formats.includes(v.format!))
+    throw new Error(`--format for ${command} must be ${formats.join(' or ')}`);
+  if (command !== 'scenario' && !v.banks) throw new Error('--banks is required');
+  if (v.graph && !['compare', 'validate'].includes(command))
+    throw new Error('--graph requires compare or validate');
   const pathKey = (p: string) =>
     process.platform === 'win32' ? resolve(p).toLowerCase() : resolve(p);
   const targets = [v.output, v.graph].filter((p): p is string => !!p).map(pathKey);
@@ -69,16 +85,27 @@ async function main() {
     throw new Error('Output paths must be distinct and cannot overwrite input files.');
   if (v.graph && !v.graph.toLowerCase().endsWith('.svg'))
     throw new Error('--graph must end in .svg');
-  const bankText = await readFile(v.banks, 'utf8'),
+  if (command === 'scenario') {
+    if (!v.scenario) throw new Error('--scenario is required');
+    const scenario = readScenario(await readFile(v.scenario, 'utf8'));
+    const result = v.format === 'xml' ? toXml(scenario) : JSON.stringify(scenario, null, 2);
+    if (v.output) await save(v.output, result + '\n');
+    else process.stdout.write(result + '\n');
+    return;
+  }
+  const bankText = await readFile(v.banks!, 'utf8'),
     catalog = readCatalog(bankText);
   let output: string,
     exitCode = 0;
-  if (command === 'banks') output = JSON.stringify(catalog, null, 2);
+  if (command === 'banks')
+    output = v.format === 'xml' ? toXml(catalog) : JSON.stringify(catalog, null, 2);
+  else if (command === 'audit' || command === 'discoveries')
+    output = JSON.stringify(auditCatalog(catalog, v['as-of']), null, 2);
   else {
     if (!v.scenario) throw new Error('--scenario is required');
     const scenarioText = await readFile(v.scenario, 'utf8'),
       scenario = readScenario(scenarioText);
-    const result = compare(scenario, catalog);
+    const result = compare(scenario, catalog, { asOf: v['as-of'] });
     const sha = (s: string) => createHash('sha256').update(s).digest('hex');
     output =
       command === 'validate'

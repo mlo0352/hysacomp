@@ -1,5 +1,28 @@
 # Changelog
 
+## v3.0.0 — 2026-10-09
+
+- Versioned bank/scenario XML returns alongside YAML/JSON, with strict metadata checks,
+  explicit legacy migration and incompatible-version rejection. Both schemas are 3.0.
+- Research profiles for 25 products: independently sourced facts, explicit unknowns,
+  conflicts, review scope, sparse APY history and a downloadable discovery log per bank.
+- Axos ONE checking/savings qualification, fallback and introductory rates are separated;
+  the coupled statement-cycle model remains excluded from earnings rankings.
+- Product-specific operations pass covers ACH/wire distinctions, holds, cards, support,
+  security and legal-bank structure. Corrects Brio's legal-bank aggregation and paper fee.
+- Exit stress tests, insurance aggregation, dated-balance comparison, filters/sorting,
+  earnings-winner cautions and source inspection. Unknown limits never mean unlimited.
+- Focus-year interest, effective APY, cap/qualification yield loss, snapshot freshness
+  and source-constrained historical statistics in the shared engine.
+- CLI audit/discovery, XML conversion and explicit evaluation dates; expanded raw exports.
+- Self-contained offline HTML and ZIP with public snapshots, checksums and five current
+  scenario/research/refresh/history/audit prompts. Fresh loads still have no scenario.
+
+Breaking change: schema 3.0 adds atomic profiles and decision metadata. Published v2
+snapshots remain intact and import through a labeled migration. Prior schemas do not
+gain verified research automatically. Linked-account assumptions are auditable inputs;
+they do not imply support for a linked-account cash strategy.
+
 ## v2.0.0 — 2026-10-09
 
 - Empty initial state; opt-in fictional salary example with seven real accounts.

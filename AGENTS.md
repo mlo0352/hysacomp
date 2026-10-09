@@ -8,8 +8,9 @@ and [tool-manifest.json](tool-manifest.json). Requires Node 22.12+.
 
 ```sh
 npm ci
-npx tsx cli.ts validate --scenario examples/working-person.yaml --banks data/banks-2026-10-09.yaml
-npx tsx cli.ts compare --scenario examples/working-person.yaml --banks data/banks-2026-10-09.yaml --output outputs/comparison.json --graph outputs/comparison.svg
+npx tsx cli.ts validate --scenario examples/working-person-v3.yaml --banks data/banks-2026-10-09-v3.yaml
+npx tsx cli.ts compare --scenario examples/working-person-v3.yaml --banks data/banks-2026-10-09-v3.yaml --as-of 2026-10-09 --output outputs/comparison.json --graph outputs/comparison.svg
+npx tsx cli.ts audit --banks data/banks-2026-10-09-v3.yaml
 ```
 
 CLI stdout is JSON by default. Errors are JSON on stderr. Exit 0 = success,
@@ -26,6 +27,12 @@ CLI stdout is JSON by default. Errors are JSON on stderr. Exit 0 = success,
 - No bank/network requests during simulation; dated files are explicit inputs.
 - Rate updates use official providers. Record review date, provider effective date (or null),
   sources, evidence and limitations. Preserve dated snapshots; do not invent effective dates.
+- Every atomic operational claim needs its own official/regulatory evidence. Preserve conflicts,
+  explicit unknowns and a dated discovery/manual-check log. Reviews do not establish safety.
+- Unknown limits are never unlimited. Exit analysis is a lower bound, separate from posted
+  cash-flow simulations. Brand aggregation and sweep allocations must not be conflated.
+- Keep XML_GUIDE, all five LLM_PROMPTS, schemas, manifest and offline bundle in sync with
+  schema changes. Use the current versioned guides under docs/.
 - Promotion eligibility is explicit opt-in. Timing, balances and payout windows still apply.
 - Personal scenarios/results and legacy HTML embedding them must never be published.
   Use ignored `*.local.yaml`, `*.local.json` or `outputs/` for personal work.
@@ -41,6 +48,7 @@ it does not replace the wider Butter FastAPI/SQLite app.
 npm test
 npm run test:browser # first install: npx playwright install chromium
 npm run build
+npm run test:offline
 ```
 
 Test financial decisions that can change a winner, browser/CLI agreement and round trips.

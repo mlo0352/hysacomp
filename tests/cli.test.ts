@@ -14,9 +14,9 @@ const run = (...args: string[]) =>
   });
 const files = [
   '--scenario',
-  'examples/working-person.yaml',
+  'examples/working-person-v3.yaml',
   '--banks',
-  'data/banks-2026-10-09.yaml',
+  'data/banks-2026-10-09-v3.yaml',
 ];
 test('CLI stdout is clean JSON and matches the shared browser engine', () => {
   const out = run('compare', ...files);
@@ -64,4 +64,23 @@ test('no eligible banks returns an inspectable report and exit 3', () => {
   const out = run('compare', '--scenario', path, '--banks', files[3]);
   assert.equal(out.status, 3);
   assert.equal(JSON.parse(out.stdout).excluded.length, 1);
+});
+
+test('CLI exposes local source audit and validates the explicit evaluation date', () => {
+  const out = run('audit', '--banks', files[3], '--as-of', '2027-02-01');
+  assert.equal(out.status, 0, out.stderr);
+  const audit = JSON.parse(out.stdout);
+  assert.equal(audit.freshness.label, 'Stale');
+  assert.equal(audit.banks.length, 25);
+  assert.ok(audit.banks.find((b: any) => b.id === 'axos_one').discoveries.length > 0);
+  assert.equal(run('audit', '--banks', files[3], '--as-of', '2026-02-30').status, 2);
+});
+
+test('CLI serializes full versioned XML without needing a catalog for a scenario', () => {
+  const scenario = run('scenario', '--scenario', files[1], '--format', 'xml');
+  assert.equal(scenario.status, 0, scenario.stderr);
+  assert.deepEqual(readScenario(scenario.stdout), readScenario(readFileSync(files[1], 'utf8')));
+  const banks = run('banks', '--banks', files[3], '--format', 'xml');
+  assert.equal(banks.status, 0, banks.stderr);
+  assert.deepEqual(readCatalog(banks.stdout), readCatalog(readFileSync(files[3], 'utf8')));
 });

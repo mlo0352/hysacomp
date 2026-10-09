@@ -14,8 +14,8 @@ test('fresh state is empty; demo shows the same winner and dollars as the CLI en
   await expect(page.getByText('Oct 9, 2026', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Try the working-person example' }).click();
   const expected = compare(
-    readScenario(readFileSync('examples/working-person.yaml', 'utf8')),
-    readCatalog(readFileSync('data/banks-2026-10-09.yaml', 'utf8')),
+    readScenario(readFileSync('examples/working-person-v3.yaml', 'utf8')),
+    readCatalog(readFileSync('data/banks-2026-10-09-v3.yaml', 'utf8')),
   );
   await expect(page.getByRole('region', { name: 'Comparison winner' })).toContainText(
     expected.ranked[0].name,
@@ -71,13 +71,11 @@ test('bank selection, unresolved sources, baseline winner and graph export', asy
 test('malformed import is visible and preserves the current scenario', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'Try the working-person example' }).click();
-  await page
-    .getByLabel('Import scenario file')
-    .setInputFiles({
-      name: 'bad.yaml',
-      mimeType: 'application/yaml',
-      buffer: Buffer.from('schemaVersion: "999"\nstartingCash: nope'),
-    });
+  await page.getByLabel('Import scenario file').setInputFiles({
+    name: 'bad.yaml',
+    mimeType: 'application/yaml',
+    buffer: Buffer.from('schemaVersion: "999"\nstartingCash: nope'),
+  });
   await expect(page.getByRole('alert')).toContainText('schemaVersion');
   await expect(page.getByRole('spinbutton', { name: 'Starting savings', exact: true })).toHaveValue(
     '25000',
@@ -108,4 +106,53 @@ test('desktop screenshots and account detail keyboard access', async ({ page }) 
   await expect(page.getByRole('dialog')).toContainText('Rate effective');
   await page.keyboard.press('Escape');
   await expect(page.getByRole('dialog')).toHaveCount(0);
+});
+
+test('Axos research separates account rates and exposes dated discoveries with exact sources', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: /Bank library/ }).click();
+  await page.getByLabel('Search banks').fill('Axos');
+  await page
+    .getByRole('button', { name: 'Axos ONE · linked savings + checking', exact: true })
+    .click();
+  const dialog = page.getByRole('dialog');
+  await expect(
+    dialog.getByRole('heading', { name: 'Two accounts, four different rates' }),
+  ).toBeVisible();
+  await expect(dialog).toContainText('0.51% checking APY and 1.00% fallback savings APY');
+  await expect(dialog).toContainText('first $49,999.99');
+  await expect(
+    dialog.getByRole('link', { name: /Axos ONE Savings: product/ }).first(),
+  ).toHaveAttribute('href', 'https://www.axosbank.com/personal/bank/axos-one');
+  await dialog.getByLabel('Search bank facts').fill('checking APY');
+  await expect(
+    dialog.locator('summary').filter({ hasText: 'Qualified checking APY' }),
+  ).toContainText('0.51');
+  await page.screenshot({ path: 'outputs/screenshots/axos-research.png', fullPage: true });
+  const pending = page.waitForEvent('download');
+  await dialog.getByRole('button', { name: 'Download discovery log' }).click();
+  const log = JSON.parse(readFileSync((await (await pending).path())!, 'utf8'));
+  expect(log.researchDate).toBe('2026-10-09');
+  expect(log.sources.length).toBeGreaterThan(1);
+});
+
+test('large-balance warning, related deposits and dated liquidity comparison update together', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Try the working-person example' }).click();
+  await page.getByRole('spinbutton', { name: 'Starting savings', exact: true }).fill('278000');
+  await expect(page.getByText(/Potentially uninsured:/).first()).toBeVisible();
+  const decision = page.getByRole('region', { name: 'Liquidity and safety comparison' });
+  await decision.getByLabel('Modeled balance date').fill('2027-01-01');
+  await decision.getByLabel('Filter decision comparison').selectOption('atm');
+  await expect(decision.getByRole('button', { name: /Wealthfront Cash/ })).toBeVisible();
+  await expect(decision.getByRole('button', { name: /EverBank Performance/ })).toHaveCount(0);
+  await page.getByRole('button', { name: 'See the calculation' }).click();
+  const dialog = page.getByRole('dialog');
+  await dialog.getByRole('button', { name: '$500k', exact: true }).click();
+  await expect(dialog.getByLabel('Cash for exit stress test')).toHaveValue('500000');
+  await expect(dialog).toContainText('Estimated real-world window: Unknown');
 });

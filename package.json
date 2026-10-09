@@ -1,6 +1,6 @@
 {
   "name": "butter-hysa-comparator",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "private": true,
   "type": "module",
   "description": "Local cash comparisons for people and AI agents. One engine, browser and CLI.",
@@ -9,14 +9,15 @@
   },
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "build": "tsc --noEmit && npm run schemas && vite build && tsx scripts/public-assets.ts",
+    "build": "tsc --noEmit && npm run schemas && vite build && tsx scripts/public-assets.ts && vite build --config vite.offline.config.ts && tsx scripts/bundle.ts",
     "preview": "vite preview --host 127.0.0.1",
     "compare": "tsx cli.ts compare",
     "cli": "tsx cli.ts",
     "test": "tsx --test tests/*.test.ts",
     "test:browser": "playwright test",
     "schemas": "tsx scripts/schemas.ts",
-    "format": "prettier --write src lib cli.ts scripts tests index.html vite.config.ts playwright.config.ts tsconfig.json"
+    "format": "prettier --write src lib cli.ts scripts tests index.html vite.config.ts playwright.config.ts tsconfig.json",
+    "test:offline": "tsx --test tests/offline/*.test.ts"
   },
   "dependencies": {
     "fast-xml-parser": "^5.11.2",
@@ -33,6 +34,7 @@
     "@types/react": "^18.3.31",
     "@types/react-dom": "^18.3.7",
     "@vitejs/plugin-react": "^5.2.0",
+    "fflate": "^0.8.3",
     "prettier": "^3.9.9",
     "tsx": "^4.23.15",
     "typescript": "^5.9.3",

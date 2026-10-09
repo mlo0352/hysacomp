@@ -72,6 +72,61 @@ produces a warning; one after the start is labeled a what-if, not a historical b
 The UI always displays the snapshot date. Old data does not establish today's offer.
 
 The CLI includes exact-file hashes. The engine never fetches rates or silently updates data.
-The comparator does not model simultaneous multi-bank strategies, FDIC aggregation, travel,
+The comparator does not model simultaneous multi-bank strategies, travel,
 Chex history, unentered penalties, account closures or market investments. Provider eligibility
 and actual funds availability must be checked before executing a forecast.
+
+## Liquidity and insurance (v3)
+
+`exitAnalysis` is separate from the yield ledger. It assesses settled cash on a selected
+date assuming unused transfer capacity. It does not automatically delay salary/expenses
+or deduct a hypothetical exit fee from a forecast that has no planned exit.
+
+ACH lower bounds use documented daily, transaction and count caps, supported calendar/
+rolling-30 monthly windows and rolling-7 weekly windows. Unknown windows are not guessed;
+warnings explain omitted constraints. Per-transaction caps alone do not imply a daily
+capacity. Banking-day initiation skips weekends; federal holidays/cutoffs are unmodeled.
+Calendar days and final initiation date are reported separately. Processing is added to
+the final initiation to illustrate a theoretical arrival range. Actual review/recipient
+holds, used/shared limits and outstanding-transfer restrictions can make it longer.
+
+Full wire capacity requires an explicit no-amount-cap statement for the route, or sufficient
+documented transaction AND daily limits. Published new-account restrictions take precedence.
+Telephone-only routes retain that condition in sourced notes. A wire route is not a timing
+guarantee. Without a documented processing range, arrival remains unknown. Real-world
+evacuation is always unknown until account-specific availability is established. Stress
+tests use $50k/$100k/$250k/$500k; the UI also uses actual daily cash or a custom balance.
+
+FDIC estimates require sourced direct-bank structure, FDIC eligibility and aggregation
+group. Single ownership uses $250,000, eligible equal-share joint ownership $250,000 per
+owner; entered related deposits reduce remaining capacity. Joint estimates assume the
+same owner set and no unequal interests. Other ownership and actual sweep allocation
+are not inferred. Peak and ending cash are checked before tax reserve because accrued
+interest also occupies coverage. Related brands share the legal-bank group. A merger
+grace period requires manual review; the model conservatively uses combined coverage.
+
+## Research statistics and ranking
+
+The earnings winner is after-tax return, never a composite safety/reputation score.
+Friction counts seven documented obstacles: monthly fee, linked account, required DD,
+no outgoing wire, daily ACH cap below $100k, new-account hold, and no 24/7 support.
+Unknown checks are displayed separately; a complete numeric score requires all seven.
+Customer-service sorting uses service-scoped ratings only, not app/company scores.
+
+History is grouped by product/tier/rate series. A dated observation covers one day unless
+the evidence explicitly establishes `validThrough`. Full coverage of every day in a
+3/6/12-calendar-month lookback (inclusive endpoints) is required for its time-weighted
+average. Overlapping conflicting values leave that day uncovered. Sparse observations
+can show observed low/high/population standard deviation and changes, but cannot establish
+the actual number of market rate changes. Missing observations are never filled forward.
+
+Effective APY annualizes total interest divided by the sum of daily earning balances;
+it excludes bonuses/fees/taxes and is unknown with no earning balance. Focus-year interest
+sums daily accrual in the requested year. Yield lost to tiers/caps compares the day's
+actual accrual to its highest eligible rate with no threshold/cap, holding daily cash
+fixed; qualification loss compares the qualified rate on unqualified days. These are
+diagnostics, not compounded alternate-strategy returns, and are not added to earnings.
+
+Freshness is evaluated against the real UTC date or explicit `--as-of`, independent of
+scenario dates: 0–7 Fresh, 8–30 Recent, 31–90 Aging, >90 Stale; future-dated inputs warn.
+Sources retain their own access/effective dates. Local audit does not reverify websites.

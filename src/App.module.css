@@ -1777,6 +1777,361 @@
   font-size: 11px;
   line-height: 1.7;
 }
+.winnerCautions {
+  padding: 16px 20px;
+  border: 1px solid #d8bd80;
+  border-radius: 13px;
+  background: #fff8e9;
+  color: #71551e;
+  font-size: 12px;
+  line-height: 1.65;
+}
+.winnerCautions p {
+  margin: 7px 0;
+}
+.decisionCard {
+  background: #fff;
+  border: 1px solid #e0e6d9;
+  border-radius: 18px;
+  padding: 24px 0 10px;
+  min-width: 0;
+}
+.decisionCard > .sectionHeading {
+  padding: 0 24px;
+}
+.decisionCard h3 {
+  font-size: 21px;
+  margin: 8px 0;
+}
+.researchControls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 24px;
+}
+.researchControls label {
+  flex: 1;
+  min-width: 155px;
+  display: grid;
+  gap: 7px;
+  font-size: 11px;
+  color: #53624c;
+}
+.researchControls input,
+.researchControls select {
+  width: 100%;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid #dce3d5;
+  border-radius: 7px;
+  background: #fafbf7;
+  font: inherit;
+}
+.decisionCard table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 11px;
+}
+.decisionCard table {
+  table-layout: fixed;
+  min-width: 670px;
+}
+.decisionCard th:nth-child(1) {
+  width: 24%;
+}
+.decisionCard th:nth-child(2) {
+  width: 14%;
+}
+.decisionCard th:nth-child(3) {
+  width: 26%;
+}
+.decisionCard th:nth-child(4) {
+  width: 19%;
+}
+.decisionCard th:nth-child(5) {
+  width: 17%;
+}
+.decisionCard th {
+  padding: 13px 15px;
+  background: #f5f7f0;
+  font-weight: 500;
+  color: #617356;
+}
+.decisionCard td {
+  padding: 14px 12px;
+  border-top: 1px solid #e9ece4;
+  vertical-align: top;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.decisionCard .accountName {
+  min-width: 0;
+  width: 100%;
+  white-space: normal;
+  font-size: 11px;
+}
+.evidenceButton {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #405c35;
+  font-size: 11px;
+  line-height: 1.65;
+  text-align: left;
+  white-space: normal;
+}
+.evidenceButton small {
+  display: block;
+  color: #78826d;
+  font-size: 10px;
+}
+.riskValue {
+  color: #a44827 !important;
+}
+.smallPrint {
+  font-size: 11px;
+  line-height: 1.7;
+  color: #6d785f;
+}
+.decisionCard > .smallPrint {
+  padding: 0 24px;
+}
+.profileIntro {
+  background: #f3f6ed;
+  padding: 18px;
+  border-radius: 12px;
+  margin: 20px 0;
+}
+.profileIntro p {
+  font-size: 12px;
+  margin-bottom: 0;
+}
+.researchSection {
+  border-top: 1px solid #e0e6d9;
+  padding: 16px 0;
+  font-size: 12px;
+  line-height: 1.65;
+}
+.researchSection > summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  color: #354e2e;
+}
+.researchSection > summary > span {
+  float: right;
+  font-size: 10px;
+  color: #73836a;
+  font-weight: 400;
+  margin-right: 12px;
+}
+.researchSection > p {
+  font-size: 12px;
+}
+.discovery {
+  padding: 15px 0;
+  border-bottom: 1px solid #edf0e8;
+}
+.discovery h4 {
+  color: #405a37;
+  font-size: 15px;
+  margin: 6px 0;
+}
+.discovery p {
+  margin: 9px 0;
+  font-size: 12px;
+  line-height: 1.75;
+}
+.discovery > small {
+  color: #869276;
+  font-size: 10px;
+}
+.sourceList {
+  display: grid;
+  gap: 9px;
+  margin: 10px 0;
+}
+.sourceList a {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 11px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.sourceList small {
+  display: block;
+  color: #7a8470;
+  font-size: 10px;
+}
+.sourceList svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.factRow {
+  padding: 10px 0;
+  border-bottom: 1px solid #edf0e8;
+}
+.factRow > summary {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) minmax(80px, 1.3fr) 14px;
+  gap: 12px;
+  cursor: pointer;
+  align-items: start;
+  font-size: 12px;
+}
+.factRow > summary > strong {
+  font-size: 12px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.unknownValue {
+  color: #87917c;
+  font-weight: 400 !important;
+}
+.factEvidence {
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #f6f8f2;
+}
+.factEvidence > small {
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: #647952;
+}
+.factEvidence p {
+  font-size: 11px;
+}
+.factCompact > summary {
+  display: flex;
+  gap: 5px;
+  cursor: pointer;
+  font-size: 11px;
+}
+.factCompact .factEvidence {
+  min-width: 180px;
+  max-width: 270px;
+}
+.factSearch {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 16px 0;
+}
+.factSearch > input {
+  min-width: 0;
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #dce3d5;
+  border-radius: 6px;
+}
+.factSearch label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+}
+.stressButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0;
+}
+.stressSummary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  background: #f6f8f1;
+  border-radius: 10px;
+  padding: 15px;
+  margin: 15px 0;
+}
+.stressSummary span,
+.stressSummary small {
+  display: block;
+  font-size: 10px;
+  color: #7a876a;
+}
+.stressSummary strong {
+  display: block;
+  font-size: 15px;
+  color: #426035;
+  margin-top: 6px;
+}
+.riskList {
+  list-style: none;
+  padding: 0;
+}
+.riskList li {
+  display: flex;
+  align-items: start;
+  gap: 8px;
+  padding: 9px 0;
+  color: #8b6225;
+  font-size: 12px;
+}
+.riskList svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.rateButton {
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+}
+.bankPromo {
+  font-size: 10px;
+  color: #8c6a2a;
+  margin: 6px 0 12px;
+}
+.discoveryLink {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  border: 0;
+  background: #f5f7f0;
+  border-radius: 6px;
+  padding: 9px;
+  width: 100%;
+  text-align: left;
+  margin: 10px 0;
+}
+.modal {
+  width: min(880px, 95vw);
+}
+@media (max-width: 620px) {
+  .stressSummary {
+    grid-template-columns: 1fr;
+  }
+  .factRow > summary {
+    grid-template-columns: 1fr 1fr 12px;
+    gap: 5px;
+    font-size: 11px;
+  }
+  .factRow > summary > strong {
+    font-size: 11px;
+  }
+  .researchSection > summary > span {
+    float: none;
+    display: block;
+  }
+  .decisionCard .tableScroll {
+    max-width: 100%;
+  }
+  .snapshot > span {
+    flex-wrap: wrap;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   :global(*) {
     transition: none !important;

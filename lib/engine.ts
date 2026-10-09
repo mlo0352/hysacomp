@@ -7,6 +7,14 @@ import {
   type Catalog,
   type Scenario,
 } from './schema';
+import {
+  exitAnalysis,
+  freshness,
+  frictionAnalysis,
+  historyAnalysis,
+  insuranceAnalysis,
+} from './analysis';
+import { verifiedValue } from './profile';
 
 const DAY = 86400000;
 export const iso = (d: Date) => d.toISOString().slice(0, 10);
@@ -126,6 +134,10 @@ export type BankResult = {
   warnings: string[];
   tasks: Task[];
   daily: Daily[];
+  focusYearInterest: number;
+  effectiveApy: number | null;
+  yieldLostToCaps: number;
+  yieldLostToQualification: number;
 };
 
 function simulate(s: Scenario, b: Bank, cashEvents: CashEvent[], baseline = false): BankResult {
@@ -149,6 +161,10 @@ function simulate(s: Scenario, b: Bank, cashEvents: CashEvent[], baseline = fals
     warnings: [...b.limitations],
     tasks: [],
     daily: [],
+    focusYearInterest: 0,
+    effectiveApy: null,
+    yieldLostToCaps: 0,
+    yieldLostToQualification: 0,
   };
   const exclude = (reason: string) => {
     result.status = 'excluded';
@@ -219,6 +235,7 @@ function simulate(s: Scenario, b: Bank, cashEvents: CashEvent[], baseline = fals
       decided: false,
     }));
   let lastPayroll: string | undefined;
+  let balanceDays = 0;
   let monthMinimum = Infinity;
   let shortfall: string | undefined;
   if (!baseline) {
@@ -289,6 +306,17 @@ function simulate(s: Scenario, b: Bank, cashEvents: CashEvent[], baseline = fals
     )
       apy = b.qualifiedApy!;
     let earned = day < arrival ? 0 : dailyInterest(b, Math.max(0, balance), apy);
+    if (day >= arrival) {
+      balanceDays += Math.max(0, balance);
+      if (b.model === 'rolling-payroll' && apy !== b.qualifiedApy)
+        result.yieldLostToQualification +=
+          Math.max(0, balance) * (dailyRate(b.qualifiedApy!) - dailyRate(apy));
+      if (['whole-balance', 'marginal'].includes(b.model))
+        result.yieldLostToCaps += Math.max(
+          0,
+          Math.max(0, balance) * dailyRate(Math.max(...b.tiers.map((t) => t.apy))) - earned,
+        );
+    }
     const p = promos[0];
     if (p && day >= arrival && day < addMonths(s.startDate, p.durationMonths)) {
       if (!['flat', 'rolling-payroll'].includes(b.model))
@@ -296,9 +324,14 @@ function simulate(s: Scenario, b: Bank, cashEvents: CashEvent[], baseline = fals
       const eligible = Math.min(Math.max(0, balance), p.cap ?? Infinity);
       const boosted = p.fixedApy ?? apy + (p.apyDelta ?? 0);
       earned += eligible * (dailyRate(boosted) - dailyRate(apy));
+      if (p.cap !== undefined)
+        result.yieldLostToCaps +=
+          Math.max(0, balance - p.cap) * Math.max(0, dailyRate(boosted) - dailyRate(apy));
     }
     balance += earned;
     interest += earned;
+    if (Number(day.slice(0, 4)) === (s.focusYear ?? Number(s.startDate.slice(0, 4))))
+      result.focusYearInterest += earned;
     monthMinimum = Math.min(monthMinimum, balance);
     if (addDays(day, 1).slice(0, 7) !== day.slice(0, 7)) {
       const waived = b.feeWaiverMinimum !== undefined && monthMinimum >= b.feeWaiverMinimum;
@@ -377,11 +410,20 @@ function simulate(s: Scenario, b: Bank, cashEvents: CashEvent[], baseline = fals
   result.endingBalance = rounded(balance);
   result.endingAfterTax = rounded(balance - (interest + bonuses) * s.taxRate);
   result.minimumLiquid = rounded(result.minimumLiquid);
+  result.focusYearInterest = rounded(result.focusYearInterest);
+  result.yieldLostToCaps = rounded(result.yieldLostToCaps);
+  result.yieldLostToQualification = rounded(result.yieldLostToQualification);
+  result.effectiveApy =
+    balanceDays > 0 ? rounded(Math.expm1(Math.log1p(interest / balanceDays) * 365) * 100) : null;
   if (shortfall) exclude(shortfall);
   return result;
 }
 
-export function compare(scenarioInput: unknown, catalogInput: unknown) {
+export function compare(
+  scenarioInput: unknown,
+  catalogInput: unknown,
+  options: { asOf?: string } = {},
+) {
   const s = ScenarioSchema.parse(scenarioInput),
     c = CatalogSchema.parse(catalogInput);
   const unknown = s.bankIds.filter((id) => !c.banks.some((b) => b.id === id));
@@ -414,6 +456,74 @@ export function compare(scenarioInput: unknown, catalogInput: unknown) {
       events,
     ),
   );
+  const evaluatedOn = options.asOf ?? iso(new Date());
+  if (
+    !/^\d{4}-\d{2}-\d{2}$/.test(evaluatedOn) ||
+    !Number.isFinite(+utc(evaluatedOn)) ||
+    iso(utc(evaluatedOn)) !== evaluatedOn
+  )
+    throw new Error('Invalid evaluation date; use YYYY-MM-DD.');
+  const decisions = Object.fromEntries(
+    all.map((r) => {
+      const b = c.banks.find((b) => b.id === r.bankId)!;
+      const balance = r.daily.length ? r.endingBalance : s.startingCash;
+      const exit = exitAnalysis(b.profile, balance, s.endDate, s.startDate);
+      const insurance = insuranceAnalysis(b.profile, balance, s.insurance);
+      const peakBalance = Math.max(s.startingCash, ...r.daily.map((d) => d.balance));
+      const peakInsurance = insuranceAnalysis(b.profile, peakBalance, s.insurance);
+      const fresh = freshness(b.checkedOn, evaluatedOn);
+      const warnings = [...insurance.warnings];
+      if ((peakInsurance.potentiallyUninsured ?? 0) > (insurance.potentiallyUninsured ?? 0))
+        warnings.push(`Peak balance insurance caution: ${peakInsurance.warnings.join(' ')}`);
+      warnings.push(...exit.warnings);
+      if (fresh.warning) warnings.push(fresh.warning);
+      if (verifiedValue(b.profile, 'variableRate') === true)
+        warnings.push(
+          'Variable APY: the bank can change this rate. The forecast holds the snapshot rate constant.',
+        );
+      const cap = verifiedValue(b.profile, 'headlineBalanceCap');
+      if (typeof cap === 'number' && peakBalance > cap)
+        warnings.push(
+          `Headline APY is capped at $${cap.toLocaleString('en-US')}; the peak modeled balance exceeds this cap.`,
+        );
+      for (const p of b.promotions)
+        if (p.enrollBy) {
+          const remaining = Math.floor((+utc(p.enrollBy) - +utc(evaluatedOn)) / DAY);
+          if (remaining < 0)
+            warnings.push(
+              `${p.name}: enrollment expired ${p.enrollBy}. The forecast can still describe a historical enrollment.`,
+            );
+          else if (remaining <= 30)
+            warnings.push(`${p.name}: enrollment ends in ${remaining} days (${p.enrollBy}).`);
+        }
+      if (!b.profile)
+        warnings.push(
+          'Legacy snapshot: no atomic provenance or operational profile; research these facts before acting.',
+        );
+      if (s.linkedAccounts.some((a) => a.bankId === b.id))
+        warnings.push(
+          'Linked-account assumptions are recorded for manual review. This version does not simulate a linked-account strategy; complex products remain excluded.',
+        );
+      r.warnings.push(...warnings);
+      return [
+        r.bankId,
+        {
+          balanceDate: s.endDate,
+          exit,
+          insurance,
+          peakInsurance,
+          freshness: fresh,
+          history: historyAnalysis(b.profile, evaluatedOn),
+          friction: frictionAnalysis(b.profile),
+          exitStress: [50000, 100000, 250000, 500000].map((amount) =>
+            exitAnalysis(b.profile, amount, evaluatedOn, s.startDate),
+          ),
+          sourceProfile: b.id,
+          warnings,
+        },
+      ];
+    }),
+  );
   for (const r of all) r.incrementalGain = rounded(r.netReturn - baseline.netReturn);
   const ranked = all
     .filter((r) => r.status === 'eligible')
@@ -426,8 +536,10 @@ export function compare(scenarioInput: unknown, catalogInput: unknown) {
       ? ranked.filter((r) => r.netReturn === best.netReturn).map((r) => r.bankId)
       : ['baseline'];
   return {
-    schemaVersion: '2.0' as const,
+    schemaVersion: '3.0' as const,
     toolVersion: VERSION,
+    evaluatedOn,
+    decisions,
     catalogId: c.id,
     bankDataCheckedOn: c.checkedOn,
     scenario: s,
