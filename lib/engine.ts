@@ -536,7 +536,7 @@ export function compare(
       ? ranked.filter((r) => r.netReturn === best.netReturn).map((r) => r.bankId)
       : ['baseline'];
   return {
-    schemaVersion: '3.0' as const,
+    schemaVersion: '3.1' as const,
     toolVersion: VERSION,
     evaluatedOn,
     decisions,

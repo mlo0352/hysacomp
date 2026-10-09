@@ -103,6 +103,7 @@ for (const b of catalog.banks) {
     researchedAt: DATE,
     facts: Object.fromEntries(Object.keys(FACT_LABELS).map((k) => [k, unknownFact()])),
     sources: [],
+    features: [],
     conflicts: [],
     discoveries: [],
     researchLog: [],

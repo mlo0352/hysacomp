@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.1.0 — 2026-10-09
+
+- Nine cash-account feature categories with a three-account comparison and evidence details.
+- Selected BankTruth claims cross-checked for Ally, Openbank and Axos; preserve contradictions, linked-product conditions, exact sources and manual questions.
+- Personal verification notebook with export/import and changed-evidence detection, independent of the financial model.
+- Features/research-queue and verification CLI commands, visible disclaimer, 3.1 schemas and offline bundle. Explicit 3.0 imports retain prior rules and dates.
+
 ## v3.0.0 — 2026-10-09
 
 Data revision r2 corrects two transaction-count unit labels. The first published v3

@@ -1,6 +1,6 @@
 {
-  "toolVersion": "3.0.0",
-  "schemaVersion": "3.0",
+  "toolVersion": "3.1.0",
+  "schemaVersion": "3.1",
   "groups": {
     "Identity & insurance": {
       "legalInstitutionName": "Legal depository institution",
@@ -183,6 +183,83 @@
       "fraudMonitoring": "Fraud monitoring",
       "suspiciousLoginBlocking": "Suspicious login blocking",
       "accountLock": "User account freeze / lock"
+    }
+  },
+  "featureGroups": {
+    "Everyday costs": {
+      "noMonthlyFee": "No monthly maintenance fee",
+      "noOpeningMinimum": "No opening minimum",
+      "freeAch": "Free standard ACH",
+      "freeIncomingWire": "Free incoming wires",
+      "atmReimbursement": "ATM fee reimbursement",
+      "noForeignTransactionFee": "No foreign purchase fee",
+      "overdraftProtection": "Overdraft protection options"
+    },
+    "Security & control": {
+      "mfa": "Two-factor authentication",
+      "biometricLogin": "Biometric sign-in",
+      "passkeys": "Passkeys",
+      "fraudMonitoring": "Fraud monitoring",
+      "cardLock": "Card freeze controls",
+      "loginAlerts": "Login alerts",
+      "identityProtection": "Identity protection service"
+    },
+    "App & alerts": {
+      "iosApp": "iPhone app",
+      "androidApp": "Android app",
+      "mobileCheckSupported": "Mobile check deposit",
+      "atmLocator": "ATM finder",
+      "transactionAlerts": "Transaction alerts",
+      "pushNotifications": "Push notifications"
+    },
+    "Moving money": {
+      "directDepositSupported": "Receive payroll deposits",
+      "earlyDirectDeposit": "Early paycheck access",
+      "outgoingWireSupported": "Send domestic wires",
+      "incomingWireSupported": "Receive domestic wires",
+      "internationalWireOut": "Send international wires",
+      "internationalWireIn": "Receive international wires",
+      "externalAccountLinking": "Link external accounts",
+      "outgoingAchSupported": "Send ACH transfers",
+      "instantTransfers": "Instant payment transfers"
+    },
+    "Saving & planning": {
+      "savingsBuckets": "Savings goals / buckets",
+      "separateSubaccounts": "Separate subaccounts",
+      "roundUps": "Purchase round-ups",
+      "scheduledSavings": "Scheduled saving transfers",
+      "spendingInsights": "Spending insights",
+      "billPay": "Bill payment service"
+    },
+    "Payments & connections": {
+      "zelle": "Zelle",
+      "applePay": "Apple Pay",
+      "googlePay": "Google Wallet",
+      "wiseIntegration": "Native Wise connection",
+      "quickbooksIntegration": "QuickBooks connection"
+    },
+    "Getting help": {
+      "support247": "Round-the-clock phone support",
+      "liveChat": "Human live chat",
+      "secureMessaging": "Secure messages",
+      "supportEmail": "Email assistance",
+      "internationalSupport": "Support while abroad"
+    },
+    "Cash & in-person access": {
+      "branches": "Branch service for this account",
+      "cashDeposits": "Deposit physical cash",
+      "debitCard": "Debit card access",
+      "atmCard": "ATM withdrawals",
+      "cashierCheck": "Cashier checks",
+      "notary": "Notary service",
+      "safeDepositBox": "Safe deposit boxes",
+      "currencyExchange": "Cash currency exchange"
+    },
+    "Other cash-account tools": {
+      "creditMonitoring": "Credit monitoring",
+      "debitCashback": "Debit purchase rewards",
+      "foreignCurrencyAccount": "Foreign-currency cash account",
+      "travelNotifications": "Card travel notices"
     }
   }
 }

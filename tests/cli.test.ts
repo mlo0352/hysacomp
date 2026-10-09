@@ -6,6 +6,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { compare } from '../lib/engine';
 import { readScenario, readCatalog } from '../lib/files';
+import { evidenceSnapshot } from '../lib/features';
 
 const run = (...args: string[]) =>
   spawnSync(process.execPath, ['--import', 'tsx', 'cli.ts', ...args], {
@@ -14,10 +15,49 @@ const run = (...args: string[]) =>
   });
 const files = [
   '--scenario',
-  'examples/working-person-v3.yaml',
+  'examples/working-person-v3.1.yaml',
   '--banks',
-  'data/banks-2026-10-09-v3-r2.yaml',
+  'data/banks-2026-10-09-v3.1.yaml',
 ];
+
+test('CLI exports feature research and inspects personal checks without a scenario', () => {
+  const features = run('features', '--banks', files[3]);
+  assert.equal(features.status, 0, features.stderr);
+  assert.equal(JSON.parse(features.stdout).banks.length, 25);
+  const dir = mkdtempSync(join(tmpdir(), 'butter-checks-')),
+    path = join(dir, 'checks.local.json');
+  const b = readCatalog(readFileSync(files[3], 'utf8')).banks.find((b) => b.id === 'ally')!;
+  writeFileSync(
+    path,
+    JSON.stringify({
+      schemaVersion: '1.0',
+      kind: 'butter-personal-verifications',
+      entries: [
+        {
+          id: 'cli-check',
+          bankId: b.id,
+          target: 'feature:internationalWireOut',
+          evidenceSnapshot: evidenceSnapshot(b, 'feature:internationalWireOut'),
+          checkedOn: '2026-10-09',
+          outcome: 'disputed',
+          sourceUrl: 'https://example.com/manual',
+          sourceTitle: 'Synthetic check',
+          section: 'Fixture',
+          productScope: b.name,
+          notes: 'Test only',
+        },
+      ],
+    }),
+  );
+  const out = run('verifications', '--banks', files[3], '--checks', path);
+  assert.equal(out.status, 0, out.stderr);
+  assert.equal(JSON.parse(out.stdout).entries[0].evidenceState, 'current-evidence');
+  assert.equal(
+    run('verifications', '--banks', files[3], '--checks', path, '--output', path).status,
+    2,
+  );
+  assert.equal(run('verifications', '--banks', files[3]).status, 2);
+});
 test('CLI stdout is clean JSON and matches the shared browser engine', () => {
   const out = run('compare', ...files);
   assert.equal(out.status, 0, out.stderr);

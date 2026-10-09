@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hysaScenario toolVersion="3.1.0" schemaVersion="3.1" dataAsOf="2026-10-09">
+  <scenario type="object">
+    <schemaVersion type="string">3.1</schemaVersion>
+    <toolVersion type="string">3.1.0</toolVersion>
+    <id type="string">working-person</id>
+    <name type="string">A regular paycheck, a smarter home for savings</name>
+    <createdAt type="string">2026-10-09</createdAt>
+    <dataAsOf type="string">2026-10-09</dataAsOf>
+    <focusYear type="number">2027</focusYear>
+    <startDate type="string">2026-10-09</startDate>
+    <endDate type="string">2027-10-08</endDate>
+    <startingCash type="number">25000</startingCash>
+    <taxRate type="number">0.22</taxRate>
+    <baseline type="object">
+      <name type="string">Keep cash at 3.10% APY</name>
+      <apy type="number">3.1</apy>
+      <monthlyFee type="number">0</monthlyFee>
+    </baseline>
+    <bankIds type="array">
+      <item type="string">everbank</item>
+      <item type="string">openbank</item>
+      <item type="string">wealthfront</item>
+      <item type="string">marcus</item>
+      <item type="string">ally</item>
+      <item type="string">brio</item>
+      <item type="string">ivy</item>
+    </bankIds>
+    <eligiblePromotionIds type="array">
+      <item type="string">openbank-intro</item>
+      <item type="string">wealthfront-intro</item>
+    </eligiblePromotionIds>
+    <transfer type="object">
+      <businessDays type="number">2</businessDays>
+      <fee type="number">0</fee>
+      <holdDays type="number">0</holdDays>
+    </transfer>
+    <eStatements type="boolean">true</eStatements>
+    <insurance type="object">
+      <ownership type="string">single</ownership>
+      <jointOwners type="number">2</jointOwners>
+      <otherDeposits type="array">
+      </otherDeposits>
+    </insurance>
+    <linkedAccounts type="array">
+    </linkedAccounts>
+    <flows type="array">
+      <flow type="object">
+        <id type="string">salary</id>
+        <label type="string">Take-home paycheck</label>
+        <amount type="number">2500</amount>
+        <direction type="string">in</direction>
+        <cadence type="string">weekly</cadence>
+        <interval type="number">2</interval>
+        <dayOfMonth type="number">1</dayOfMonth>
+        <startDate type="string">2026-10-16</startDate>
+        <endDate type="string">2027-10-08</endDate>
+        <qualification type="string">payroll</qualification>
+      </flow>
+      <flow type="object">
+        <id type="string">living</id>
+        <label type="string">Rent, bills &amp; everyday spending</label>
+        <amount type="number">3500</amount>
+        <direction type="string">out</direction>
+        <cadence type="string">monthly</cadence>
+        <interval type="number">1</interval>
+        <dayOfMonth type="number">1</dayOfMonth>
+        <startDate type="string">2026-11-01</startDate>
+        <endDate type="string">2027-10-08</endDate>
+        <qualification type="string">none</qualification>
+      </flow>
+    </flows>
+    <events type="array">
+    </events>
+    <notes type="array">
+      <item type="string">Fictional example with $25,000 saved, $2,500 take-home pay every two weeks, and $3,500 monthly expenses.</item>
+      <item type="string">Assumes eligibility for Openbank and Wealthfront new-customer boosts; turn these off if ineligible.</item>
+      <item type="string">Baseline APY is an editable assumption. A 22% tax estimate applies only to interest and bonuses.</item>
+      <item type="string">Payroll and expenses are posted cash flows. A separate everyday checking account and its transfer costs are not modeled.</item>
+    </notes>
+  </scenario>
+</hysaScenario>

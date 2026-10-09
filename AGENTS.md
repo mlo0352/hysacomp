@@ -8,9 +8,9 @@ and [tool-manifest.json](tool-manifest.json). Requires Node 22.12+.
 
 ```sh
 npm ci
-npx tsx cli.ts validate --scenario examples/working-person-v3.yaml --banks data/banks-2026-10-09-v3-r2.yaml
-npx tsx cli.ts compare --scenario examples/working-person-v3.yaml --banks data/banks-2026-10-09-v3-r2.yaml --as-of 2026-10-09 --output outputs/comparison.json --graph outputs/comparison.svg
-npx tsx cli.ts audit --banks data/banks-2026-10-09-v3-r2.yaml
+npx tsx cli.ts validate --scenario examples/working-person-v3.1.yaml --banks data/banks-2026-10-09-v3.1.yaml
+npx tsx cli.ts compare --scenario examples/working-person-v3.1.yaml --banks data/banks-2026-10-09-v3.1.yaml --as-of 2026-10-09 --output outputs/comparison.json --graph outputs/comparison.svg
+npx tsx cli.ts audit --banks data/banks-2026-10-09-v3.1.yaml
 ```
 
 CLI stdout is JSON by default. Errors are JSON on stderr. Exit 0 = success,
@@ -55,3 +55,11 @@ Test financial decisions that can change a winner, browser/CLI agreement and rou
 Breaking data changes require a schema major bump, regenerated schemas and updated docs.
 Legacy monthly metrics cannot be reconstructed into dated events without guessing; reject
 them. Legacy imports need an explicitly configured baseline and tax rate before interpretation.
+
+
+## Feature evidence (3.1)
+
+Read docs/FEATURE_RESEARCH.md. Keep secondary claims separate from official features,
+retain exact product scope and conditions, and export a research queue. Personal checks
+are local assertions bound to their evidence snapshot; they never upgrade source verification
+or change the earnings winner. Keep the visible research disclaimer and notebook export.

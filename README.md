@@ -2,7 +2,7 @@
 
 Compare what your cash earns, how it can leave, and which conditions need checking.
 **[Open Butter](https://mlo0352.github.io/hysacomp/)** ·
-**[Download the offline bundle](https://mlo0352.github.io/hysacomp/downloads/butter-v3.0.0-offline.zip)** ·
+**[Download the offline bundle](https://mlo0352.github.io/hysacomp/downloads/butter-v3.1.0-offline.zip)** ·
 [GitHub](https://github.com/mlo0352/hysacomp)
 
 Butter starts with **no scenario**. Try the optional fictional working-person example,
@@ -10,7 +10,7 @@ enter your own cash flows, or import a YAML, JSON or XML file. Your scenario sta
 browser memory until you save it. Reloading clears it. No bank login, analytics, API key
 or cloud account is needed.
 
-Version **3.0.0**, build **2026-10-09**, scenario/bank schemas **3.0**.
+Version **3.1.0**, build **2026-10-09**, scenario/bank schemas **3.1**.
 The bundled bank research was checked **2026-10-09**. Retrieval dates, provider effective
 dates, source dates and freshness are visible separately; variable rates can change.
 
@@ -33,7 +33,7 @@ accounts, **not a safety rating**. Liquidity and insurance warnings remain visib
 ## Best with a local AI agent
 
 Clone this repo and give your agent [AGENTS.md](AGENTS.md) plus the
-[current copy/paste prompts](docs/LLM_PROMPTS_v3.0.0_2026-10-09.md). The agent can turn
+[current copy/paste prompts](docs/LLM_PROMPTS_v3.1.0_2026-10-09.md). The agent can turn
 plain English into a validated scenario, compare local files and return numbers and a chart.
 Use the browser for the simple route; use the CLI for reproducible research and experiments.
 
@@ -41,9 +41,9 @@ Use the browser for the simple route; use the CLI for reproducible research and 
 git clone https://github.com/mlo0352/hysacomp.git
 cd hysacomp
 npm ci
-npx tsx cli.ts compare --scenario examples/working-person-v3.yaml --banks data/banks-2026-10-09-v3-r2.yaml --as-of 2026-10-09 --output outputs/comparison.json --graph outputs/comparison.svg
-npx tsx cli.ts audit --banks data/banks-2026-10-09-v3-r2.yaml
-npx tsx cli.ts scenario --scenario examples/working-person-v3.yaml --format xml --output outputs/scenario.xml
+npx tsx cli.ts compare --scenario examples/working-person-v3.1.yaml --banks data/banks-2026-10-09-v3.1.yaml --as-of 2026-10-09 --output outputs/comparison.json --graph outputs/comparison.svg
+npx tsx cli.ts audit --banks data/banks-2026-10-09-v3.1.yaml
+npx tsx cli.ts scenario --scenario examples/working-person-v3.1.yaml --format xml --output outputs/scenario.xml
 ```
 
 Requires Node **22.12+**. `npx tsx cli.ts --help` documents all commands. JSON stdout is
@@ -60,14 +60,14 @@ On Windows, run `Start-Comparator.ps1`, or run `npm run dev` and open the printe
 The launcher installs missing dependencies and selects a free localhost port.
 
 For a server-free copy, extract the offline ZIP and double-click
-`hysa_comparator_v3.0.0_2026-10-09.html`. All application code, styles, the bank snapshot
+`hysa_comparator_v3.1.0_2026-10-09.html`. All application code, styles, the bank snapshot
 and the opt-in example are embedded. The ZIP also contains editable bank/scenario XML,
 YAML, schemas, documentation, prompts, discovery notes and SHA-256 checksums. Source
 links need internet when you choose to open them; calculations do not.
 
 ## Evidence and limits
 
-See the [bank discovery log](docs/BANK_DISCOVERIES_v3.0.0_2026-10-09.md) for product-specific
+See the [bank discovery log](docs/BANK_DISCOVERIES_v3.1.0_2026-10-09.md) for product-specific
 findings and manual checks. Research coverage is recorded per bank; **unknown does not
 mean absent, unlimited, safe or unsafe**. Rates and policies are manually reviewed snapshots,
 not continuous monitoring or an exhaustive regulatory audit.
@@ -85,8 +85,8 @@ filled forward into invented averages. See [methodology](docs/METHODOLOGY.md).
 
 ## Files and maintenance
 
-- [XML guide and compatibility](docs/XML_GUIDE_v3.0.0_2026-10-09.md)
-- [Five research/scenario/audit prompts](docs/LLM_PROMPTS_v3.0.0_2026-10-09.md)
+- [XML guide and compatibility](docs/XML_GUIDE_v3.1.0_2026-10-09.md)
+- [Five research/scenario/audit prompts](docs/LLM_PROMPTS_v3.1.0_2026-10-09.md)
 - [Agent integration guide](docs/AGENT_GUIDE.md), [tool manifest](tool-manifest.json), [llms.txt](llms.txt)
 - [Source policy](docs/DATA_SOURCES.md), [changelog](CHANGELOG.md)
 
@@ -107,3 +107,17 @@ The Pages workflow runs those checks and deploys the explicit public build from 
 Enable **Settings → Pages → GitHub Actions** for a fork. `npm run build` creates both
 `dist/` and the self-contained downloads. No backend is required; this focused comparator
 is separate from Butter's broader cash-flow strategy/SQLite application.
+
+## Features and your own verification
+
+Compare cash-account features in nine categories, with linked-account conditions and
+secondary-source disagreements visible in each cell. All 25 products share the checklist;
+this feature pass cross-checks selected Ally, Openbank and Axos claims with official pages.
+Unknowns remain explicit. Record your own evidence and export/import a local verification
+notebook. Changed claims require rechecking. [Feature research guide](docs/FEATURE_RESEARCH.md).
+
+Use `npx tsx cli.ts features --banks data/banks-2026-10-09-v3.1.yaml` for a machine-readable
+checklist and research queue. Personal checks never alter official evidence or earnings.
+
+Butter is a research aid, not a guarantee or personal financial advice. Information may be
+incomplete, outdated or wrong. Check current terms directly with the bank before moving money.

@@ -12,6 +12,8 @@ import {
 } from '../lib/analysis';
 import { money } from '../lib/export';
 import styles from './App.module.css';
+import { BankFeatures } from './Features';
+import { VerificationButton, VerificationNotebook } from './Verification';
 
 export const today = () => new Date().toISOString().slice(0, 10);
 export const displayFact = (p: Profile | undefined, key: string) => {
@@ -45,6 +47,7 @@ export function Sources({ profile, ids }: { profile: Profile; ids: string[] }) {
               <small>
                 {s.section} · Accessed {s.accessedAt}
                 {s.effectiveDate ? ` · Effective ${s.effectiveDate}` : ''} · {s.type}
+                {s.publishedAt ? ` · Source updated ${s.publishedAt}` : ''}
               </small>
             </span>
           </a>
@@ -83,6 +86,11 @@ export function FactView({
               : 'Claim supported by the linked source; check product scope and date.')}
         </p>
         {bank.profile && <Sources profile={bank.profile} ids={f.sourceIds} />}
+        <VerificationButton
+          bank={bank}
+          target={`fact:${field}`}
+          label={FACT_LABELS[field] ?? field}
+        />
       </div>
     </details>
   );
@@ -369,6 +377,7 @@ export function BankResearch({
               <strong>Check manually:</strong> {d.action}
             </p>
             <Sources profile={p} ids={d.sourceIds} />
+            <VerificationButton bank={b} target={`discovery:${d.id}`} label={d.title} />
           </article>
         ))}
         {p && (
@@ -539,6 +548,11 @@ export function BankResearch({
               {h.product} · {h.tier} · Series: {h.series} · {h.confidence} confidence
             </p>
             <Sources profile={p} ids={h.sourceIds} />
+            <VerificationButton
+              bank={b}
+              target={`history:${i}`}
+              label={`Rate observation ${h.date}`}
+            />
           </div>
         ))}
       </details>
@@ -568,6 +582,7 @@ export function BankResearch({
             </p>
             <p>{r.notes}</p>
             <Sources profile={p} ids={r.sourceIds} />
+            <VerificationButton bank={b} target={`review:${r.id}`} label={r.scope} />
           </div>
         ))}
         <h4>Recurring reports</h4>
@@ -579,6 +594,7 @@ export function BankResearch({
               </p>
               <p>{t.notes}</p>
               <Sources profile={p} ids={t.sourceIds} />
+              <VerificationButton bank={b} target={`theme:${i}`} label={t.description} />
             </div>
           ))
         ) : (
@@ -604,6 +620,7 @@ export function BankResearch({
                   <Sources profile={p} ids={claim.sourceIds} />
                 </div>
               ))}
+              <VerificationButton bank={b} target={`conflict:${c.key}`} label={c.key} />
               <p>
                 <strong>{c.resolved ? 'Resolution' : 'Unresolved'}:</strong> {c.resolution}
               </p>
@@ -611,6 +628,8 @@ export function BankResearch({
           ))}
         </details>
       )}
+      <BankFeatures bank={b} />
+      <VerificationNotebook />
       <h3>Fact-by-fact evidence</h3>
       <div className={styles.factSearch}>
         <Search size={16} />
@@ -673,6 +692,7 @@ export function BankResearch({
               {r.date} · {r.notes}
             </p>
             <Sources profile={p} ids={r.sourceIds} />
+            <VerificationButton bank={b} target={`log:${i}`} label={r.area} />
           </div>
         ))}
       </details>

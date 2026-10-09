@@ -1,13 +1,22 @@
 {
   "name": "butter_cash_comparison",
-  "version": "3.0.0",
-  "schemaVersion": "3.0",
+  "version": "3.1.0",
+  "schemaVersion": "3.1",
   "buildDate": "2026-10-09",
   "description": "Compare cash accounts against a baseline using dated bank terms and posted cash flows. Local process tool; no network or bank access.",
   "repository": "https://github.com/mlo0352/hysacomp",
   "runtime": "Node.js >=22.12",
-  "setup": ["npm", "ci"],
-  "command": ["node", "--import", "tsx", "cli.ts", "compare"],
+  "setup": [
+    "npm",
+    "ci"
+  ],
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "cli.ts",
+    "compare"
+  ],
   "arguments": {
     "--scenario": {
       "required": true,
@@ -19,10 +28,25 @@
       "type": "local-file-path",
       "schema": "schemas/banks.schema.json"
     },
-    "--format": { "enum": ["json", "csv"], "default": "json" },
-    "--output": { "type": "local-file-path", "default": "stdout" },
-    "--graph": { "type": "local-file-path", "extension": ".svg" },
-    "--as-of": { "type": "YYYY-MM-DD", "default": "current UTC date" }
+    "--format": {
+      "enum": [
+        "json",
+        "csv"
+      ],
+      "default": "json"
+    },
+    "--output": {
+      "type": "local-file-path",
+      "default": "stdout"
+    },
+    "--graph": {
+      "type": "local-file-path",
+      "extension": ".svg"
+    },
+    "--as-of": {
+      "type": "YYYY-MM-DD",
+      "default": "current UTC date"
+    }
   },
   "stdout": "JSON comparison unless --format csv or --output is specified",
   "stderr": "JSON error with error and message fields",
@@ -50,10 +74,34 @@
     "cashEvents",
     "provenance"
   ],
-  "otherCommands": ["validate", "audit", "discoveries", "banks", "scenario"],
-  "xml": "banks/scenario --format xml serializes validated YAML/JSON/XML into schema 3.0 XML",
+  "otherCommands": [
+    "validate",
+    "audit",
+    "discoveries",
+    "banks",
+    "scenario",
+    "features",
+    "verifications"
+  ],
+  "xml": "banks/scenario --format xml serializes validated YAML/JSON/XML into schema 3.1 XML",
   "audit": "Local evidence/unknown/conflict audit; does not reopen URLs or certify terms",
   "provenance": "CLI includes SHA-256 hashes of both exact input files.",
   "sideEffects": "Only requested local output files and their parent directories are written.",
-  "network": false
+  "network": false,
+  "features": "Nine feature categories, source-scoped claims and a prioritized research queue; local files only.",
+  "verifications": {
+    "command": [
+      "node",
+      "--import",
+      "tsx",
+      "cli.ts",
+      "verifications"
+    ],
+    "arguments": [
+      "--banks PATH",
+      "--checks PATH"
+    ],
+    "schema": "schemas/verifications.schema.json",
+    "effect": "Inspect personal checks and evidence changes; no mutation of bank data or rankings"
+  }
 }

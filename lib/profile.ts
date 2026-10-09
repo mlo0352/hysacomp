@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { FeatureSchema } from './feature-model';
 
 const day = z
   .string()
@@ -29,6 +30,7 @@ export const SourceSchema = z
     section: z.string().min(1),
     accessedAt: day,
     effectiveDate: day.nullable().default(null),
+    publishedAt: day.optional(),
   })
   .strict();
 export const FactSchema = z
@@ -58,6 +60,7 @@ export const ProfileSchema = z
     researchedAt: day,
     facts: z.record(z.string(), FactSchema),
     sources: z.array(SourceSchema),
+    features: z.array(FeatureSchema).default([]),
     conflicts: z
       .array(
         z
@@ -163,6 +166,8 @@ export const ProfileSchema = z
       ...p.rateHistory,
       ...p.reviews,
       ...p.themes,
+      ...p.features,
+      ...p.features.flatMap((f) => f.claims),
     ];
     for (const r of records)
       for (const id of r.sourceIds)
@@ -177,6 +182,25 @@ export const ProfileSchema = z
         ctx.addIssue({
           code: 'custom',
           message: `${key}: objective verification needs a first-party or regulatory source.`,
+        });
+    }
+    if (new Set(p.features.map((f) => f.key)).size !== p.features.length)
+      ctx.addIssue({ code: 'custom', message: 'Duplicate feature keys.' });
+    for (const f of p.features) {
+      if (
+        f.evidenceStatus === 'verified' &&
+        !f.sourceIds.some((id) =>
+          p.sources.some((s) => s.id === id && ['official', 'regulator'].includes(s.type)),
+        )
+      )
+        ctx.addIssue({
+          code: 'custom',
+          message: `${f.key}: verified features need first-party evidence.`,
+        });
+      if (f.claims.some((c) => c.assessment !== 'unverified') && f.evidenceStatus !== 'verified')
+        ctx.addIssue({
+          code: 'custom',
+          message: `${f.key}: resolving a secondary claim needs first-party feature evidence.`,
         });
     }
     if (p.sources.some((s) => s.accessedAt > p.researchedAt))

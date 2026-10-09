@@ -2138,3 +2138,227 @@
     animation: none !important;
   }
 }
+
+.disclaimer {
+  margin: 18px 0;
+  padding: 13px 18px;
+  border: 1px solid #deded0;
+  border-radius: 10px;
+  background: #f6f5ec;
+  color: #606451;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.disclaimer strong {
+  color: #3c4736;
+}
+.featureComparison {
+  padding: 26px;
+  margin: 24px 0 32px;
+  background: #fffef9;
+  border: 1px solid #dfdfd0;
+  border-radius: 18px;
+}
+.featureComparison h2 {
+  font-size: 25px;
+  letter-spacing: -0.7px;
+  margin: 8px 0;
+}
+.featureComparison p,
+.bankFeatures p {
+  font-size: 12px;
+  line-height: 1.7;
+  color: #66705f;
+}
+.featureLegend {
+  border-top: 1px solid #eeeee5;
+  padding-top: 14px;
+}
+.featureTable {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+  margin-bottom: 18px;
+  table-layout: fixed;
+}
+.featureTable th,
+.featureTable td {
+  text-align: left;
+  vertical-align: top;
+  padding: 12px;
+  border-bottom: 1px solid #e8e9df;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+.featureTable th {
+  color: #3f513c;
+  font-weight: 600;
+}
+.featureTable th button {
+  border: 0;
+  background: transparent;
+  text-align: left;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: normal;
+  max-width: 100%;
+}
+.featureTable .sourceList a {
+  min-width: 0;
+}
+.featureTable .sourceList a span {
+  min-width: 0;
+}
+.featureTable .sourceList small {
+  white-space: normal;
+}
+.featureDetail > summary {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: center;
+  padding: 9px 0;
+  font-size: 12px;
+}
+.featureDetail {
+  position: relative;
+}
+.verification {
+  position: relative;
+}
+.featureDetail > summary::before {
+  content: '+';
+  color: #788367;
+}
+.featureDetail[open] > summary::before {
+  content: '−';
+}
+.featureTable .featureDetail > summary > span:first-of-type {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.featureBadge {
+  display: inline-block;
+  font-size: 10px;
+  padding: 5px 8px;
+  border-radius: 5px;
+  font-weight: 600;
+  white-space: normal;
+}
+.featureYes {
+  background: #e7efdf;
+  color: #395231;
+}
+.featureConditional {
+  background: #faf0d3;
+  color: #796020;
+}
+.featureUnknown {
+  background: #eeeee8;
+  color: #696c62;
+}
+.featureNo {
+  background: #f5eae4;
+  color: #885b45;
+}
+.secondaryClaim {
+  border-left: 3px solid #dcbf79;
+  padding: 8px 12px;
+  margin: 14px 0;
+  background: #fffaf0;
+}
+.secondaryClaim strong {
+  font-size: 11px;
+}
+.verification {
+  margin-top: 12px;
+}
+.verification > button {
+  padding: 6px 9px;
+  font-size: 11px;
+}
+.personalCheck {
+  display: block;
+  color: #695026;
+  margin-bottom: 8px;
+}
+.checkForm {
+  padding: 16px;
+  margin-top: 10px;
+  border: 1px solid #d7dcca;
+  border-radius: 9px;
+  background: #f6f8ef;
+}
+.checkForm label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 11px;
+  margin: 8px 0;
+}
+.checkForm input,
+.checkForm select,
+.checkForm textarea {
+  min-width: 0;
+  width: 100%;
+  background: white;
+  padding: 8px;
+  border: 1px solid #cbd3c0;
+  border-radius: 5px;
+  font: inherit;
+}
+.checkGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0 12px;
+}
+.notebook {
+  margin-top: 22px;
+  padding: 16px;
+  background: #f2f4ea;
+  border-radius: 9px;
+}
+.notebook > summary {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+.notebook > summary span {
+  font-weight: 400;
+  margin-left: 10px;
+}
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+@media (max-width: 620px) {
+  .featureComparison {
+    padding: 16px;
+  }
+  .featureComparison h2 {
+    font-size: 21px;
+  }
+  .libraryToolbar {
+    flex-wrap: wrap;
+  }
+  .libraryToolbar > input {
+    min-width: 0;
+    width: 100%;
+  }
+  .libraryToolbar .actions {
+    flex-wrap: wrap;
+  }
+}

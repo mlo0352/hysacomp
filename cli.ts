@@ -6,25 +6,28 @@ import { createHash } from 'node:crypto';
 import { compare } from './lib/engine';
 import { readScenario, readCatalog, readableError, toXml } from './lib/files';
 import { auditCatalog } from './lib/audit';
+import { featureReport } from './lib/features';
+import { readVerifications, verificationReport } from './lib/verification';
 import { toCsv, toSvg } from './lib/export';
 import { VERSION } from './lib/schema';
 
 const help = `Butter ${VERSION} — deterministic cash comparisons for people and agents
 
 Usage:
-  npm run cli -- compare --scenario examples/working-person-v3.yaml --banks data/banks-2026-10-09-v3-r2.yaml
+  npm run cli -- compare --scenario examples/working-person-v3.1.yaml --banks data/banks-2026-10-09-v3.1.yaml
   npm run cli -- compare --scenario plan.yaml --banks banks.yaml --format csv --output outputs/comparison.csv --graph outputs/comparison.svg
   npm run cli -- validate --scenario plan.yaml --banks banks.yaml
-  npm run cli -- audit --banks data/banks-2026-10-09-v3-r2.yaml --as-of 2026-10-09
-  npm run cli -- banks --banks data/banks-2026-10-09-v3-r2.yaml --format xml --output outputs/banks.xml
+  npm run cli -- audit --banks data/banks-2026-10-09-v3.1.yaml --as-of 2026-10-09
+  npm run cli -- banks --banks data/banks-2026-10-09-v3.1.yaml --format xml --output outputs/banks.xml
   npm run cli -- scenario --scenario plan.yaml --format xml --output outputs/scenario.xml
 
-Commands: compare (default), validate, audit, discoveries, banks, scenario
+Commands: compare (default), validate, audit, discoveries, features, verifications, banks, scenario
 Options:
   --scenario PATH   Required for compare/validate/scenario. YAML, JSON or versioned XML.
   --banks PATH      Required except for scenario. YAML, JSON or versioned XML.
   --format FORMAT   json (default); csv for compare; xml for banks/scenario.
   --as-of DATE      YYYY-MM-DD freshness evaluation date (default: today's UTC date).
+  --checks PATH     Personal verification JSON; required for verifications.
   --output PATH     Write result here instead of stdout.
   --graph PATH      Write an accessible, standalone SVG comparison image.
   --help            Show this help.
@@ -49,6 +52,7 @@ async function main() {
       output: { type: 'string' },
       graph: { type: 'string' },
       'as-of': { type: 'string' },
+      checks: { type: 'string' },
       help: { type: 'boolean' },
       version: { type: 'boolean' },
     },
@@ -64,7 +68,16 @@ async function main() {
   const command = positionals[0] ?? 'compare';
   if (
     positionals.length > 1 ||
-    !['compare', 'validate', 'banks', 'scenario', 'audit', 'discoveries'].includes(command)
+    ![
+      'compare',
+      'validate',
+      'banks',
+      'scenario',
+      'audit',
+      'discoveries',
+      'features',
+      'verifications',
+    ].includes(command)
   )
     throw new Error('Unknown command. Use --help.');
   const formats = ['banks', 'scenario'].includes(command)
@@ -80,7 +93,7 @@ async function main() {
   const pathKey = (p: string) =>
     process.platform === 'win32' ? resolve(p).toLowerCase() : resolve(p);
   const targets = [v.output, v.graph].filter((p): p is string => !!p).map(pathKey);
-  const inputs = [v.scenario, v.banks].filter((p): p is string => !!p).map(pathKey);
+  const inputs = [v.scenario, v.banks, v.checks].filter((p): p is string => !!p).map(pathKey);
   if (new Set(targets).size !== targets.length || targets.some((p) => inputs.includes(p)))
     throw new Error('Output paths must be distinct and cannot overwrite input files.');
   if (v.graph && !v.graph.toLowerCase().endsWith('.svg'))
@@ -101,7 +114,20 @@ async function main() {
     output = v.format === 'xml' ? toXml(catalog) : JSON.stringify(catalog, null, 2);
   else if (command === 'audit' || command === 'discoveries')
     output = JSON.stringify(auditCatalog(catalog, v['as-of']), null, 2);
-  else {
+  else if (command === 'features') output = JSON.stringify(featureReport(catalog), null, 2);
+  else if (command === 'verifications') {
+    if (!v.checks) throw new Error('--checks is required for verifications');
+    const checks = readVerifications(await readFile(v.checks, 'utf8'));
+    output = JSON.stringify(
+      {
+        toolVersion: VERSION,
+        scope: 'Personal checks only; never changes source verification or earnings.',
+        entries: verificationReport(checks.entries, catalog),
+      },
+      null,
+      2,
+    );
+  } else {
     if (!v.scenario) throw new Error('--scenario is required');
     const scenarioText = await readFile(v.scenario, 'utf8'),
       scenario = readScenario(scenarioText);

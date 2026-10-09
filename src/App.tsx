@@ -35,14 +35,17 @@ import { compare, type BankResult, type Comparison } from '../lib/engine';
 import { readCatalog, readScenario, readableError, toYaml, toXml } from '../lib/files';
 import { money, toCsv, toSvg } from '../lib/export';
 import { VERSION, BUILD_DATE, type Bank, type Scenario } from '../lib/schema';
-import catalogText from '../data/banks-2026-10-09-v3-r2.yaml?raw';
-import exampleText from '../examples/working-person-v3.yaml?raw';
-import promptsText from '../docs/LLM_PROMPTS_v3.0.0_2026-10-09.md?raw';
-import xmlGuideText from '../docs/XML_GUIDE_v3.0.0_2026-10-09.md?raw';
-import discoveryText from '../docs/BANK_DISCOVERIES_v3.0.0_2026-10-09.md?raw';
+import catalogText from '../data/banks-2026-10-09-v3.1.yaml?raw';
+import exampleText from '../examples/working-person-v3.1.yaml?raw';
+import promptsText from '../docs/LLM_PROMPTS_v3.1.0_2026-10-09.md?raw';
+import xmlGuideText from '../docs/XML_GUIDE_v3.1.0_2026-10-09.md?raw';
+import discoveryText from '../docs/BANK_DISCOVERIES_v3.1.0_2026-10-09.md?raw';
+import featureGuideText from '../docs/FEATURE_RESEARCH.md?raw';
 import { BankResearch, DecisionTable, today } from './Research';
 import { freshness } from '../lib/analysis';
 import styles from './App.module.css';
+import { FeatureComparison, ResearchDisclaimer } from './Features';
+import { VerificationProvider } from './Verification';
 
 const repo = 'https://github.com/mlo0352/hysacomp';
 const initialCatalog = readCatalog(catalogText);
@@ -1030,7 +1033,7 @@ function AgentGuide() {
   const [copied, setCopied] = useState(false),
     [copyError, setCopyError] = useState('');
   const prompt =
-    'Use https://github.com/mlo0352/hysacomp. Read AGENTS.md and docs/LLM_PROMPTS_v3.0.0_2026-10-09.md. Ask for cash, dates, income, withdrawals, baseline, taxes, ownership and other same-bank deposits. Create a schema 3.0 scenario XML or YAML. Research each bank at the atomic fact level, preserve sources/conflicts and a discovery log, and mark unknowns. Run the CLI with explicit files and --as-of. Return comparison JSON and SVG, explain earnings over baseline, exit limits, uninsured cash and manual checks. Never upload my personal files.';
+    'Use https://github.com/mlo0352/hysacomp. Read AGENTS.md, docs/FEATURE_RESEARCH.md and docs/LLM_PROMPTS_v3.1.0_2026-10-09.md. Ask for cash, dates, income, withdrawals, baseline, taxes, ownership and other same-bank deposits. Create a schema 3.1 scenario XML or YAML. Run features --banks FILE for the research queue. Check secondary claims against official product terms, distinguish linked checking from savings, preserve sources/conflicts and a discovery log, and mark unknowns. Personal verification notes are separate from official evidence. Run the comparison CLI with explicit files and --as-of. Return JSON and SVG, explain earnings over baseline, exit limits, uninsured cash and manual checks. Remind me that research can be wrong and current terms need checking. Never upload my personal files.';
   return (
     <div className={styles.agentPage}>
       <span className={styles.eyebrow}>
@@ -1095,49 +1098,59 @@ function AgentGuide() {
         </div>
         <pre>
           <code>
-            npx tsx cli.ts compare \{'\n'} --scenario examples/working-person-v3.yaml \{'\n'}{' '}
-            --banks data/banks-2026-10-09-v3-r2.yaml \{'\n'} --output outputs/comparison.json \
-            {'\n'} --graph outputs/comparison.svg{'\n\n'}# Also: --format csv, validate, banks,
-            --help
+            npx tsx cli.ts compare \{'\n'} --scenario examples/working-person-v3.1.yaml \{'\n'}{' '}
+            --banks data/banks-2026-10-09-v3.1.yaml \{'\n'} --output outputs/comparison.json \{'\n'}{' '}
+            --graph outputs/comparison.svg{'\n\n'}# Research without a scenario{'\n'}npx tsx cli.ts
+            features --banks data/banks-2026-10-09-v3.1.yaml
           </code>
         </pre>
       </section>
       <div className={styles.docLinks}>
-        <a href="https://mlo0352.github.io/hysacomp/downloads/butter-v3.0.0-offline.zip" download>
+        <a
+          href="docs/FEATURE_RESEARCH.md"
+          download
+          onClick={(e) => {
+            e.preventDefault();
+            download('FEATURE_RESEARCH.md', featureGuideText, 'text/markdown');
+          }}
+        >
+          Feature research & manual checks
+        </a>
+        <a href="https://mlo0352.github.io/hysacomp/downloads/butter-v3.1.0-offline.zip" download>
           <ArrowDownToLine size={15} /> Offline bundle
         </a>
         <a
-          href="https://mlo0352.github.io/hysacomp/downloads/hysa_comparator_v3.0.0_2026-10-09.html"
+          href="https://mlo0352.github.io/hysacomp/downloads/hysa_comparator_v3.1.0_2026-10-09.html"
           download
         >
           Standalone HTML
         </a>
         <a
-          href="docs/LLM_PROMPTS_v3.0.0_2026-10-09.md"
+          href="docs/LLM_PROMPTS_v3.1.0_2026-10-09.md"
           download
           onClick={(e) => {
             e.preventDefault();
-            download('LLM_PROMPTS_v3.0.0_2026-10-09.md', promptsText, 'text/markdown');
+            download('LLM_PROMPTS_v3.1.0_2026-10-09.md', promptsText, 'text/markdown');
           }}
         >
           Five agent prompts
         </a>
         <a
-          href="docs/XML_GUIDE_v3.0.0_2026-10-09.md"
+          href="docs/XML_GUIDE_v3.1.0_2026-10-09.md"
           download
           onClick={(e) => {
             e.preventDefault();
-            download('XML_GUIDE_v3.0.0_2026-10-09.md', xmlGuideText, 'text/markdown');
+            download('XML_GUIDE_v3.1.0_2026-10-09.md', xmlGuideText, 'text/markdown');
           }}
         >
           XML guide
         </a>
         <a
-          href="docs/BANK_DISCOVERIES_v3.0.0_2026-10-09.md"
+          href="docs/BANK_DISCOVERIES_v3.1.0_2026-10-09.md"
           download
           onClick={(e) => {
             e.preventDefault();
-            download('BANK_DISCOVERIES_v3.0.0_2026-10-09.md', discoveryText, 'text/markdown');
+            download('BANK_DISCOVERIES_v3.1.0_2026-10-09.md', discoveryText, 'text/markdown');
           }}
         >
           Bank discovery log
@@ -1238,480 +1251,488 @@ export default function App() {
       });
   };
   return (
-    <div className={styles.app}>
-      <a className={styles.skipLink} href="#main">
-        Skip to main content
-      </a>
-      <header className={styles.header}>
-        <a
-          href="#"
-          className={styles.brand}
-          onClick={(e) => {
-            e.preventDefault();
-            setTab('compare');
-          }}
-        >
-          <span className={styles.logoMark}>b</span>butter
-          <span className={styles.brandCaption}>cash, with clarity.</span>
+    <VerificationProvider catalog={catalog}>
+      <div className={styles.app}>
+        <a className={styles.skipLink} href="#main">
+          Skip to main content
         </a>
-        <nav aria-label="Main navigation">
-          <button
-            className={tab === 'compare' ? styles.activeNav : ''}
-            onClick={() => setTab('compare')}
-          >
-            Compare
-          </button>
-          <button
-            className={tab === 'banks' ? styles.activeNav : ''}
-            onClick={() => setTab('banks')}
-          >
-            Bank library <span>{catalog.banks.length}</span>
-          </button>
-          <button
-            className={tab === 'agents' ? styles.activeNav : ''}
-            onClick={() => setTab('agents')}
-          >
-            <Code2 size={15} /> For AI agents
-          </button>
-        </nav>
-        <a href={repo} target="_blank" rel="noreferrer" className={styles.githubLink}>
-          <GitBranch size={18} />
-          <span>GitHub</span>
-          <ArrowUpRight size={13} />
-        </a>
-      </header>
-      <div className={styles.snapshot}>
-        <span>
-          <span className={styles.dot} /> Bank data checked{' '}
-          <strong>{dateLabel(catalog.checkedOn)}</strong>
-          <span className={styles.snapshotDivider}>/</span>
-          {catalog.banks.filter(isModeled).length} modeled · {catalog.banks.length} reviewed
-          <span className={styles.snapshotDivider}>/</span>
-          {freshness(catalog.checkedOn, today()).ageDays} days old ·{' '}
-          {freshness(catalog.checkedOn, today()).label}
-        </span>
-        <button className={styles.textButton} onClick={() => setTab('banks')}>
-          View sources <ArrowUpRight size={13} />
-        </button>
-      </div>
-      <input
-        ref={scenarioFile}
-        aria-label="Import scenario file"
-        type="file"
-        hidden
-        accept=".yaml,.yml,.json,.xml"
-        onChange={(e) => {
-          void importFile(e.target.files?.[0], 'scenario');
-          e.target.value = '';
-        }}
-      />
-      <input
-        ref={bankFile}
-        aria-label="Import bank file"
-        type="file"
-        hidden
-        accept=".yaml,.yml,.json,.xml"
-        onChange={(e) => {
-          void importFile(e.target.files?.[0], 'banks');
-          e.target.value = '';
-        }}
-      />
-      <main id="main" className={styles.main}>
-        {freshness(catalog.checkedOn, today()).warning && (
-          <p role="alert" className={styles.winnerCautions}>
-            {freshness(catalog.checkedOn, today()).warning}
-          </p>
-        )}
-        {notice && (
-          <div role="status" className={styles.notice}>
-            <CheckCircle2 size={16} />
-            <span>{notice}</span>
-            <button
-              aria-label="Dismiss notice"
-              className={styles.iconButton}
-              onClick={() => setNotice('')}
-            >
-              <X size={15} />
-            </button>
-          </div>
-        )}
-        {error && (
-          <div role="alert" className={styles.error}>
-            {error}
-            <button onClick={() => setError('')}>Dismiss</button>
-          </div>
-        )}
-        {tab === 'compare' && !scenario && (
-          <EmptyState
-            load={loadExample}
-            create={create}
-            importFile={() => scenarioFile.current?.click()}
-          />
-        )}
-        {tab === 'compare' && scenario && (
-          <>
-            <div className={styles.pageHeading}>
-              <div>
-                <span className={styles.eyebrow}>YOUR CASH, WORKING HARDER</span>
-                <h1>Let’s find its best home.</h1>
-                <p>Same money. Same life. A better-informed choice.</p>
-              </div>
-              <div className={styles.actions}>
-                <button onClick={() => scenarioFile.current?.click()}>
-                  <FileUp size={15} /> Import
-                </button>
-                <button
-                  onClick={() => download('my-scenario.yaml', toYaml(scenario), 'application/yaml')}
-                >
-                  <ArrowDownToLine size={15} /> Save scenario
-                </button>
-                <button
-                  onClick={() => download('my-scenario.xml', toXml(scenario), 'application/xml')}
-                >
-                  <ArrowDownToLine size={15} /> Save XML
-                </button>
-                <button
-                  className={styles.iconButton}
-                  aria-label="Clear scenario"
-                  title="Clear scenario"
-                  onClick={() => {
-                    setScenario(null);
-                    setNotice(
-                      'Scenario cleared. Save a scenario file before leaving if you want to keep your plan.',
-                    );
-                  }}
-                >
-                  <Trash2 size={17} />
-                </button>
-              </div>
-            </div>
-            <div className={styles.workspace}>
-              <PlanEditor
-                scenario={scenario}
-                setScenario={setScenario}
-                banks={catalog.banks}
-                chooseBanks={() => setTab('banks')}
-              />
-              {calculation.result ? (
-                <Results result={calculation.result} inspect={(r) => setInspected(r.bankId)} />
-              ) : (
-                <div className={styles.calculationError} role="alert">
-                  <CircleHelp size={25} />
-                  <h2>A detail needs your attention.</h2>
-                  <p>{calculation.error}</p>
-                  <p>
-                    Adjust your plan to see a valid comparison. If the bank IDs are missing, load
-                    the matching bank file or change the selection.
-                  </p>
-                  <button onClick={() => setTab('banks')}>Choose accounts</button>
-                </div>
-              )}
-            </div>
-          </>
-        )}
-        {tab === 'banks' && (
-          <div className={styles.bankPage}>
-            <div className={styles.pageHeading}>
-              <div>
-                <span className={styles.eyebrow}>REAL ACCOUNTS. VISIBLE SOURCES.</span>
-                <h1>The bank library.</h1>
-                <p>
-                  Checked {dateLabel(catalog.checkedOn)}. Every rate has a source. Every unknown
-                  stays visible.
-                </p>
-              </div>
-              <div className={styles.actions}>
-                <button onClick={() => bankFile.current?.click()}>
-                  <FileUp size={15} /> Import banks
-                </button>
-                <button onClick={() => download('banks.yaml', toYaml(catalog), 'application/yaml')}>
-                  <ArrowDownToLine size={15} /> Export banks
-                </button>
-                <button onClick={() => download('banks.xml', toXml(catalog), 'application/xml')}>
-                  Export bank XML
-                </button>
-              </div>
-            </div>
-            <div className={styles.libraryToolbar}>
-              <input
-                aria-label="Search banks"
-                placeholder="Search a bank or institution…"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-              <div className={styles.actions}>
-                {scenario ? (
-                  <>
-                    <button
-                      onClick={() =>
-                        setScenario({
-                          ...scenario,
-                          bankIds: catalog.banks.filter(isModeled).map((b) => b.id),
-                        })
-                      }
-                    >
-                      Select all modeled
-                    </button>
-                    <button className={styles.primary} onClick={() => setTab('compare')}>
-                      Compare {scenario.bankIds.length} accounts <ArrowRight size={15} />
-                    </button>
-                  </>
-                ) : (
-                  <button onClick={create}>Create a scenario to choose accounts</button>
-                )}
-              </div>
-            </div>
-            <p className={styles.libraryNote}>
-              Model verification covers the calculation scope. Open a profile for atomic sources,
-              transfer limits, insurance, reviews and its discovery log. Unknown fields remain
-              visible.
-            </p>
-            <div className={styles.bankGrid}>
-              {catalog.banks
-                .filter((b) =>
-                  `${b.name} ${b.institution}`.toLowerCase().includes(search.toLowerCase()),
-                )
-                .map((b) => (
-                  <article
-                    className={`${styles.bankCard} ${scenario?.bankIds.includes(b.id) ? styles.selectedBank : ''}`}
-                    key={b.id}
-                  >
-                    <div className={styles.bankCardTop}>
-                      <span className={styles.bankAvatar}>{initials(b.institution)}</span>
-                      <span className={isModeled(b) ? styles.verified : styles.review}>
-                        {isModeled(b) ? (
-                          <>
-                            <Check size={12} /> Verified model
-                          </>
-                        ) : b.verification === 'verified' ? (
-                          'Needs model'
-                        ) : (
-                          'Needs review'
-                        )}
-                      </span>
-                      {scenario && (
-                        <input
-                          type="checkbox"
-                          aria-label={`Compare ${b.name}`}
-                          checked={scenario.bankIds.includes(b.id)}
-                          onChange={() => toggleBank(b.id)}
-                        />
-                      )}
-                    </div>
-                    <button className={styles.bankTitle} onClick={() => setInspected(b.id)}>
-                      {b.name}
-                      <ArrowUpRight size={15} />
-                    </button>
-                    <div className={styles.bankRate}>
-                      <button
-                        className={styles.rateButton}
-                        onClick={() => setInspected(b.id)}
-                        title="Inspect savings rate evidence"
-                      >
-                        {rate(b)} <ArrowUpRight size={15} />
-                      </button>
-                      <span>
-                        {b.apy === null
-                          ? 'Current rate unresolved'
-                          : b.qualifiedApy !== undefined
-                            ? 'qualified savings APY · requirements apply'
-                            : b.model === 'whole-balance'
-                              ? 'highest regular tier · conditions apply'
-                              : 'regular savings APY · variable'}
-                      </span>
-                    </div>
-                    {b.profile?.facts.promotionalApy.status === 'verified' && (
-                      <p className={styles.bankPromo}>
-                        Intro up to {String(b.profile.facts.promotionalApy.value)}% · inspect caps &
-                        eligibility
-                      </p>
-                    )}
-                    <button className={styles.discoveryLink} onClick={() => setInspected(b.id)}>
-                      {b.profile?.discoveries.length ?? 0} discoveries · liquidity, coverage &
-                      sources <ArrowUpRight size={13} />
-                    </button>
-                    <div className={styles.bankCardBottom}>
-                      <span>Checked {b.checkedOn}</span>
-                      <a href={b.sourceUrl} target="_blank" rel="noreferrer">
-                        Official source <ArrowUpRight size={12} />
-                      </a>
-                    </div>
-                  </article>
-                ))}
-            </div>
-            {!catalog.banks.some((b) =>
-              `${b.name} ${b.institution}`.toLowerCase().includes(search.toLowerCase()),
-            ) && (
-              <p className={styles.emptySearch}>
-                No accounts match “{search}”. Try another bank name.
-              </p>
-            )}
-          </div>
-        )}
-        {tab === 'agents' && <AgentGuide />}
-      </main>
-      <footer className={styles.footer}>
-        <span>
-          <Leaf size={15} /> A little more from the money you already have.
-        </span>
-        <span>
-          Local calculations · No account connections ·{' '}
-          <a href={`${repo}/blob/main/docs/METHODOLOGY.md`}>Methodology</a>
-        </span>
-        <span>
-          Butter {VERSION} · Build {BUILD_DATE} · Schemas 3.0
-        </span>
-      </footer>
-      {inspected && (selectedBank || selectedResult) && (
-        <div className={styles.modalBackdrop} onClick={() => setInspected(null)}>
-          <section
-            className={styles.modal}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Account details"
-            onClick={(e) => e.stopPropagation()}
-            onKeyDown={(e) => {
-              if (e.key === 'Escape') setInspected(null);
-              if (e.key === 'Tab') {
-                const focusable = [
-                  ...e.currentTarget.querySelectorAll<HTMLElement>(
-                    'button, a[href], input, select, summary, [tabindex="0"]',
-                  ),
-                ].filter(
-                  (element) =>
-                    element.getClientRects().length > 0 && !element.hasAttribute('disabled'),
-                );
-                const first = focusable[0],
-                  last = focusable[focusable.length - 1];
-                if (e.shiftKey && document.activeElement === first) {
-                  e.preventDefault();
-                  last?.focus();
-                } else if (!e.shiftKey && document.activeElement === last) {
-                  e.preventDefault();
-                  first?.focus();
-                }
-              }
+        <header className={styles.header}>
+          <a
+            href="#"
+            className={styles.brand}
+            onClick={(e) => {
+              e.preventDefault();
+              setTab('compare');
             }}
           >
+            <span className={styles.logoMark}>b</span>butter
+            <span className={styles.brandCaption}>cash, with clarity.</span>
+          </a>
+          <nav aria-label="Main navigation">
             <button
-              autoFocus
-              className={styles.modalClose}
-              aria-label="Close account details"
-              onClick={() => setInspected(null)}
+              className={tab === 'compare' ? styles.activeNav : ''}
+              onClick={() => setTab('compare')}
             >
-              <X size={20} />
+              Compare
             </button>
-            <span className={styles.eyebrow}>THE DETAILS BEHIND THE DOLLARS</span>
-            <h2>{selectedBank?.name ?? selectedResult?.name}</h2>
-            {selectedBank && (
-              <>
-                <p className={styles.sourceDates}>
-                  Checked <strong>{selectedBank.checkedOn}</strong> · Rate effective{' '}
-                  <strong>{selectedBank.rateAsOf ?? 'not published'}</strong>
-                </p>
-                <p>{selectedBank.evidence}</p>
-                <a href={selectedBank.sourceUrl} target="_blank" rel="noreferrer">
-                  Read the official source <ArrowUpRight size={14} />
-                </a>
-                {selectedBank.additionalSources.map((url, i) => (
-                  <a
-                    className={styles.extraSource}
-                    key={url}
-                    href={url}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Supporting source {i + 1} <ArrowUpRight size={12} />
-                  </a>
-                ))}
-              </>
-            )}
-            {selectedResult?.status === 'eligible' && (
-              <>
-                <h3>The return breakdown</h3>
-                <dl className={styles.breakdown}>
-                  <dt>Interest</dt>
-                  <dd>{money(selectedResult.interest)}</dd>
-                  <dt>Bonuses</dt>
-                  <dd>{money(selectedResult.bonuses)}</dd>
-                  <dt>Fees</dt>
-                  <dd>−{money(selectedResult.fees)}</dd>
-                  <dt>Estimated tax</dt>
-                  <dd>−{money(selectedResult.estimatedTax)}</dd>
-                  <dt>
-                    <strong>Net earnings</strong>
-                  </dt>
-                  <dd>
-                    <strong>{money(selectedResult.netReturn)}</strong>
-                  </dd>
-                  <dt>Gain over baseline</dt>
-                  <dd>{money(selectedResult.incrementalGain)}</dd>
-                  <dt>Minimum liquid cash</dt>
-                  <dd>{money(selectedResult.minimumLiquid)}</dd>
-                  <dt>
-                    Focus-year interest ({scenario?.focusYear ?? scenario?.startDate.slice(0, 4)})
-                  </dt>
-                  <dd>{money(selectedResult.focusYearInterest)}</dd>
-                  <dt>Effective APY on earning balances</dt>
-                  <dd>
-                    {selectedResult.effectiveApy === null
-                      ? 'Unknown'
-                      : `${selectedResult.effectiveApy}%`}
-                  </dd>
-                  <dt>Yield lost to tier / promo caps</dt>
-                  <dd>{money(selectedResult.yieldLostToCaps)}</dd>
-                  <dt>Yield lost to qualification failures</dt>
-                  <dd>{money(selectedResult.yieldLostToQualification)}</dd>
-                </dl>
-              </>
-            )}
-            {selectedResult?.status === 'excluded' && (
-              <p className={styles.error}>{selectedResult.exclusionReason}</p>
-            )}
-            {!!(selectedResult?.warnings.length || selectedBank?.limitations.length) && (
-              <>
-                <h3>Assumptions & limitations</h3>
-                <ul>
-                  {(selectedResult?.warnings ?? selectedBank?.limitations ?? []).map((w, i) => (
-                    <li key={i}>{w}</li>
-                  ))}
-                </ul>
-              </>
-            )}
-            {!!selectedBank?.requirements.length && (
-              <>
-                <h3>Requirements</h3>
-                <ul>
-                  {selectedBank.requirements.map((t) => (
-                    <li key={t}>{t}</li>
-                  ))}
-                </ul>
-              </>
-            )}
-            {!!selectedResult?.tasks.length && (
-              <>
-                <h3>Before you act</h3>
-                <ul className={styles.tasks}>
-                  {selectedResult.tasks.map((t, i) => (
-                    <li key={i}>
-                      <span>{t.date}</span>
-                      {t.title}
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-            {selectedBank && (
-              <BankResearch
-                key={selectedBank.id}
-                bank={selectedBank}
-                scenario={scenario}
-                comparison={calculation.result}
-              />
-            )}
-          </section>
+            <button
+              className={tab === 'banks' ? styles.activeNav : ''}
+              onClick={() => setTab('banks')}
+            >
+              Bank library <span>{catalog.banks.length}</span>
+            </button>
+            <button
+              className={tab === 'agents' ? styles.activeNav : ''}
+              onClick={() => setTab('agents')}
+            >
+              <Code2 size={15} /> For AI agents
+            </button>
+          </nav>
+          <a href={repo} target="_blank" rel="noreferrer" className={styles.githubLink}>
+            <GitBranch size={18} />
+            <span>GitHub</span>
+            <ArrowUpRight size={13} />
+          </a>
+        </header>
+        <div className={styles.snapshot}>
+          <span>
+            <span className={styles.dot} /> Bank data checked{' '}
+            <strong>{dateLabel(catalog.checkedOn)}</strong>
+            <span className={styles.snapshotDivider}>/</span>
+            {catalog.banks.filter(isModeled).length} modeled · {catalog.banks.length} reviewed
+            <span className={styles.snapshotDivider}>/</span>
+            {freshness(catalog.checkedOn, today()).ageDays} days old ·{' '}
+            {freshness(catalog.checkedOn, today()).label}
+          </span>
+          <button className={styles.textButton} onClick={() => setTab('banks')}>
+            View sources <ArrowUpRight size={13} />
+          </button>
         </div>
-      )}
-    </div>
+        <input
+          ref={scenarioFile}
+          aria-label="Import scenario file"
+          type="file"
+          hidden
+          accept=".yaml,.yml,.json,.xml"
+          onChange={(e) => {
+            void importFile(e.target.files?.[0], 'scenario');
+            e.target.value = '';
+          }}
+        />
+        <input
+          ref={bankFile}
+          aria-label="Import bank file"
+          type="file"
+          hidden
+          accept=".yaml,.yml,.json,.xml"
+          onChange={(e) => {
+            void importFile(e.target.files?.[0], 'banks');
+            e.target.value = '';
+          }}
+        />
+        <main id="main" className={styles.main}>
+          <ResearchDisclaimer />
+          {freshness(catalog.checkedOn, today()).warning && (
+            <p role="alert" className={styles.winnerCautions}>
+              {freshness(catalog.checkedOn, today()).warning}
+            </p>
+          )}
+          {notice && (
+            <div role="status" className={styles.notice}>
+              <CheckCircle2 size={16} />
+              <span>{notice}</span>
+              <button
+                aria-label="Dismiss notice"
+                className={styles.iconButton}
+                onClick={() => setNotice('')}
+              >
+                <X size={15} />
+              </button>
+            </div>
+          )}
+          {error && (
+            <div role="alert" className={styles.error}>
+              {error}
+              <button onClick={() => setError('')}>Dismiss</button>
+            </div>
+          )}
+          {tab === 'compare' && !scenario && (
+            <EmptyState
+              load={loadExample}
+              create={create}
+              importFile={() => scenarioFile.current?.click()}
+            />
+          )}
+          {tab === 'compare' && scenario && (
+            <>
+              <div className={styles.pageHeading}>
+                <div>
+                  <span className={styles.eyebrow}>YOUR CASH, WORKING HARDER</span>
+                  <h1>Let’s find its best home.</h1>
+                  <p>Same money. Same life. A better-informed choice.</p>
+                </div>
+                <div className={styles.actions}>
+                  <button onClick={() => scenarioFile.current?.click()}>
+                    <FileUp size={15} /> Import
+                  </button>
+                  <button
+                    onClick={() =>
+                      download('my-scenario.yaml', toYaml(scenario), 'application/yaml')
+                    }
+                  >
+                    <ArrowDownToLine size={15} /> Save scenario
+                  </button>
+                  <button
+                    onClick={() => download('my-scenario.xml', toXml(scenario), 'application/xml')}
+                  >
+                    <ArrowDownToLine size={15} /> Save XML
+                  </button>
+                  <button
+                    className={styles.iconButton}
+                    aria-label="Clear scenario"
+                    title="Clear scenario"
+                    onClick={() => {
+                      setScenario(null);
+                      setNotice(
+                        'Scenario cleared. Save a scenario file before leaving if you want to keep your plan.',
+                      );
+                    }}
+                  >
+                    <Trash2 size={17} />
+                  </button>
+                </div>
+              </div>
+              <div className={styles.workspace}>
+                <PlanEditor
+                  scenario={scenario}
+                  setScenario={setScenario}
+                  banks={catalog.banks}
+                  chooseBanks={() => setTab('banks')}
+                />
+                {calculation.result ? (
+                  <Results result={calculation.result} inspect={(r) => setInspected(r.bankId)} />
+                ) : (
+                  <div className={styles.calculationError} role="alert">
+                    <CircleHelp size={25} />
+                    <h2>A detail needs your attention.</h2>
+                    <p>{calculation.error}</p>
+                    <p>
+                      Adjust your plan to see a valid comparison. If the bank IDs are missing, load
+                      the matching bank file or change the selection.
+                    </p>
+                    <button onClick={() => setTab('banks')}>Choose accounts</button>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+          {tab === 'banks' && (
+            <div className={styles.bankPage}>
+              <div className={styles.pageHeading}>
+                <div>
+                  <span className={styles.eyebrow}>REAL ACCOUNTS. VISIBLE SOURCES.</span>
+                  <h1>The bank library.</h1>
+                  <p>
+                    Checked {dateLabel(catalog.checkedOn)}. Every rate has a source. Every unknown
+                    stays visible.
+                  </p>
+                </div>
+                <div className={styles.actions}>
+                  <button onClick={() => bankFile.current?.click()}>
+                    <FileUp size={15} /> Import banks
+                  </button>
+                  <button
+                    onClick={() => download('banks.yaml', toYaml(catalog), 'application/yaml')}
+                  >
+                    <ArrowDownToLine size={15} /> Export banks
+                  </button>
+                  <button onClick={() => download('banks.xml', toXml(catalog), 'application/xml')}>
+                    Export bank XML
+                  </button>
+                </div>
+              </div>
+              <FeatureComparison catalog={catalog} inspect={setInspected} />
+              <div className={styles.libraryToolbar}>
+                <input
+                  aria-label="Search banks"
+                  placeholder="Search a bank or institution…"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+                <div className={styles.actions}>
+                  {scenario ? (
+                    <>
+                      <button
+                        onClick={() =>
+                          setScenario({
+                            ...scenario,
+                            bankIds: catalog.banks.filter(isModeled).map((b) => b.id),
+                          })
+                        }
+                      >
+                        Select all modeled
+                      </button>
+                      <button className={styles.primary} onClick={() => setTab('compare')}>
+                        Compare {scenario.bankIds.length} accounts <ArrowRight size={15} />
+                      </button>
+                    </>
+                  ) : (
+                    <button onClick={create}>Create a scenario to choose accounts</button>
+                  )}
+                </div>
+              </div>
+              <p className={styles.libraryNote}>
+                Model verification covers the calculation scope. Open a profile for atomic sources,
+                transfer limits, insurance, reviews and its discovery log. Unknown fields remain
+                visible.
+              </p>
+              <div className={styles.bankGrid}>
+                {catalog.banks
+                  .filter((b) =>
+                    `${b.name} ${b.institution}`.toLowerCase().includes(search.toLowerCase()),
+                  )
+                  .map((b) => (
+                    <article
+                      className={`${styles.bankCard} ${scenario?.bankIds.includes(b.id) ? styles.selectedBank : ''}`}
+                      key={b.id}
+                    >
+                      <div className={styles.bankCardTop}>
+                        <span className={styles.bankAvatar}>{initials(b.institution)}</span>
+                        <span className={isModeled(b) ? styles.verified : styles.review}>
+                          {isModeled(b) ? (
+                            <>
+                              <Check size={12} /> Verified model
+                            </>
+                          ) : b.verification === 'verified' ? (
+                            'Needs model'
+                          ) : (
+                            'Needs review'
+                          )}
+                        </span>
+                        {scenario && (
+                          <input
+                            type="checkbox"
+                            aria-label={`Compare ${b.name}`}
+                            checked={scenario.bankIds.includes(b.id)}
+                            onChange={() => toggleBank(b.id)}
+                          />
+                        )}
+                      </div>
+                      <button className={styles.bankTitle} onClick={() => setInspected(b.id)}>
+                        {b.name}
+                        <ArrowUpRight size={15} />
+                      </button>
+                      <div className={styles.bankRate}>
+                        <button
+                          className={styles.rateButton}
+                          onClick={() => setInspected(b.id)}
+                          title="Inspect savings rate evidence"
+                        >
+                          {rate(b)} <ArrowUpRight size={15} />
+                        </button>
+                        <span>
+                          {b.apy === null
+                            ? 'Current rate unresolved'
+                            : b.qualifiedApy !== undefined
+                              ? 'qualified savings APY · requirements apply'
+                              : b.model === 'whole-balance'
+                                ? 'highest regular tier · conditions apply'
+                                : 'regular savings APY · variable'}
+                        </span>
+                      </div>
+                      {b.profile?.facts.promotionalApy.status === 'verified' && (
+                        <p className={styles.bankPromo}>
+                          Intro up to {String(b.profile.facts.promotionalApy.value)}% · inspect caps
+                          & eligibility
+                        </p>
+                      )}
+                      <button className={styles.discoveryLink} onClick={() => setInspected(b.id)}>
+                        {b.profile?.discoveries.length ?? 0} discoveries · liquidity, coverage &
+                        sources <ArrowUpRight size={13} />
+                      </button>
+                      <div className={styles.bankCardBottom}>
+                        <span>Checked {b.checkedOn}</span>
+                        <a href={b.sourceUrl} target="_blank" rel="noreferrer">
+                          Official source <ArrowUpRight size={12} />
+                        </a>
+                      </div>
+                    </article>
+                  ))}
+              </div>
+              {!catalog.banks.some((b) =>
+                `${b.name} ${b.institution}`.toLowerCase().includes(search.toLowerCase()),
+              ) && (
+                <p className={styles.emptySearch}>
+                  No accounts match “{search}”. Try another bank name.
+                </p>
+              )}
+            </div>
+          )}
+          {tab === 'agents' && <AgentGuide />}
+        </main>
+        <footer className={styles.footer}>
+          <span>
+            <Leaf size={15} /> A little more from the money you already have.
+          </span>
+          <span>
+            Local calculations · No account connections ·{' '}
+            <a href={`${repo}/blob/main/docs/METHODOLOGY.md`}>Methodology</a>
+          </span>
+          <span>
+            Butter {VERSION} · Build {BUILD_DATE} · Schemas 3.1
+          </span>
+        </footer>
+        {inspected && (selectedBank || selectedResult) && (
+          <div className={styles.modalBackdrop} onClick={() => setInspected(null)}>
+            <section
+              className={styles.modal}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Account details"
+              onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') setInspected(null);
+                if (e.key === 'Tab') {
+                  const focusable = [
+                    ...e.currentTarget.querySelectorAll<HTMLElement>(
+                      'button, a[href], input, select, summary, [tabindex="0"]',
+                    ),
+                  ].filter(
+                    (element) =>
+                      element.getClientRects().length > 0 && !element.hasAttribute('disabled'),
+                  );
+                  const first = focusable[0],
+                    last = focusable[focusable.length - 1];
+                  if (e.shiftKey && document.activeElement === first) {
+                    e.preventDefault();
+                    last?.focus();
+                  } else if (!e.shiftKey && document.activeElement === last) {
+                    e.preventDefault();
+                    first?.focus();
+                  }
+                }
+              }}
+            >
+              <button
+                autoFocus
+                className={styles.modalClose}
+                aria-label="Close account details"
+                onClick={() => setInspected(null)}
+              >
+                <X size={20} />
+              </button>
+              <span className={styles.eyebrow}>THE DETAILS BEHIND THE DOLLARS</span>
+              <h2>{selectedBank?.name ?? selectedResult?.name}</h2>
+              {selectedBank && (
+                <>
+                  <p className={styles.sourceDates}>
+                    Checked <strong>{selectedBank.checkedOn}</strong> · Rate effective{' '}
+                    <strong>{selectedBank.rateAsOf ?? 'not published'}</strong>
+                  </p>
+                  <p>{selectedBank.evidence}</p>
+                  <a href={selectedBank.sourceUrl} target="_blank" rel="noreferrer">
+                    Read the official source <ArrowUpRight size={14} />
+                  </a>
+                  {selectedBank.additionalSources.map((url, i) => (
+                    <a
+                      className={styles.extraSource}
+                      key={url}
+                      href={url}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Supporting source {i + 1} <ArrowUpRight size={12} />
+                    </a>
+                  ))}
+                </>
+              )}
+              {selectedResult?.status === 'eligible' && (
+                <>
+                  <h3>The return breakdown</h3>
+                  <dl className={styles.breakdown}>
+                    <dt>Interest</dt>
+                    <dd>{money(selectedResult.interest)}</dd>
+                    <dt>Bonuses</dt>
+                    <dd>{money(selectedResult.bonuses)}</dd>
+                    <dt>Fees</dt>
+                    <dd>−{money(selectedResult.fees)}</dd>
+                    <dt>Estimated tax</dt>
+                    <dd>−{money(selectedResult.estimatedTax)}</dd>
+                    <dt>
+                      <strong>Net earnings</strong>
+                    </dt>
+                    <dd>
+                      <strong>{money(selectedResult.netReturn)}</strong>
+                    </dd>
+                    <dt>Gain over baseline</dt>
+                    <dd>{money(selectedResult.incrementalGain)}</dd>
+                    <dt>Minimum liquid cash</dt>
+                    <dd>{money(selectedResult.minimumLiquid)}</dd>
+                    <dt>
+                      Focus-year interest ({scenario?.focusYear ?? scenario?.startDate.slice(0, 4)})
+                    </dt>
+                    <dd>{money(selectedResult.focusYearInterest)}</dd>
+                    <dt>Effective APY on earning balances</dt>
+                    <dd>
+                      {selectedResult.effectiveApy === null
+                        ? 'Unknown'
+                        : `${selectedResult.effectiveApy}%`}
+                    </dd>
+                    <dt>Yield lost to tier / promo caps</dt>
+                    <dd>{money(selectedResult.yieldLostToCaps)}</dd>
+                    <dt>Yield lost to qualification failures</dt>
+                    <dd>{money(selectedResult.yieldLostToQualification)}</dd>
+                  </dl>
+                </>
+              )}
+              {selectedResult?.status === 'excluded' && (
+                <p className={styles.error}>{selectedResult.exclusionReason}</p>
+              )}
+              {!!(selectedResult?.warnings.length || selectedBank?.limitations.length) && (
+                <>
+                  <h3>Assumptions & limitations</h3>
+                  <ul>
+                    {(selectedResult?.warnings ?? selectedBank?.limitations ?? []).map((w, i) => (
+                      <li key={i}>{w}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
+              {!!selectedBank?.requirements.length && (
+                <>
+                  <h3>Requirements</h3>
+                  <ul>
+                    {selectedBank.requirements.map((t) => (
+                      <li key={t}>{t}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
+              {!!selectedResult?.tasks.length && (
+                <>
+                  <h3>Before you act</h3>
+                  <ul className={styles.tasks}>
+                    {selectedResult.tasks.map((t, i) => (
+                      <li key={i}>
+                        <span>{t.date}</span>
+                        {t.title}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+              {selectedBank && (
+                <BankResearch
+                  key={selectedBank.id}
+                  bank={selectedBank}
+                  scenario={scenario}
+                  comparison={calculation.result}
+                />
+              )}
+            </section>
+          </div>
+        )}
+      </div>
+    </VerificationProvider>
   );
 }
