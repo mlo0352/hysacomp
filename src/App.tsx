@@ -1540,7 +1540,7 @@ export default function App() {
                                 : 'regular savings APY · variable'}
                         </span>
                       </div>
-                      {b.profile?.facts.promotionalApy.status === 'verified' && (
+                      {b.profile?.facts.promotionalApy?.status === 'verified' && (
                         <p className={styles.bankPromo}>
                           Intro up to {String(b.profile.facts.promotionalApy.value)}% · inspect caps
                           & eligibility

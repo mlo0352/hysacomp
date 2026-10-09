@@ -97,6 +97,8 @@ test('personal verification can be saved, exported, imported, and flagged when i
   const catalog = readCatalog(readFileSync('data/banks-2026-10-09-v3.1.yaml', 'utf8'));
   catalog.banks.find((b) => b.id === 'ally')!.profile!.features[0].conditions +=
     ' Updated condition.';
+  // An imported profile may have feature evidence without every optional atomic fact.
+  delete catalog.banks.find((b) => b.id === 'openbank')!.profile!.facts.promotionalApy;
   await page
     .getByLabel('Import bank file')
     .setInputFiles({
