@@ -111,6 +111,7 @@ export function verificationTarget(bank: Bank, target: string): unknown {
   if (kind === 'claim') return featureFor(bank, key).claims.find((c) => c.id === claimId);
   if (kind === 'discovery') return bank.profile?.discoveries.find((d) => d.id === key);
   if (kind === 'review') return bank.profile?.reviews.find((r) => r.id === key);
+  if (kind === 'customer-review') return bank.profile?.customerReviews.find((r) => r.id === key);
   if (kind === 'conflict') return bank.profile?.conflicts.find((c) => c.key === key);
   if (kind === 'history') return bank.profile?.rateHistory[Number(key)];
   if (kind === 'log') return bank.profile?.researchLog[Number(key)];

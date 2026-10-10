@@ -14,8 +14,8 @@ import {
 import { compare } from '../lib/engine';
 import { auditCatalog } from '../lib/audit';
 
-const catalog = readCatalog(readFileSync('data/banks-2026-10-09-v3.1.yaml', 'utf8'));
-const example = readScenario(readFileSync('examples/working-person-v3.1.yaml', 'utf8'));
+const catalog = readCatalog(readFileSync('data/banks-2026-10-09-v3.2.yaml', 'utf8'));
+const example = readScenario(readFileSync('examples/working-person-v3.2.yaml', 'utf8'));
 const profile = (values: Record<string, Fact['value']> = {}): Profile =>
   ProfileSchema.parse({
     researchedAt: '2026-10-09',
@@ -41,7 +41,7 @@ const profile = (values: Record<string, Fact['value']> = {}): Profile =>
 test('modern XML round trips every bank fact, source, review, conflict and scenario input', () => {
   assert.deepEqual(readCatalog(toXml(catalog)), catalog);
   assert.deepEqual(
-    readCatalog(readFileSync('data/banks_verified_2026-10-09_tool-v3.1.0.xml', 'utf8')),
+    readCatalog(readFileSync('data/banks_verified_2026-10-09_tool-v3.2.0.xml', 'utf8')),
     catalog,
   );
   const s = structuredClone(example);
@@ -53,8 +53,8 @@ test('modern XML round trips every bank fact, source, review, conflict and scena
 test('XML rejects incompatible versions, duplicate fields, hostile markup and metadata mismatch', () => {
   const xml = toXml(example);
   for (const bad of [
-    xml.replace('toolVersion="3.1.0"', 'toolVersion="9.0.0"'),
-    xml.replace('schemaVersion="3.1"', 'schemaVersion="4.0"'),
+    xml.replace('toolVersion="3.2.0"', 'toolVersion="9.0.0"'),
+    xml.replace('schemaVersion="3.2"', 'schemaVersion="4.0"'),
     xml.replace(
       '<scenario type="object">',
       '<scenario type="object"><id type="string">duplicate</id>',

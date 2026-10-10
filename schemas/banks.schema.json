@@ -4,12 +4,12 @@
   "properties": {
     "schemaVersion": {
       "type": "string",
-      "const": "3.1"
+      "const": "3.2"
     },
     "toolVersion": {
-      "default": "3.1.0",
+      "default": "3.2.0",
       "type": "string",
-      "const": "3.1.0"
+      "const": "3.2.0"
     },
     "id": {
       "type": "string",
@@ -621,6 +621,246 @@
                   "additionalProperties": false
                 }
               },
+              "customerReviews": {
+                "default": [],
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "pattern": "^[a-z0-9_-]+$"
+                    },
+                    "platform": {
+                      "type": "string",
+                      "enum": [
+                        "reddit",
+                        "yelp",
+                        "trustpilot",
+                        "app-store",
+                        "forum",
+                        "other"
+                      ]
+                    },
+                    "author": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 150
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "permalink": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "threadUrl": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uri"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "sourceIds": {
+                      "minItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "publishedOn": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "dateText": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 250
+                    },
+                    "accessedAt": {
+                      "type": "string",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    },
+                    "experienceOn": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "product": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 250
+                    },
+                    "scope": {
+                      "type": "string",
+                      "enum": [
+                        "product",
+                        "linked-product",
+                        "institution",
+                        "unclear"
+                      ]
+                    },
+                    "sentiment": {
+                      "type": "string",
+                      "enum": [
+                        "positive",
+                        "mixed",
+                        "negative",
+                        "neutral"
+                      ]
+                    },
+                    "topics": {
+                      "minItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "access",
+                          "transfers",
+                          "holds",
+                          "support",
+                          "app",
+                          "onboarding",
+                          "rates-fees",
+                          "closure",
+                          "security",
+                          "features"
+                        ]
+                      }
+                    },
+                    "excerpt": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 1600
+                    },
+                    "summary": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 1600
+                    },
+                    "context": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 1600
+                    },
+                    "evidence": {
+                      "type": "string",
+                      "enum": [
+                        "firsthand",
+                        "secondhand",
+                        "unclear"
+                      ]
+                    },
+                    "status": {
+                      "type": "string",
+                      "const": "reported"
+                    },
+                    "rating": {
+                      "anyOf": [
+                        {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 5
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "resolution": {
+                      "type": "string",
+                      "enum": [
+                        "reported-resolved",
+                        "reported-unresolved",
+                        "unknown"
+                      ]
+                    },
+                    "manualCheck": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 1600
+                    },
+                    "officialContext": {
+                      "type": "object",
+                      "properties": {
+                        "assessment": {
+                          "type": "string",
+                          "enum": [
+                            "not-checked",
+                            "no-published-rule",
+                            "related-policy",
+                            "conflicting-policy"
+                          ]
+                        },
+                        "notes": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 1600
+                        },
+                        "sourceIds": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": [
+                        "assessment",
+                        "notes",
+                        "sourceIds"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "platform",
+                    "author",
+                    "permalink",
+                    "threadUrl",
+                    "sourceIds",
+                    "publishedOn",
+                    "dateText",
+                    "accessedAt",
+                    "experienceOn",
+                    "product",
+                    "scope",
+                    "sentiment",
+                    "topics",
+                    "excerpt",
+                    "summary",
+                    "context",
+                    "evidence",
+                    "status",
+                    "rating",
+                    "resolution",
+                    "manualCheck",
+                    "officialContext"
+                  ],
+                  "additionalProperties": false
+                }
+              },
               "conflicts": {
                 "default": [],
                 "type": "array",
@@ -1037,6 +1277,6 @@
   ],
   "additionalProperties": false,
   "$id": "https://mlo0352.github.io/hysacomp/schemas/banks.schema.json",
-  "title": "Butter banks schema 3.1",
+  "title": "Butter banks schema 3.2",
   "description": "Also run CLI validate for semantic date, uniqueness, eligibility and cross-file checks."
 }

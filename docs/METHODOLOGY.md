@@ -130,3 +130,11 @@ diagnostics, not compounded alternate-strategy returns, and are not added to ear
 Freshness is evaluated against the real UTC date or explicit `--as-of`, independent of
 scenario dates: 0–7 Fresh, 8–30 Recent, 31–90 Aging, >90 Stale; future-dated inputs warn.
 Sources retain their own access/effective dates. Local audit does not reverify websites.
+
+## Individual comments
+
+Review sentiment is a curator's label for the selected comment, never a calculated safety
+score or population estimate. Mixed reports preserve both sides. Duplicate permalinks are
+rejected; counts of distinct public handles do not authenticate distinct people. A reported
+transfer cap does not enter exit calculations until independently established as a sourced
+bank rule. Existing aggregate platform listings and individual comments remain separate.

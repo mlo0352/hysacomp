@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { FeatureSchema } from './feature-model';
+import { CustomerReviewSchema, reviewIdentity } from './review-model';
 
 const day = z
   .string()
@@ -61,6 +62,7 @@ export const ProfileSchema = z
     facts: z.record(z.string(), FactSchema),
     sources: z.array(SourceSchema),
     features: z.array(FeatureSchema).default([]),
+    customerReviews: z.array(CustomerReviewSchema).default([]),
     conflicts: z
       .array(
         z
@@ -165,6 +167,8 @@ export const ProfileSchema = z
       ...p.researchLog,
       ...p.rateHistory,
       ...p.reviews,
+      ...p.customerReviews,
+      ...p.customerReviews.map((r) => r.officialContext),
       ...p.themes,
       ...p.features,
       ...p.features.flatMap((f) => f.claims),
@@ -172,6 +176,40 @@ export const ProfileSchema = z
     for (const r of records)
       for (const id of r.sourceIds)
         if (!ids.has(id)) ctx.addIssue({ code: 'custom', message: `Missing source ${id}` });
+    if (
+      new Set(p.customerReviews.map((r) => r.id)).size !== p.customerReviews.length ||
+      new Set(p.customerReviews.map((r) => reviewIdentity(r.permalink))).size !==
+        p.customerReviews.length
+    )
+      ctx.addIssue({ code: 'custom', message: 'Duplicate customer review ID or permalink.' });
+    for (const r of p.customerReviews) {
+      if (r.accessedAt > p.researchedAt)
+        ctx.addIssue({ code: 'custom', message: 'Review access date exceeds researchedAt.' });
+      if (
+        !r.sourceIds.some((id) =>
+          p.sources.some(
+            (s) =>
+              s.id === id &&
+              ['review', 'community', 'app-store'].includes(s.type) &&
+              s.accessedAt === r.accessedAt,
+          ),
+        )
+      )
+        ctx.addIssue({
+          code: 'custom',
+          message: 'Customer reviews need a dated review/community source.',
+        });
+      if (
+        r.officialContext.assessment !== 'not-checked' &&
+        !r.officialContext.sourceIds.some((id) =>
+          p.sources.some((s) => s.id === id && ['official', 'regulator'].includes(s.type)),
+        )
+      )
+        ctx.addIssue({
+          code: 'custom',
+          message: 'Review policy context requires first-party evidence.',
+        });
+    }
     for (const [key, f] of Object.entries(p.facts)) {
       if (
         f.status === 'verified' &&

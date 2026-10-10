@@ -32,7 +32,7 @@ const bank = (changes: Partial<Bank> = {}) =>
   });
 const scenario = (changes: Partial<Scenario> = {}) =>
   ScenarioSchema.parse({
-    schemaVersion: '3.1',
+    schemaVersion: '3.2',
     id: 'test-plan',
     name: 'Test plan',
     createdAt: '2026-01-01',
@@ -49,7 +49,7 @@ const scenario = (changes: Partial<Scenario> = {}) =>
   });
 const catalog = (...banks: Bank[]) =>
   CatalogSchema.parse({
-    schemaVersion: '3.1',
+    schemaVersion: '3.2',
     id: 'fixture',
     checkedOn: '2026-01-01',
     currency: 'USD',

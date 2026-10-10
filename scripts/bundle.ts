@@ -50,10 +50,11 @@ const paths = [
   'schemas/fact-inventory.json',
   'schemas/verifications.schema.json',
   'docs/FEATURE_RESEARCH.md',
+  'docs/REVIEW_RESEARCH.md',
   `data/banks_verified_${BUILD_DATE}_tool-v${VERSION}.xml`,
-  `data/banks-${BUILD_DATE}-v3.1.yaml`,
+  `data/banks-${BUILD_DATE}-v3.2.yaml`,
   `examples/scenario_example_${BUILD_DATE}_tool-v${VERSION}.xml`,
-  'examples/working-person-v3.1.yaml',
+  'examples/working-person-v3.2.yaml',
 ];
 const files: Zippable = { [`${name}.html`]: html };
 const hashes: Record<string, string> = {};

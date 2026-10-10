@@ -9,8 +9,8 @@ await writeFile(
   'schemas/fact-inventory.json',
   JSON.stringify(
     {
-      toolVersion: '3.1.0',
-      schemaVersion: '3.1',
+      toolVersion: '3.2.0',
+      schemaVersion: '3.2',
       groups: FACT_GROUPS,
       featureGroups: FEATURE_GROUPS,
     },
@@ -30,7 +30,7 @@ for (const [name, schema] of [
       {
         ...json,
         $id: `https://mlo0352.github.io/hysacomp/schemas/${name}.schema.json`,
-        title: `Butter ${name} schema ${name === 'verifications' ? '1.0' : '3.1'}`,
+        title: `Butter ${name} schema ${name === 'verifications' ? '1.0' : '3.2'}`,
         description:
           name === 'verifications'
             ? 'Personal notes only. Use CLI verifications with a bank file to check evidence state.'

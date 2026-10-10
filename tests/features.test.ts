@@ -12,7 +12,7 @@ import {
 } from '../lib/verification';
 import { compare } from '../lib/engine';
 
-const catalog = readCatalog(readFileSync('data/banks-2026-10-09-v3.1.yaml', 'utf8'));
+const catalog = readCatalog(readFileSync('data/banks-2026-10-09-v3.2.yaml', 'utf8'));
 const bank = (id: string) => catalog.banks.find((b) => b.id === id)!;
 test('feature evidence distinguishes product availability from linked checking and secondary assertions', () => {
   const wire = featureFor(bank('ally'), 'internationalWireOut');
@@ -64,8 +64,8 @@ test('every bank has the complete checklist with explicit unknowns and an action
 });
 test('old schema imports preserve numerical comparisons and explicit feature evidence survives XML/YAML', () => {
   const old = readCatalog(readFileSync('data/banks-2026-10-09-v3-r2.yaml', 'utf8'));
-  assert.equal(old.schemaVersion, '3.1');
-  assert.match(old.policy, /3.0-to-3.1/);
+  assert.equal(old.schemaVersion, '3.2');
+  assert.match(old.policy, /3.0-to-3.2/);
   const oldXml = readCatalog(
     readFileSync('data/banks_verified_2026-10-09_tool-v3.0.0-r2.xml', 'utf8'),
   );

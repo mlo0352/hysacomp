@@ -8,9 +8,9 @@ and [tool-manifest.json](tool-manifest.json). Requires Node 22.12+.
 
 ```sh
 npm ci
-npx tsx cli.ts validate --scenario examples/working-person-v3.1.yaml --banks data/banks-2026-10-09-v3.1.yaml
-npx tsx cli.ts compare --scenario examples/working-person-v3.1.yaml --banks data/banks-2026-10-09-v3.1.yaml --as-of 2026-10-09 --output outputs/comparison.json --graph outputs/comparison.svg
-npx tsx cli.ts audit --banks data/banks-2026-10-09-v3.1.yaml
+npx tsx cli.ts validate --scenario examples/working-person-v3.2.yaml --banks data/banks-2026-10-09-v3.2.yaml
+npx tsx cli.ts compare --scenario examples/working-person-v3.2.yaml --banks data/banks-2026-10-09-v3.2.yaml --as-of 2026-10-09 --output outputs/comparison.json --graph outputs/comparison.svg
+npx tsx cli.ts audit --banks data/banks-2026-10-09-v3.2.yaml
 ```
 
 CLI stdout is JSON by default. Errors are JSON on stderr. Exit 0 = success,
@@ -63,3 +63,11 @@ Read docs/FEATURE_RESEARCH.md. Keep secondary claims separate from official feat
 retain exact product scope and conditions, and export a research queue. Personal checks
 are local assertions bound to their evidence snapshot; they never upgrade source verification
 or change the earnings winner. Keep the visible research disclaimer and notebook export.
+
+## Customer comments (3.2)
+
+Read docs/REVIEW_RESEARCH.md. Keep individual comments in profile.customerReviews;
+aggregate listings remain profile.reviews. Use direct permalinks, attributed short quotes,
+exact or explicitly unknown posting dates, product scope, balanced context and manual checks.
+Reviews are always reported, never verified bank terms. Deduplicate URLs and public handles;
+do not infer prevalence or safety from the curated sample. Run reviews --banks PATH for JSON.

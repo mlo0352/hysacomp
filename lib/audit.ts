@@ -3,6 +3,7 @@ import { date, VERSION } from './schema';
 import { FACT_LABELS, fact } from './profile';
 import { freshness } from './analysis';
 import { featureReport } from './features';
+import { reviewReport } from './reviews';
 
 export function auditCatalog(
   catalog: Catalog,
@@ -11,12 +12,13 @@ export function auditCatalog(
   date.parse(evaluatedOn);
   return {
     toolVersion: VERSION,
-    schemaVersion: '3.1',
+    schemaVersion: '3.2',
     catalogId: catalog.id,
     evaluatedOn,
     scope: 'Local evidence audit only. This command does not reopen URLs or certify bank terms.',
     freshness: freshness(catalog.checkedOn, evaluatedOn),
     features: featureReport(catalog),
+    customerReviews: reviewReport(catalog),
     banks: catalog.banks.map((b: Bank) => {
       const p = b.profile;
       const inputs: Record<string, unknown> = {

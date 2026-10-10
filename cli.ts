@@ -7,6 +7,7 @@ import { compare } from './lib/engine';
 import { readScenario, readCatalog, readableError, toXml } from './lib/files';
 import { auditCatalog } from './lib/audit';
 import { featureReport } from './lib/features';
+import { reviewReport } from './lib/reviews';
 import { readVerifications, verificationReport } from './lib/verification';
 import { toCsv, toSvg } from './lib/export';
 import { VERSION } from './lib/schema';
@@ -14,14 +15,15 @@ import { VERSION } from './lib/schema';
 const help = `Butter ${VERSION} — deterministic cash comparisons for people and agents
 
 Usage:
-  npm run cli -- compare --scenario examples/working-person-v3.1.yaml --banks data/banks-2026-10-09-v3.1.yaml
+  npm run cli -- compare --scenario examples/working-person-v3.2.yaml --banks data/banks-2026-10-09-v3.2.yaml
   npm run cli -- compare --scenario plan.yaml --banks banks.yaml --format csv --output outputs/comparison.csv --graph outputs/comparison.svg
   npm run cli -- validate --scenario plan.yaml --banks banks.yaml
-  npm run cli -- audit --banks data/banks-2026-10-09-v3.1.yaml --as-of 2026-10-09
-  npm run cli -- banks --banks data/banks-2026-10-09-v3.1.yaml --format xml --output outputs/banks.xml
+  npm run cli -- audit --banks data/banks-2026-10-09-v3.2.yaml --as-of 2026-10-09
+  npm run cli -- reviews --banks data/banks-2026-10-09-v3.2.yaml --output outputs/reviews.json
+  npm run cli -- banks --banks data/banks-2026-10-09-v3.2.yaml --format xml --output outputs/banks.xml
   npm run cli -- scenario --scenario plan.yaml --format xml --output outputs/scenario.xml
 
-Commands: compare (default), validate, audit, discoveries, features, verifications, banks, scenario
+Commands: compare (default), validate, audit, discoveries, features, reviews, verifications, banks, scenario
 Options:
   --scenario PATH   Required for compare/validate/scenario. YAML, JSON or versioned XML.
   --banks PATH      Required except for scenario. YAML, JSON or versioned XML.
@@ -76,6 +78,7 @@ async function main() {
       'audit',
       'discoveries',
       'features',
+      'reviews',
       'verifications',
     ].includes(command)
   )
@@ -115,6 +118,7 @@ async function main() {
   else if (command === 'audit' || command === 'discoveries')
     output = JSON.stringify(auditCatalog(catalog, v['as-of']), null, 2);
   else if (command === 'features') output = JSON.stringify(featureReport(catalog), null, 2);
+  else if (command === 'reviews') output = JSON.stringify(reviewReport(catalog), null, 2);
   else if (command === 'verifications') {
     if (!v.checks) throw new Error('--checks is required for verifications');
     const checks = readVerifications(await readFile(v.checks, 'utf8'));

@@ -1,7 +1,7 @@
 {
   "name": "butter_cash_comparison",
-  "version": "3.1.0",
-  "schemaVersion": "3.1",
+  "version": "3.2.0",
+  "schemaVersion": "3.2",
   "buildDate": "2026-10-09",
   "description": "Compare cash accounts against a baseline using dated bank terms and posted cash flows. Local process tool; no network or bank access.",
   "repository": "https://github.com/mlo0352/hysacomp",
@@ -81,9 +81,10 @@
     "banks",
     "scenario",
     "features",
-    "verifications"
+    "verifications",
+    "reviews"
   ],
-  "xml": "banks/scenario --format xml serializes validated YAML/JSON/XML into schema 3.1 XML",
+  "xml": "banks/scenario --format xml serializes validated YAML/JSON/XML into schema 3.2 XML",
   "audit": "Local evidence/unknown/conflict audit; does not reopen URLs or certify terms",
   "provenance": "CLI includes SHA-256 hashes of both exact input files.",
   "sideEffects": "Only requested local output files and their parent directories are written.",
@@ -103,5 +104,19 @@
     ],
     "schema": "schemas/verifications.schema.json",
     "effect": "Inspect personal checks and evidence changes; no mutation of bank data or rankings"
+  },
+  "reviews": {
+    "command": [
+      "node",
+      "--import",
+      "tsx",
+      "cli.ts",
+      "reviews"
+    ],
+    "arguments": [
+      "--banks PATH",
+      "--output PATH (optional)"
+    ],
+    "description": "Local attributed customer reports, source context, curation coverage and manual checks; no scenario or network required. Not a bank safety score."
   }
 }

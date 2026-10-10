@@ -32,7 +32,7 @@ function legacyScenario(root: any): Scenario {
   const sim = root.simulation;
   if (!sim) throw new Error('Missing XML simulation');
   return ScenarioSchema.parse({
-    schemaVersion: '3.1',
+    schemaVersion: '3.2',
     id: root.id || 'imported-scenario',
     name: root.name || 'Imported scenario',
     createdAt: root.createdAt,
@@ -93,7 +93,7 @@ function legacyCatalog(root: any): Catalog {
   if (root.schemaVersion !== '2.1' || !String(root.toolVersion).startsWith('1.'))
     throw new Error('Unsupported legacy bank XML version.');
   return CatalogSchema.parse({
-    schemaVersion: '3.1',
+    schemaVersion: '3.2',
     id: 'legacy-xml-snapshot',
     checkedOn: root.dataAsOf,
     currency: root.currency,
@@ -145,18 +145,17 @@ export function parseFile(text: string): unknown {
   return parseYaml(trimmed, { uniqueKeys: true, maxAliasCount: 0 });
 }
 function migrateV2(raw: any, kind: 'scenario' | 'banks') {
-  if (raw?.schemaVersion === '3.0') {
-    if (raw.toolVersion && !String(raw.toolVersion).startsWith('3.0.'))
-      throw new Error('Incompatible tool version for schema 3.0');
-    const value = { ...raw, schemaVersion: '3.1', toolVersion: VERSION };
-    const note =
-      'Explicit 3.0-to-3.1 import: feature checklist added; existing research dates and calculation rules retained. No new online verification.';
+  if (['3.0', '3.1'].includes(raw?.schemaVersion)) {
+    if (raw.toolVersion && !String(raw.toolVersion).startsWith(`${raw.schemaVersion}.`))
+      throw new Error(`Incompatible tool version for schema ${raw.schemaVersion}`);
+    const value = { ...raw, schemaVersion: '3.2', toolVersion: VERSION };
+    const note = `Explicit ${raw.schemaVersion}-to-3.2 import: feature checklist and individual customer reviews supported; existing research dates and calculation rules retained. No new online verification.`;
     if (kind === 'scenario') value.notes = [...(raw.notes ?? []), note];
     else value.policy = [raw.policy, note].filter(Boolean).join(' ');
     return value;
   }
   if (raw?.schemaVersion !== '2.0') return raw;
-  const value = { ...raw, schemaVersion: '3.1', toolVersion: VERSION };
+  const value = { ...raw, schemaVersion: '3.2', toolVersion: VERSION };
   if (kind === 'scenario') {
     value.dataAsOf = raw.createdAt;
     value.notes = [
@@ -297,10 +296,10 @@ function decode(node: any, name: string, depth = 0): any {
 function modernXml(root: any, kind: 'scenario' | 'banks') {
   if (
     !String(root['@_toolVersion']).startsWith('3.') ||
-    !['3.0', '3.1'].includes(root['@_schemaVersion'])
+    !['3.0', '3.1', '3.2'].includes(root['@_schemaVersion'])
   )
     throw new Error(
-      `Incompatible XML: tool ${root['@_toolVersion']}, schema ${root['@_schemaVersion']}. Butter ${VERSION} accepts tool major 3 and schemas 3.0/3.1. Explicit legacy v1 migrations are separate.`,
+      `Incompatible XML: tool ${root['@_toolVersion']}, schema ${root['@_schemaVersion']}. Butter ${VERSION} accepts tool major 3 and schemas 3.0/3.1/3.2. Explicit legacy v1 migrations are separate.`,
     );
   const payload = root[kind === 'scenario' ? 'scenario' : 'catalog'];
   if (
@@ -329,7 +328,7 @@ export function toXml(input: Scenario | Catalog) {
   const value = isCatalog ? CatalogSchema.parse(input) : ScenarioSchema.parse(input);
   const root = isCatalog ? 'hysaRules' : 'hysaScenario';
   const dataAsOf = 'checkedOn' in value ? value.checkedOn : (value.dataAsOf ?? value.createdAt);
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<${root} toolVersion="${VERSION}" schemaVersion="3.1" dataAsOf="${dataAsOf}">\n${encode(isCatalog ? 'catalog' : 'scenario', value)}</${root}>\n`;
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<${root} toolVersion="${VERSION}" schemaVersion="3.2" dataAsOf="${dataAsOf}">\n${encode(isCatalog ? 'catalog' : 'scenario', value)}</${root}>\n`;
 }
 export const toYaml = (value: unknown) => stringifyYaml(value, { lineWidth: 100 });
 export function readableError(error: unknown) {

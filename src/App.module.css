@@ -1,6 +1,177 @@
 :global(*) {
   box-sizing: border-box;
 }
+.reviewIntro {
+  padding: 22px 24px;
+  border: 1px solid #d9dfcf;
+  border-radius: 12px;
+  background: #eef2e4;
+  margin: 24px 0;
+}
+.reviewIntro p {
+  margin: 8px 0 0;
+  color: #59644e;
+}
+.reviewFilters {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr 1fr 1.3fr;
+  gap: 12px;
+  margin: 24px 0 16px;
+}
+.reviewFilters label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+  font-size: 12px;
+  font-weight: 600;
+}
+.reviewCountBar {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  color: #5d6756;
+  font-size: 12px;
+  margin: 18px 0;
+}
+.reviewGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  align-items: start;
+}
+.reviewCard {
+  min-width: 0;
+  padding: 24px;
+  background: #fff;
+  border: 1px solid #dce2d5;
+  border-radius: 12px;
+  overflow-wrap: anywhere;
+}
+.researchSection > .reviewCard {
+  margin-top: 14px;
+}
+.reviewCardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.reviewSentiment {
+  border-radius: 20px;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+.reviewPositive {
+  color: #31592b;
+  background: #eaf2df;
+}
+.reviewNegative {
+  color: #874a35;
+  background: #f8ebe4;
+}
+.reviewMixed {
+  color: #695925;
+  background: #f5f0dc;
+}
+.reviewByline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin: 13px 0 18px;
+  font-size: 12px;
+  color: #617056;
+}
+.reviewSummary {
+  font-size: 17px;
+  line-height: 1.5;
+  font-weight: 550;
+}
+.reviewCard blockquote {
+  margin: 18px 0;
+  padding: 15px 18px;
+  border-left: 3px solid #b4c78e;
+  background: #f7f8f2;
+}
+.reviewCard blockquote p {
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+.reviewCard cite {
+  font-size: 11px;
+  font-style: normal;
+}
+.reviewTopics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 16px 0;
+}
+.reviewTopics span {
+  font-size: 11px;
+  background: #f1f3eb;
+  border-radius: 5px;
+  padding: 4px 7px;
+  color: #526348;
+}
+.reviewContext {
+  font-size: 13px;
+  color: #606957;
+}
+.reviewDates {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #6b7563;
+}
+.reviewEvidence {
+  border-top: 1px solid #e5e9de;
+  margin-top: 18px;
+  padding-top: 14px;
+  font-size: 12px;
+}
+.reviewEvidence > summary {
+  font-weight: 600;
+}
+.reviewEvidence > p {
+  margin-top: 12px;
+}
+.reviewEmpty {
+  padding: 42px 24px;
+  text-align: center;
+  border: 1px dashed #cbd3bf;
+  border-radius: 12px;
+}
+.reviewEmpty p {
+  margin-top: 12px;
+}
+@media (max-width: 1000px) {
+  .reviewFilters {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 620px) {
+  .reviewGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .reviewFilters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .reviewFilters label:last-child {
+    grid-column: 1 / -1;
+  }
+  .reviewCard {
+    padding: 18px;
+  }
+  .reviewIntro {
+    padding: 18px;
+  }
+}
 :global(body) {
   margin: 0;
   background: #f7f8f2;

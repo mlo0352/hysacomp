@@ -55,9 +55,9 @@ flagged. This notebook is a personal log, not an authenticated certificate or ta
 ## Local agent interface
 
 ```sh
-npx tsx cli.ts features --banks data/banks-2026-10-09-v3.1.yaml --output outputs/features.json
-npx tsx cli.ts audit --banks data/banks-2026-10-09-v3.1.yaml --output outputs/audit.json
-npx tsx cli.ts verifications --banks data/banks-2026-10-09-v3.1.yaml --checks butter-verifications.local.json
+npx tsx cli.ts features --banks data/banks-2026-10-09-v3.2.yaml --output outputs/features.json
+npx tsx cli.ts audit --banks data/banks-2026-10-09-v3.2.yaml --output outputs/audit.json
+npx tsx cli.ts verifications --banks data/banks-2026-10-09-v3.2.yaml --checks butter-verifications.local.json
 ```
 
 `features` provides the full checklist, coverage counts, exact sources, secondary claims

@@ -1,19 +1,19 @@
-# Butter agent interface — 3.1.0
+# Butter agent interface — 3.2.0
 
-Read the [XML guide](XML_GUIDE_v3.1.0_2026-10-09.md),
-[five task prompts](LLM_PROMPTS_v3.1.0_2026-10-09.md), [methodology](METHODOLOGY.md)
+Read the [XML guide](XML_GUIDE_v3.2.0_2026-10-09.md),
+[five task prompts](LLM_PROMPTS_v3.2.0_2026-10-09.md), [methodology](METHODOLOGY.md)
 and [tool manifest](../tool-manifest.json). Browser and CLI call the same deterministic engine.
 
 ## Run locally
 
 ```sh
 npm ci
-npx tsx cli.ts validate --scenario examples/working-person-v3.1.yaml --banks data/banks-2026-10-09-v3.1.yaml
-npx tsx cli.ts compare --scenario examples/working-person-v3.1.yaml --banks data/banks-2026-10-09-v3.1.yaml --as-of 2026-10-09 --output outputs/result.json --graph outputs/result.svg
-npx tsx cli.ts audit --banks data/banks-2026-10-09-v3.1.yaml --output outputs/audit.json
-npx tsx cli.ts discoveries --banks data/banks-2026-10-09-v3.1.yaml
-npx tsx cli.ts banks --banks data/banks-2026-10-09-v3.1.yaml --format xml --output outputs/banks.xml
-npx tsx cli.ts scenario --scenario examples/working-person-v3.1.yaml --format xml --output outputs/scenario.xml
+npx tsx cli.ts validate --scenario examples/working-person-v3.2.yaml --banks data/banks-2026-10-09-v3.2.yaml
+npx tsx cli.ts compare --scenario examples/working-person-v3.2.yaml --banks data/banks-2026-10-09-v3.2.yaml --as-of 2026-10-09 --output outputs/result.json --graph outputs/result.svg
+npx tsx cli.ts audit --banks data/banks-2026-10-09-v3.2.yaml --output outputs/audit.json
+npx tsx cli.ts discoveries --banks data/banks-2026-10-09-v3.2.yaml
+npx tsx cli.ts banks --banks data/banks-2026-10-09-v3.2.yaml --format xml --output outputs/banks.xml
+npx tsx cli.ts scenario --scenario examples/working-person-v3.2.yaml --format xml --output outputs/scenario.xml
 ```
 
 `audit` and `discoveries` return the same evidence audit including missing fields,
@@ -53,7 +53,7 @@ not merely running `audit`. Each source's access date stays attached to its own 
 
 Version 2 YAML/JSON migration adds explicit migration notes and unknown research fields.
 Legacy XML imports are limited to dated cash events and supported simple account rules;
-undated monthly qualification metrics are rejected. Use schema 3.1 for all new output.
+undated monthly qualification metrics are rejected. Use schema 3.2 for all new output.
 
 ## Feature research and manual verification
 
@@ -61,4 +61,11 @@ Read [FEATURE_RESEARCH.md](FEATURE_RESEARCH.md). Run `features --banks PATH` to 
 category-level evidence and a prioritized research queue without daily simulation output.
 Use `verifications --banks PATH --checks PATH` to inspect a personal notebook against the
 current evidence. User notes never change the official snapshot or earnings calculation.
-Bank/scenario 3.0 imports migrate explicitly to 3.1 with notes; research dates are preserved.
+Bank/scenario 3.0/3.1 imports migrate explicitly to 3.2 with notes; research dates are preserved.
+
+## Individual customer experiences
+
+Run `reviews --banks PATH` for comments, source context, sentiment/topic counts and manual
+questions. Read [REVIEW_RESEARCH.md](REVIEW_RESEARCH.md) before collecting or interpreting
+comments. Bank/scenario 3.0 and 3.1 imports migrate explicitly to 3.2; old source dates stay
+unchanged. Source checking is separate from authenticating a reviewer's experience.

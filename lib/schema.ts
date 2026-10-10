@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import { ProfileSchema } from './profile';
 
-export const VERSION = '3.1.0';
+export const VERSION = '3.2.0';
 export const BUILD_DATE = '2026-10-09';
-export const SCHEMA_VERSION = '3.1';
+export const SCHEMA_VERSION = '3.2';
 export const date = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/, 'Use YYYY-MM-DD')
@@ -46,7 +46,7 @@ export const FlowSchema = z
 
 export const ScenarioSchema = z
   .object({
-    schemaVersion: z.literal('3.1'),
+    schemaVersion: z.literal('3.2'),
     toolVersion: z.literal(VERSION).default(VERSION),
     id,
     name: text,
@@ -239,7 +239,7 @@ export const BankSchema = z
   });
 export const CatalogSchema = z
   .object({
-    schemaVersion: z.literal('3.1'),
+    schemaVersion: z.literal('3.2'),
     toolVersion: z.literal(VERSION).default(VERSION),
     id,
     checkedOn: date,

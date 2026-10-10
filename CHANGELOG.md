@@ -1,3 +1,14 @@
+# 3.2.0 — 2026-10-09
+
+- Added a searchable Reviews page and bank-profile comments: positive, mixed and negative
+  experiences with attribution, direct permalinks, dates, product scope and manual checks.
+- Seeded nine selected Reddit/Trustpilot comments across Peak and Ally; documented scope,
+  uncertain dates, access failures and uncovered products. Peak's reported $10k cap remains
+  unverified; financial models and rankings are unchanged.
+- Added reviews CLI JSON, individual-review schemas, deduplication, source/date validation,
+  personal source checks and review research instructions in the offline bundle.
+- Bank/scenario schema 3.2 explicitly migrates 3.0/3.1 without rewriting research dates.
+
 # Changelog
 
 ## 3.1.0 — 2026-10-09

@@ -14,6 +14,7 @@ import { money } from '../lib/export';
 import styles from './App.module.css';
 import { BankFeatures } from './Features';
 import { VerificationButton, VerificationNotebook } from './Verification';
+import { BankCustomerReviews } from './Reviews';
 
 export const today = () => new Date().toISOString().slice(0, 10);
 export const displayFact = (p: Profile | undefined, key: string) => {
@@ -358,6 +359,7 @@ export function BankResearch({
           question, not a negative finding.
         </p>
       </div>
+      <BankCustomerReviews bank={b} />
       <details className={styles.researchSection} open>
         <summary>
           Discoveries & manual checks <span>{p?.discoveries.length ?? 0}</span>
