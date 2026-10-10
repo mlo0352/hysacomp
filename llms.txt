@@ -10,11 +10,11 @@
 - [Tool manifest](tool-manifest.json)
 - [Scenario schema](schemas/scenario.schema.json)
 - [Bank schema](schemas/banks.schema.json)
-- [Fictional salary scenario](examples/working-person-v3.2.yaml)
-- [Bank snapshot](data/banks-2026-10-09-v3.2.yaml)
-- [XML guide 3.2.0](docs/XML_GUIDE_v3.2.0_2026-10-09.md)
-- [Five current prompts](docs/LLM_PROMPTS_v3.2.0_2026-10-09.md)
-- [Bank discoveries](docs/BANK_DISCOVERIES_v3.2.0_2026-10-09.md)
+- [Fictional salary scenario](examples/working-person-v3.2.1.yaml)
+- [Bank snapshot](data/banks-2026-10-09-v3.2-r2.yaml)
+- [XML guide 3.2.1](docs/XML_GUIDE_v3.2.1_2026-10-10.md)
+- [Five current prompts](docs/LLM_PROMPTS_v3.2.1_2026-10-10.md)
+- [Bank discoveries](docs/BANK_DISCOVERIES_v3.2.1_2026-10-10.md)
 - [Atomic fact inventory](schemas/fact-inventory.json)
 
 Install with npm ci. Run npx tsx cli.ts --help. Inputs: YAML/JSON or versioned XML (3.2; explicit 3.0/3.1 migration supported).
@@ -23,7 +23,7 @@ Report source dates, baseline-relative earnings, model exclusions and assumption
 
 
 Feature research: docs/FEATURE_RESEARCH.md
-Feature CLI: npx tsx cli.ts features --banks data/banks-2026-10-09-v3.2.yaml
+Feature CLI: npx tsx cli.ts features --banks data/banks-2026-10-09-v3.2-r2.yaml
 Personal checks: npx tsx cli.ts verifications --banks BANKS --checks CHECKS
 Unknown is not unavailable; secondary claims and personal checks are not first-party verification.
 

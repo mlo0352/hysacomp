@@ -1,0 +1,62 @@
+[
+  {
+    "bankId": "peak",
+    "commentId": "ob4yk20",
+    "author": "MissionHairy2041",
+    "createdUtc": 1773849018,
+    "publishedAt": "2026-03-18T15:50:18.000Z",
+    "checkedAt": "2026-10-10",
+    "sourceUrl": "https://www.reddit.com/r/SavingMoney/comments/1iguc0v/comment/ob4yk20/.json",
+    "field": "comment.data.created_utc"
+  },
+  {
+    "bankId": "peak",
+    "commentId": "ot7srvk",
+    "author": "franfromfrance",
+    "createdUtc": 1782167338,
+    "publishedAt": "2026-06-22T22:28:58.000Z",
+    "checkedAt": "2026-10-10",
+    "sourceUrl": "https://www.reddit.com/r/SavingMoney/comments/1iguc0v/comment/ot7srvk/.json",
+    "field": "comment.data.created_utc"
+  },
+  {
+    "bankId": "peak",
+    "commentId": "mybwov9",
+    "author": "pocketpriorities",
+    "createdUtc": 1750192868,
+    "publishedAt": "2025-06-17T20:41:08.000Z",
+    "checkedAt": "2026-10-10",
+    "sourceUrl": "https://www.reddit.com/r/SavingMoney/comments/1iguc0v/comment/mybwov9/.json",
+    "field": "comment.data.created_utc"
+  },
+  {
+    "bankId": "peak",
+    "commentId": "nst7nrg",
+    "author": "Far_Health_3214",
+    "createdUtc": 1765135869,
+    "publishedAt": "2025-12-07T19:31:09.000Z",
+    "checkedAt": "2026-10-10",
+    "sourceUrl": "https://www.reddit.com/r/SavingMoney/comments/1iguc0v/comment/nst7nrg/.json",
+    "field": "comment.data.created_utc"
+  },
+  {
+    "bankId": "ally",
+    "commentId": "nctatp8",
+    "author": "Logistix1",
+    "createdUtc": 1757200100,
+    "publishedAt": "2025-09-06T23:08:20.000Z",
+    "checkedAt": "2026-10-10",
+    "sourceUrl": "https://www.reddit.com/r/AllyBank/comments/1nad2n9/comment/nctatp8/.json",
+    "field": "comment.data.created_utc"
+  },
+  {
+    "bankId": "ally",
+    "commentId": "nctfg5w",
+    "author": "scottwsx96",
+    "createdUtc": 1757201735,
+    "publishedAt": "2025-09-06T23:35:35.000Z",
+    "checkedAt": "2026-10-10",
+    "sourceUrl": "https://www.reddit.com/r/AllyBank/comments/1nad2n9/comment/nctfg5w/.json",
+    "field": "comment.data.created_utc"
+  }
+]

@@ -1,8 +1,8 @@
 {
   "name": "butter_cash_comparison",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "schemaVersion": "3.2",
-  "buildDate": "2026-10-09",
+  "buildDate": "2026-10-10",
   "description": "Compare cash accounts against a baseline using dated bank terms and posted cash flows. Local process tool; no network or bank access.",
   "repository": "https://github.com/mlo0352/hysacomp",
   "runtime": "Node.js >=22.12",

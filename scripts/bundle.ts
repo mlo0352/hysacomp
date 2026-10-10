@@ -51,10 +51,11 @@ const paths = [
   'schemas/verifications.schema.json',
   'docs/FEATURE_RESEARCH.md',
   'docs/REVIEW_RESEARCH.md',
-  `data/banks_verified_${BUILD_DATE}_tool-v${VERSION}.xml`,
-  `data/banks-${BUILD_DATE}-v3.2.yaml`,
-  `examples/scenario_example_${BUILD_DATE}_tool-v${VERSION}.xml`,
-  'examples/working-person-v3.2.yaml',
+  'data/reddit-timestamps-2026-10-10.json',
+  `data/banks_verified_2026-10-09_tool-v${VERSION}.xml`,
+  'data/banks-2026-10-09-v3.2-r2.yaml',
+  `examples/scenario_example_2026-10-09_tool-v${VERSION}.xml`,
+  'examples/working-person-v3.2.1.yaml',
 ];
 const files: Zippable = { [`${name}.html`]: html };
 const hashes: Record<string, string> = {};

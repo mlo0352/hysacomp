@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react';
 import type { Bank, Catalog } from '../lib/schema';
 import { bankReviews, reviewCounts, reviewReport } from '../lib/reviews';
 import {
-  REVIEW_DISCLAIMER,
   REVIEW_PLATFORMS,
   REVIEW_SENTIMENTS,
   REVIEW_TOPICS,
@@ -11,6 +10,7 @@ import {
 import { Sources } from './Research';
 import { VerificationButton, VerificationNotebook } from './Verification';
 import styles from './App.module.css';
+import { DisclaimerButton } from './Disclaimer';
 
 const title = (s: string) => s.charAt(0).toUpperCase() + s.slice(1).replaceAll('-', ' ');
 export function ReviewCard({ bank, review: r }: { bank: Bank; review: CustomerReview }) {
@@ -31,45 +31,35 @@ export function ReviewCard({ bank, review: r }: { bank: Bank; review: CustomerRe
         <a href={r.permalink} target="_blank" rel="noreferrer">
           {r.author ?? 'Unknown author'} · {title(r.platform)} ↗
         </a>
-        <span>{r.rating !== null ? `${r.rating}/5 by this reviewer · ` : ''}Self-reported</span>
+        {r.rating !== null && <span>{r.rating}/5</span>}
       </div>
       <p className={styles.reviewSummary}>{r.summary}</p>
       <blockquote>
         <p>“{r.excerpt}”</p>
-        <cite>
-          <a href={r.permalink} target="_blank" rel="noreferrer">
-            Read original comment ↗
-          </a>
-        </cite>
       </blockquote>
       <div className={styles.reviewTopics}>
         {r.topics.map((t) => (
           <span key={t}>{title(t)}</span>
         ))}
       </div>
-      <p className={styles.reviewContext}>{r.context}</p>
       <div className={styles.reviewDates}>
-        <span>
-          {r.publishedOn ? `Posted ${r.publishedOn}` : `Posting date uncertain · ${r.dateText}`}
-        </span>
-        {r.experienceOn && <span>Experience {r.experienceOn}</span>}
         <span>Collected {r.accessedAt}</span>
-        <span>
-          Scope: {r.scope} · {r.product}
-        </span>
       </div>
       <details className={styles.reviewEvidence}>
-        <summary>What to verify & source context</summary>
+        <summary>Details & sources</summary>
+        <p>{r.context}</p>
+        <p>
+          {r.publishedOn ? `Posted ${r.publishedOn}` : r.dateText}
+          {r.experienceOn ? ` · Experience ${r.experienceOn}` : ''}
+        </p>
         <p>
           <strong>Check yourself:</strong> {r.manualCheck}
         </p>
         <p>
-          <strong>Official context · {r.officialContext.assessment.replaceAll('-', ' ')}:</strong>{' '}
-          {r.officialContext.notes}
+          <strong>Official context:</strong> {r.officialContext.notes}
         </p>
         <p>
-          Resolution: {r.resolution.replaceAll('-', ' ')}. Evidence: {r.evidence}. The described
-          events have not been independently authenticated.
+          Scope: {r.product} · {r.scope}. Resolution: {r.resolution.replaceAll('-', ' ')}.
         </p>
         {r.threadUrl && (
           <a href={r.threadUrl} target="_blank" rel="noreferrer">
@@ -77,7 +67,13 @@ export function ReviewCard({ bank, review: r }: { bank: Bank; review: CustomerRe
           </a>
         )}
         {bank.profile && (
-          <Sources profile={bank.profile} ids={[...r.sourceIds, ...r.officialContext.sourceIds]} />
+          <Sources
+            profile={bank.profile}
+            ids={[...new Set([...r.sourceIds, ...r.officialContext.sourceIds])].filter((id) => {
+              const url = bank.profile!.sources.find((s) => s.id === id)?.url;
+              return url !== r.permalink && url !== r.threadUrl;
+            })}
+          />
         )}
         <VerificationButton
           bank={bank}
@@ -95,13 +91,8 @@ export function BankCustomerReviews({ bank }: { bank: Bank }) {
       <summary>
         Customer comments <span>{reviews.length} selected</span>
       </summary>
-      <p>{REVIEW_DISCLAIMER}</p>
-      {!reviews.length && (
-        <p>
-          No individual comments saved for this product yet. This is a gap in research, not a
-          judgment about the bank.
-        </p>
-      )}
+      <DisclaimerButton reviews />
+      {!reviews.length && <p>No reviews collected yet.</p>}
       {reviews.map((r) => (
         <ReviewCard key={r.id} bank={bank} review={r} />
       ))}
@@ -177,24 +168,13 @@ export function ReviewsPage({ catalog }: { catalog: Catalog }) {
     <div className={styles.bankPage}>
       <div className={styles.pageHeading}>
         <div>
-          <span className={styles.eyebrow}>THE PEOPLE BEHIND THE NUMBERS</span>
-          <h1>Read the experiences.</h1>
-          <p>Good days, frustrating days, and the details worth checking.</p>
+          <h1>Customer reviews</h1>
         </div>
-        <button onClick={exportReviews}>Export matching reviews</button>
+        <div className={styles.actions}>
+          <DisclaimerButton reviews />
+          <button onClick={exportReviews}>Export reviews</button>
+        </div>
       </div>
-      <section className={styles.reviewIntro} aria-label="About customer reviews">
-        <strong>
-          {report.coverage.total} selected comments · {report.coverage.productsWithComments} of{' '}
-          {report.coverage.products} products have comments
-        </strong>
-        <p>{REVIEW_DISCLAIMER}</p>
-        <p>
-          We preserve mixed experiences and source context. Counts describe this collection only.
-          Missing reviews mean research is pending. Reddit ages are saved as displayed when an exact
-          posting date was unavailable.
-        </p>
-      </section>
       <div className={styles.reviewFilters}>
         <label>
           Bank
@@ -263,24 +243,12 @@ export function ReviewsPage({ catalog }: { catalog: Catalog }) {
         </label>
       </div>
       <div className={styles.reviewCountBar}>
-        <span aria-live="polite">{filtered.length} matching comments</span>
-        <span>
-          Collection for selected bank(s): {counts.sentiments.positive} positive ·{' '}
-          {counts.sentiments.mixed} mixed · {counts.sentiments.negative} negative ·{' '}
-          {counts.sentiments.neutral} neutral
-        </span>
+        <span aria-live="polite">{filtered.length} reviews</span>
       </div>
       {!filtered.length && (
         <div className={styles.reviewEmpty}>
-          <strong>
-            {counts.total
-              ? 'No comments match these filters.'
-              : 'No individual comments saved for this selection yet.'}
-          </strong>
-          <p>
-            Try another bank or broaden the filters. You can add sourced comments to a bank file
-            locally; agents can follow docs/REVIEW_RESEARCH.md.
-          </p>
+          <strong>{counts.total ? 'No matching reviews.' : 'No reviews collected yet.'}</strong>
+          <p>Try another bank or clear the filters.</p>
           <button
             onClick={() => {
               setBank('all');
@@ -300,7 +268,11 @@ export function ReviewsPage({ catalog }: { catalog: Catalog }) {
         ))}
       </div>
       <details className={styles.researchSection}>
-        <summary>How this collection was researched</summary>
+        <summary>Research log</summary>
+        <p>
+          {report.coverage.total} comments across {report.coverage.productsWithComments} of{' '}
+          {report.coverage.products} products.
+        </p>
         {report.banks
           .filter((b) => bankId === 'all' || bankId === b.id)
           .map((b) => (

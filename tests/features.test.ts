@@ -12,7 +12,7 @@ import {
 } from '../lib/verification';
 import { compare } from '../lib/engine';
 
-const catalog = readCatalog(readFileSync('data/banks-2026-10-09-v3.2.yaml', 'utf8'));
+const catalog = readCatalog(readFileSync('data/banks-2026-10-09-v3.2-r2.yaml', 'utf8'));
 const bank = (id: string) => catalog.banks.find((b) => b.id === id)!;
 test('feature evidence distinguishes product availability from linked checking and secondary assertions', () => {
   const wire = featureFor(bank('ally'), 'internationalWireOut');

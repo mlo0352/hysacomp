@@ -1,3 +1,13 @@
+# 3.2.1 — 2026-10-10
+
+- Moved general and review disclaimers behind buttons. Simplified the snapshot bar,
+  review headings, counts and cards; retained one comment link and the collection date.
+- Centered feature availability and moved expand/collapse controls to the right.
+- Recovered all six Reddit posting timestamps from comment-specific created_utc metadata.
+  Kept original collection and bank financial-terms dates; preserved the prior snapshot.
+- Schema 3.2 accepts 3.2.0 patch inputs. Profile research dates can be newer than the
+  financial-terms snapshot; source access dates still cannot exceed profile research dates.
+
 # 3.2.0 — 2026-10-09
 
 - Added a searchable Reviews page and bank-profile comments: positive, mixed and negative

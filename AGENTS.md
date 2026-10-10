@@ -8,9 +8,9 @@ and [tool-manifest.json](tool-manifest.json). Requires Node 22.12+.
 
 ```sh
 npm ci
-npx tsx cli.ts validate --scenario examples/working-person-v3.2.yaml --banks data/banks-2026-10-09-v3.2.yaml
-npx tsx cli.ts compare --scenario examples/working-person-v3.2.yaml --banks data/banks-2026-10-09-v3.2.yaml --as-of 2026-10-09 --output outputs/comparison.json --graph outputs/comparison.svg
-npx tsx cli.ts audit --banks data/banks-2026-10-09-v3.2.yaml
+npx tsx cli.ts validate --scenario examples/working-person-v3.2.1.yaml --banks data/banks-2026-10-09-v3.2-r2.yaml
+npx tsx cli.ts compare --scenario examples/working-person-v3.2.1.yaml --banks data/banks-2026-10-09-v3.2-r2.yaml --as-of 2026-10-09 --output outputs/comparison.json --graph outputs/comparison.svg
+npx tsx cli.ts audit --banks data/banks-2026-10-09-v3.2-r2.yaml
 ```
 
 CLI stdout is JSON by default. Errors are JSON on stderr. Exit 0 = success,
@@ -62,7 +62,7 @@ them. Legacy imports need an explicitly configured baseline and tax rate before 
 Read docs/FEATURE_RESEARCH.md. Keep secondary claims separate from official features,
 retain exact product scope and conditions, and export a research queue. Personal checks
 are local assertions bound to their evidence snapshot; they never upgrade source verification
-or change the earnings winner. Keep the visible research disclaimer and notebook export.
+or change the earnings winner. Keep disclaimers behind explicit buttons and retain notebook export.
 
 ## Customer comments (3.2)
 
@@ -71,3 +71,6 @@ aggregate listings remain profile.reviews. Use direct permalinks, attributed sho
 exact or explicitly unknown posting dates, product scope, balanced context and manual checks.
 Reviews are always reported, never verified bank terms. Deduplicate URLs and public handles;
 do not infer prevalence or safety from the curated sample. Run reviews --banks PATH for JSON.
+Inspect comment-specific timestamp metadata (DOM datetime, JSON created_utc) before marking
+a posting date unknown. Preserve collection and metadata-check dates independently. Keep
+the default UI concise: one source link per comment, only Collected on the card, details on demand.

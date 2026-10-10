@@ -9,17 +9,39 @@ test('feature comparison exposes sources, conditions and secondary conflicts wit
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
   await page.goto('/');
-  await expect(page.getByRole('complementary', { name: 'Research disclaimer' })).toContainText(
-    'incomplete, outdated or incorrect',
-  );
+  const disclaimer = page.getByRole('dialog', { name: 'Research disclaimer' });
+  await expect(disclaimer).not.toBeVisible();
+  await page.getByRole('button', { name: 'Disclaimer', exact: true }).click();
+  await expect(disclaimer).toContainText('incomplete, outdated or incorrect');
+  await page.keyboard.press('Escape');
+  await expect(disclaimer).not.toBeVisible();
+  await expect(page.getByRole('button', { name: 'Disclaimer', exact: true })).toBeFocused();
+  const snapshot = page.getByText('Bank data checked', { exact: false }).first();
+  await expect(snapshot).not.toContainText(/modeled|reviewed|days old|Fresh/);
   await page.getByRole('button', { name: /Bank library/ }).click();
   const comparison = page.getByRole('region', { name: 'Bank feature comparison' });
-  const row = comparison
-    .getByRole('row')
-    .filter({
-      has: page.getByRole('rowheader', { name: 'Send international wires', exact: true }),
-    });
+  const row = comparison.getByRole('row').filter({
+    has: page.getByRole('rowheader', { name: 'Send international wires', exact: true }),
+  });
   await expect(row).toContainText('Unavailable');
+  const layout = await row
+    .locator('td')
+    .first()
+    .locator('summary')
+    .evaluate((el) => {
+      const summary = el.getBoundingClientRect();
+      const badge = el.querySelector('span:last-of-type')!.getBoundingClientRect();
+      return {
+        offset: Math.abs((badge.left + badge.right) / 2 - (summary.left + summary.right) / 2),
+        after: getComputedStyle(el, '::after').content,
+        align: getComputedStyle(el, '::after').justifySelf,
+        before: getComputedStyle(el, '::before').content,
+      };
+    });
+  expect(layout.offset).toBeLessThan(2);
+  expect(layout.after).toBe('"+"');
+  expect(layout.align).toBe('end');
+  expect(layout.before).toBe('none');
   await row.locator('td').first().locator('summary').click();
   await expect(row).toContainText('Secondary claim · contradicted');
   await expect(row.getByRole('link', { name: /Ally.*Bank transfer help/ })).toHaveAttribute(
@@ -49,11 +71,9 @@ test('personal verification can be saved, exported, imported, and flagged when i
 }) => {
   await page.goto('/');
   await page.getByRole('button', { name: /Bank library/ }).click();
-  const row = page
-    .getByRole('row')
-    .filter({
-      has: page.getByRole('rowheader', { name: 'Send international wires', exact: true }),
-    });
+  const row = page.getByRole('row').filter({
+    has: page.getByRole('rowheader', { name: 'Send international wires', exact: true }),
+  });
   const cell = row.locator('td').first();
   await cell.locator('summary').click();
   await cell
@@ -86,26 +106,22 @@ test('personal verification can be saved, exported, imported, and flagged when i
   await page.getByRole('button', { name: /Bank library/ }).click();
   await expect(notebook.locator('summary')).toContainText('0 checks');
   await notebook.locator('summary').click();
-  await page
-    .getByLabel('Import verification notebook')
-    .setInputFiles({
-      name: 'checks.local.json',
-      mimeType: 'application/json',
-      buffer: Buffer.from(downloaded),
-    });
+  await page.getByLabel('Import verification notebook').setInputFiles({
+    name: 'checks.local.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(downloaded),
+  });
   await expect(notebook).toContainText('current-evidence');
-  const catalog = readCatalog(readFileSync('data/banks-2026-10-09-v3.2.yaml', 'utf8'));
+  const catalog = readCatalog(readFileSync('data/banks-2026-10-09-v3.2-r2.yaml', 'utf8'));
   catalog.banks.find((b) => b.id === 'ally')!.profile!.features[0].conditions +=
     ' Updated condition.';
   // An imported profile may have feature evidence without every optional atomic fact.
   delete catalog.banks.find((b) => b.id === 'openbank')!.profile!.facts.promotionalApy;
-  await page
-    .getByLabel('Import bank file')
-    .setInputFiles({
-      name: 'banks.json',
-      mimeType: 'application/json',
-      buffer: Buffer.from(JSON.stringify(catalog)),
-    });
+  await page.getByLabel('Import bank file').setInputFiles({
+    name: 'banks.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(catalog)),
+  });
   await expect(notebook).toContainText('changed-evidence');
   await expect(page.getByRole('region', { name: 'Comparison winner' })).toHaveCount(0);
 });

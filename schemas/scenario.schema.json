@@ -7,9 +7,9 @@
       "const": "3.2"
     },
     "toolVersion": {
-      "default": "3.2.0",
+      "default": "3.2.1",
       "type": "string",
-      "const": "3.2.0"
+      "const": "3.2.1"
     },
     "id": {
       "type": "string",

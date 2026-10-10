@@ -35,17 +35,18 @@ import { compare, type BankResult, type Comparison } from '../lib/engine';
 import { readCatalog, readScenario, readableError, toYaml, toXml } from '../lib/files';
 import { money, toCsv, toSvg } from '../lib/export';
 import { VERSION, BUILD_DATE, type Bank, type Scenario } from '../lib/schema';
-import catalogText from '../data/banks-2026-10-09-v3.2.yaml?raw';
-import exampleText from '../examples/working-person-v3.2.yaml?raw';
-import promptsText from '../docs/LLM_PROMPTS_v3.2.0_2026-10-09.md?raw';
-import xmlGuideText from '../docs/XML_GUIDE_v3.2.0_2026-10-09.md?raw';
-import discoveryText from '../docs/BANK_DISCOVERIES_v3.2.0_2026-10-09.md?raw';
+import catalogText from '../data/banks-2026-10-09-v3.2-r2.yaml?raw';
+import exampleText from '../examples/working-person-v3.2.1.yaml?raw';
+import promptsText from '../docs/LLM_PROMPTS_v3.2.1_2026-10-10.md?raw';
+import xmlGuideText from '../docs/XML_GUIDE_v3.2.1_2026-10-10.md?raw';
+import discoveryText from '../docs/BANK_DISCOVERIES_v3.2.1_2026-10-10.md?raw';
 import featureGuideText from '../docs/FEATURE_RESEARCH.md?raw';
 import reviewGuideText from '../docs/REVIEW_RESEARCH.md?raw';
 import { BankResearch, DecisionTable, today } from './Research';
 import { freshness } from '../lib/analysis';
 import styles from './App.module.css';
-import { FeatureComparison, ResearchDisclaimer } from './Features';
+import { FeatureComparison } from './Features';
+import { DisclaimerButton } from './Disclaimer';
 import { VerificationProvider } from './Verification';
 import { ReviewsPage } from './Reviews';
 
@@ -1035,7 +1036,7 @@ function AgentGuide() {
   const [copied, setCopied] = useState(false),
     [copyError, setCopyError] = useState('');
   const prompt =
-    'Use https://github.com/mlo0352/hysacomp. Read AGENTS.md, docs/FEATURE_RESEARCH.md, docs/REVIEW_RESEARCH.md and docs/LLM_PROMPTS_v3.2.0_2026-10-09.md. Ask for cash, dates, income, withdrawals, baseline, taxes, ownership and other same-bank deposits. Create a schema 3.2 scenario XML or YAML. Run features --banks FILE for the research queue. Check secondary claims against official product terms, distinguish linked checking from savings, preserve sources/conflicts and a discovery log, and mark unknowns. Run reviews --banks FILE for attributed positive, mixed and negative comments; keep anecdotes separate from bank terms and note collection bias. Personal verification notes are separate from official evidence. Run the comparison CLI with explicit files and --as-of. Return JSON and SVG, explain earnings over baseline, exit limits, uninsured cash and manual checks. Remind me that research can be wrong and current terms need checking. Never upload my personal files.';
+    'Use https://github.com/mlo0352/hysacomp. Read AGENTS.md, docs/FEATURE_RESEARCH.md, docs/REVIEW_RESEARCH.md and docs/LLM_PROMPTS_v3.2.1_2026-10-10.md. Ask for cash, dates, income, withdrawals, baseline, taxes, ownership and other same-bank deposits. Create a schema 3.2 scenario XML or YAML. Run features --banks FILE for the research queue. Check secondary claims against official product terms, distinguish linked checking from savings, preserve sources/conflicts and a discovery log, and mark unknowns. Run reviews --banks FILE for attributed positive, mixed and negative comments; keep anecdotes separate from bank terms and note collection bias. Personal verification notes are separate from official evidence. Run the comparison CLI with explicit files and --as-of. Return JSON and SVG, explain earnings over baseline, exit limits, uninsured cash and manual checks. Remind me that research can be wrong and current terms need checking. Never upload my personal files.';
   return (
     <div className={styles.agentPage}>
       <span className={styles.eyebrow}>
@@ -1100,11 +1101,11 @@ function AgentGuide() {
         </div>
         <pre>
           <code>
-            npx tsx cli.ts compare \{'\n'} --scenario examples/working-person-v3.2.yaml \{'\n'}{' '}
-            --banks data/banks-2026-10-09-v3.2.yaml \{'\n'} --output outputs/comparison.json \{'\n'}{' '}
-            --graph outputs/comparison.svg{'\n\n'}# Research without a scenario{'\n'}npx tsx cli.ts
-            features --banks data/banks-2026-10-09-v3.2.yaml
-            {'\n'}npx tsx cli.ts reviews --banks data/banks-2026-10-09-v3.2.yaml
+            npx tsx cli.ts compare \{'\n'} --scenario examples/working-person-v3.2.1.yaml \{'\n'}{' '}
+            --banks data/banks-2026-10-09-v3.2-r2.yaml \{'\n'} --output outputs/comparison.json \
+            {'\n'} --graph outputs/comparison.svg{'\n\n'}# Research without a scenario{'\n'}npx tsx
+            cli.ts features --banks data/banks-2026-10-09-v3.2-r2.yaml
+            {'\n'}npx tsx cli.ts reviews --banks data/banks-2026-10-09-v3.2-r2.yaml
           </code>
         </pre>
       </section>
@@ -1119,41 +1120,41 @@ function AgentGuide() {
         >
           Feature research & manual checks
         </a>
-        <a href="https://mlo0352.github.io/hysacomp/downloads/butter-v3.2.0-offline.zip" download>
+        <a href="https://mlo0352.github.io/hysacomp/downloads/butter-v3.2.1-offline.zip" download>
           <ArrowDownToLine size={15} /> Offline bundle
         </a>
         <a
-          href="https://mlo0352.github.io/hysacomp/downloads/hysa_comparator_v3.2.0_2026-10-09.html"
+          href="https://mlo0352.github.io/hysacomp/downloads/hysa_comparator_v3.2.1_2026-10-10.html"
           download
         >
           Standalone HTML
         </a>
         <a
-          href="docs/LLM_PROMPTS_v3.2.0_2026-10-09.md"
+          href="docs/LLM_PROMPTS_v3.2.1_2026-10-10.md"
           download
           onClick={(e) => {
             e.preventDefault();
-            download('LLM_PROMPTS_v3.2.0_2026-10-09.md', promptsText, 'text/markdown');
+            download('LLM_PROMPTS_v3.2.1_2026-10-10.md', promptsText, 'text/markdown');
           }}
         >
           Five agent prompts
         </a>
         <a
-          href="docs/XML_GUIDE_v3.2.0_2026-10-09.md"
+          href="docs/XML_GUIDE_v3.2.1_2026-10-10.md"
           download
           onClick={(e) => {
             e.preventDefault();
-            download('XML_GUIDE_v3.2.0_2026-10-09.md', xmlGuideText, 'text/markdown');
+            download('XML_GUIDE_v3.2.1_2026-10-10.md', xmlGuideText, 'text/markdown');
           }}
         >
           XML guide
         </a>
         <a
-          href="docs/BANK_DISCOVERIES_v3.2.0_2026-10-09.md"
+          href="docs/BANK_DISCOVERIES_v3.2.1_2026-10-10.md"
           download
           onClick={(e) => {
             e.preventDefault();
-            download('BANK_DISCOVERIES_v3.2.0_2026-10-09.md', discoveryText, 'text/markdown');
+            download('BANK_DISCOVERIES_v3.2.1_2026-10-10.md', discoveryText, 'text/markdown');
           }}
         >
           Bank discovery log
@@ -1292,7 +1293,7 @@ export default function App() {
               className={tab === 'banks' ? styles.activeNav : ''}
               onClick={() => setTab('banks')}
             >
-              Bank library <span>{catalog.banks.length}</span>
+              Bank library
             </button>
             <button
               className={tab === 'reviews' ? styles.activeNav : ''}
@@ -1317,11 +1318,6 @@ export default function App() {
           <span>
             <span className={styles.dot} /> Bank data checked{' '}
             <strong>{dateLabel(catalog.checkedOn)}</strong>
-            <span className={styles.snapshotDivider}>/</span>
-            {catalog.banks.filter(isModeled).length} modeled · {catalog.banks.length} reviewed
-            <span className={styles.snapshotDivider}>/</span>
-            {freshness(catalog.checkedOn, today()).ageDays} days old ·{' '}
-            {freshness(catalog.checkedOn, today()).label}
           </span>
           <button className={styles.textButton} onClick={() => setTab('banks')}>
             View sources <ArrowUpRight size={13} />
@@ -1350,7 +1346,6 @@ export default function App() {
           }}
         />
         <main id="main" className={styles.main}>
-          <ResearchDisclaimer />
           {freshness(catalog.checkedOn, today()).warning && (
             <p role="alert" className={styles.winnerCautions}>
               {freshness(catalog.checkedOn, today()).warning}
@@ -1449,11 +1444,10 @@ export default function App() {
             <div className={styles.bankPage}>
               <div className={styles.pageHeading}>
                 <div>
-                  <span className={styles.eyebrow}>REAL ACCOUNTS. VISIBLE SOURCES.</span>
-                  <h1>The bank library.</h1>
+                  <h1>Bank library</h1>
                   <p>
-                    Checked {dateLabel(catalog.checkedOn)}. Every rate has a source. Every unknown
-                    stays visible.
+                    {catalog.banks.length} accounts · {catalog.banks.filter(isModeled).length}{' '}
+                    modeled
                   </p>
                 </div>
                 <div className={styles.actions}>
@@ -1501,9 +1495,7 @@ export default function App() {
                 </div>
               </div>
               <p className={styles.libraryNote}>
-                Model verification covers the calculation scope. Open a profile for atomic sources,
-                transfer limits, insurance, reviews and its discovery log. Unknown fields remain
-                visible.
+                Open an account for rates, requirements and sources.
               </p>
               <div className={styles.bankGrid}>
                 {catalog.banks
@@ -1597,6 +1589,7 @@ export default function App() {
           <span>
             Local calculations · No account connections ·{' '}
             <a href={`${repo}/blob/main/docs/METHODOLOGY.md`}>Methodology</a>
+            <DisclaimerButton />
           </span>
           <span>
             Butter {VERSION} · Build {BUILD_DATE} · Schemas 3.2

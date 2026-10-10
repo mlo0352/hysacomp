@@ -8,12 +8,13 @@ for (const path of [
   'CHANGELOG.md',
   'docs',
   'schemas',
+  'data/reddit-timestamps-2026-10-10.json',
   'examples/working-person.yaml',
   'data/banks-2026-10-09.yaml',
-  'examples/working-person-v3.2.yaml',
-  'examples/scenario_example_2026-10-09_tool-v3.2.0.xml',
-  'data/banks-2026-10-09-v3.2.yaml',
-  'data/banks_verified_2026-10-09_tool-v3.2.0.xml',
+  'examples/working-person-v3.2.1.yaml',
+  'examples/scenario_example_2026-10-09_tool-v3.2.1.xml',
+  'data/banks-2026-10-09-v3.2-r2.yaml',
+  'data/banks_verified_2026-10-09_tool-v3.2.1.xml',
 ]) {
   const dest = `dist/${path}`;
   await mkdir(dest.slice(0, dest.lastIndexOf('/')), { recursive: true });

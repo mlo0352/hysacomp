@@ -15,12 +15,12 @@ import { VERSION } from './lib/schema';
 const help = `Butter ${VERSION} — deterministic cash comparisons for people and agents
 
 Usage:
-  npm run cli -- compare --scenario examples/working-person-v3.2.yaml --banks data/banks-2026-10-09-v3.2.yaml
+  npm run cli -- compare --scenario examples/working-person-v3.2.1.yaml --banks data/banks-2026-10-09-v3.2-r2.yaml
   npm run cli -- compare --scenario plan.yaml --banks banks.yaml --format csv --output outputs/comparison.csv --graph outputs/comparison.svg
   npm run cli -- validate --scenario plan.yaml --banks banks.yaml
-  npm run cli -- audit --banks data/banks-2026-10-09-v3.2.yaml --as-of 2026-10-09
-  npm run cli -- reviews --banks data/banks-2026-10-09-v3.2.yaml --output outputs/reviews.json
-  npm run cli -- banks --banks data/banks-2026-10-09-v3.2.yaml --format xml --output outputs/banks.xml
+  npm run cli -- audit --banks data/banks-2026-10-09-v3.2-r2.yaml --as-of 2026-10-09
+  npm run cli -- reviews --banks data/banks-2026-10-09-v3.2-r2.yaml --output outputs/reviews.json
+  npm run cli -- banks --banks data/banks-2026-10-09-v3.2-r2.yaml --format xml --output outputs/banks.xml
   npm run cli -- scenario --scenario plan.yaml --format xml --output outputs/scenario.xml
 
 Commands: compare (default), validate, audit, discoveries, features, reviews, verifications, banks, scenario

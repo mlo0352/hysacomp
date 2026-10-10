@@ -1,6 +1,6 @@
 {
   "name": "butter-hysa-comparator",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "private": true,
   "type": "module",
   "description": "Local cash comparisons for people and AI agents. One engine, browser and CLI.",

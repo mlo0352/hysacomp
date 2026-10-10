@@ -65,13 +65,15 @@ when it matches or beats candidates because moving cash adds no modeled benefit.
 
 ## Dated data
 
-`checkedOn` is our retrieval/review date; `rateAsOf` is the provider's stated effective date,
+`checkedOn` is the financial-terms snapshot review date; `rateAsOf` is the provider's stated effective date,
 or null if unavailable. Account details show both. Rates remain fixed to the input snapshot
 except modeled promotional transitions. A snapshot over 30 days before the scenario start
 produces a warning; one after the start is labeled a what-if, not a historical backtest.
 The UI always displays the snapshot date. Old data does not establish today's offer.
 
 The CLI includes exact-file hashes. The engine never fetches rates or silently updates data.
+Operational/review research has its own `profile.researchedAt` and per-source access dates,
+which may be newer. Correcting a review timestamp does not refresh the bank's financial terms.
 The comparator does not model simultaneous multi-bank strategies, travel,
 Chex history, unentered penalties, account closures or market investments. Provider eligibility
 and actual funds availability must be checked before executing a forecast.

@@ -1,18 +1,11 @@
 import { useState } from 'react';
 import type { Bank, Catalog } from '../lib/schema';
-import { FEATURE_GROUPS, RESEARCH_DISCLAIMER, type Feature } from '../lib/feature-model';
+import { FEATURE_GROUPS, type Feature } from '../lib/feature-model';
 import { featureFor, featureRows, featureReport } from '../lib/features';
 import { Sources } from './Research';
 import { VerificationButton, VerificationNotebook } from './Verification';
 import styles from './App.module.css';
 
-export function ResearchDisclaimer() {
-  return (
-    <aside className={styles.disclaimer} aria-label="Research disclaimer">
-      <strong>Check before you move your money.</strong> {RESEARCH_DISCLAIMER}
-    </aside>
-  );
-}
 const availabilityLabel = {
   available: 'Available',
   conditional: 'Conditions apply',
@@ -81,10 +74,9 @@ export function BankFeatures({ bank }: { bank: Bank }) {
     known = rows.filter((f) => f.evidenceStatus === 'verified').length;
   return (
     <section className={styles.bankFeatures} aria-label="Account feature evidence">
-      <h3>How this account works in real life.</h3>
+      <h3>Account features</h3>
       <p>
-        {known} of {rows.length} features have first-party evidence. This measures research
-        coverage, not account quality. Checking features can require a separate product.
+        {known} of {rows.length} features verified. Open a feature for conditions and sources.
       </p>
       <div className={styles.researchControls}>
         <label>
@@ -154,12 +146,7 @@ export function FeatureComparison({
     <section className={styles.featureComparison} aria-label="Bank feature comparison">
       <div className={styles.sectionHeading}>
         <div>
-          <span className={styles.eyebrow}>BEYOND THE RATE</span>
-          <h2>Will it work for your everyday life?</h2>
-          <p>
-            Compare features without a scenario. Open any cell for sources, conditions and your own
-            verification.
-          </p>
+          <h2>Compare features</h2>
         </div>
       </div>
       <div className={styles.researchControls}>
@@ -188,10 +175,6 @@ export function FeatureComparison({
           </label>
         ))}
       </div>
-      <p className={styles.featureLegend}>
-        Available · Conditions apply · Unavailable · Unknown. A missing source never means “no.”
-        Evidence and dates are in each cell.
-      </p>
       <div className={styles.tableScroll}>
         <table className={styles.featureTable}>
           <thead>

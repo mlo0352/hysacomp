@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { ProfileSchema } from './profile';
 
-export const VERSION = '3.2.0';
-export const BUILD_DATE = '2026-10-09';
+export const VERSION = '3.2.1';
+export const BUILD_DATE = '2026-10-10';
 export const SCHEMA_VERSION = '3.2';
 export const date = z
   .string()
@@ -234,8 +234,8 @@ export const BankSchema = z
       if (input !== f.value)
         fail(`${key}: sourced calculation claim does not match the engine input`);
     }
-    if (b.profile && b.profile.researchedAt > b.checkedOn)
-      fail('Research date cannot exceed the bank snapshot date');
+    // Operational/review research can be newer than the financial-terms snapshot.
+    // Keep checkedOn unchanged when only review metadata was revisited.
   });
 export const CatalogSchema = z
   .object({

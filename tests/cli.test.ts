@@ -15,9 +15,9 @@ const run = (...args: string[]) =>
   });
 const files = [
   '--scenario',
-  'examples/working-person-v3.2.yaml',
+  'examples/working-person-v3.2.1.yaml',
   '--banks',
-  'data/banks-2026-10-09-v3.2.yaml',
+  'data/banks-2026-10-09-v3.2-r2.yaml',
 ];
 
 test('CLI exports feature research and inspects personal checks without a scenario', () => {

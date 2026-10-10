@@ -9,7 +9,7 @@ await writeFile(
   'schemas/fact-inventory.json',
   JSON.stringify(
     {
-      toolVersion: '3.2.0',
+      toolVersion: '3.2.1',
       schemaVersion: '3.2',
       groups: FACT_GROUPS,
       featureGroups: FEATURE_GROUPS,

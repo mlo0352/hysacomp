@@ -345,7 +345,7 @@ export function BankResearch({
   );
   const hist = historyAnalysis(p, comparison?.evaluatedOn ?? today(), series);
   const known = Object.values(p?.facts ?? {}).filter((f) => f.status === 'verified').length;
-  const fresh = freshness(b.checkedOn, today());
+  const fresh = freshness(p?.researchedAt ?? b.checkedOn, today());
   return (
     <div className={styles.researchProfile}>
       <div className={styles.profileIntro}>

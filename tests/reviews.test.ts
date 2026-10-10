@@ -9,17 +9,21 @@ import { reviewCounts, reviewReport } from '../lib/reviews';
 import { evidenceSnapshot } from '../lib/features';
 import { compare } from '../lib/engine';
 
-const path = 'data/banks-2026-10-09-v3.2.yaml';
+const path = 'data/banks-2026-10-09-v3.2-r2.yaml';
 const catalog = readCatalog(readFileSync(path, 'utf8'));
 const peak = catalog.banks.find((b) => b.id === 'peak')!;
 const sample = peak.profile!.customerReviews[0];
-test('individual reports preserve attribution, context, unknown dates and full XML/YAML evidence', () => {
+test('individual reports preserve attribution, corrected dates and full XML/YAML evidence', () => {
   const report = reviewReport(catalog);
   assert.equal(report.coverage.total, 9);
   assert.equal(report.coverage.productsWithComments, 2);
   assert.deepEqual(report.coverage.sentiments, { positive: 2, mixed: 2, negative: 5, neutral: 0 });
-  assert.equal(sample.publishedOn, null);
-  assert.match(sample.dateText, /exact posting date not captured/);
+  assert.equal(sample.publishedOn, '2026-03-18');
+  assert.equal(sample.dateText, '2026-03-18T15:50:18.000Z');
+  assert.equal(sample.accessedAt, '2026-10-09');
+  assert.equal(peak.checkedOn, '2026-10-09');
+  assert.equal(catalog.checkedOn, '2026-10-09');
+  assert.equal(peak.profile!.researchedAt, '2026-10-10');
   assert.equal(peak.profile!.facts.outgoingAchDaily.status, 'unknown');
   assert.equal(peak.profile!.facts.outgoingAchDaily.value, null);
   assert.equal(peak.profile!.customerReviews.find((r) => r.author === 'May')!.rating, 5);
@@ -63,7 +67,7 @@ test('profiles reject duplicate permalinks, missing sources and community eviden
         [sample.id];
     },
     (c: typeof catalog) => {
-      c.banks.find((b) => b.id === 'peak')!.profile!.customerReviews[0].accessedAt = '2026-10-10';
+      c.banks.find((b) => b.id === 'peak')!.profile!.customerReviews[0].accessedAt = '2026-10-11';
     },
   ]) {
     const copy = structuredClone(catalog);
@@ -110,7 +114,7 @@ test('source checks bind to individual review and official context without alter
   without.banks.forEach((b) => {
     if (b.profile) b.profile.customerReviews = [];
   });
-  const scenario = readScenario(readFileSync('examples/working-person-v3.2.yaml', 'utf8'));
+  const scenario = readScenario(readFileSync('examples/working-person-v3.2.1.yaml', 'utf8'));
   const summarize = (c: typeof catalog) => {
     const r = compare(scenario, c, { asOf: '2026-10-09' });
     return { winner: r.winnerIds, baseline: r.baseline, ranked: r.ranked };
@@ -141,4 +145,28 @@ test('reviews CLI needs only bank file and emits the same raw sourced report', (
   );
   assert.equal(result.status, 0, result.stderr);
   assert.deepEqual(JSON.parse(result.stdout), reviewReport(catalog));
+});
+test('every Reddit timestamp is tied to the matching comment and preserved independently of collection dates', () => {
+  const observations = JSON.parse(readFileSync('data/reddit-timestamps-2026-10-10.json', 'utf8'));
+  assert.equal(observations.length, 6);
+  for (const e of observations) {
+    const b = catalog.banks.find((b) => b.id === e.bankId)!;
+    const r = b.profile!.customerReviews.find((r) => r.id === `reddit-${e.commentId}`)!;
+    assert.equal(r.author, e.author);
+    assert.equal(r.publishedOn, new Date(e.createdUtc * 1000).toISOString().slice(0, 10));
+    assert.equal(r.dateText, e.publishedAt);
+    const source = b.profile!.sources.find((s) => s.id === `timestamp-${e.commentId}`)!;
+    assert.equal(source.url, `${r.permalink}.json`);
+    assert.equal(source.accessedAt, '2026-10-10');
+    assert.equal(r.accessedAt, '2026-10-09');
+    assert.equal(b.checkedOn, '2026-10-09');
+  }
+  const old = readCatalog(readFileSync('data/banks-2026-10-09-v3.2.yaml', 'utf8'));
+  assert.equal(old.toolVersion, '3.2.1');
+  assert.ok(
+    old.banks
+      .flatMap((b) => b.profile?.customerReviews ?? [])
+      .filter((r) => r.platform === 'reddit')
+      .every((r) => r.publishedOn === null),
+  );
 });

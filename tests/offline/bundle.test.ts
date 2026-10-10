@@ -10,7 +10,7 @@ import { readCatalog, readScenario } from '../../lib/files';
 import { compare } from '../../lib/engine';
 
 test('release ZIP contains self-contained public artifacts with matching checksums', () => {
-  const files = unzipSync(readFileSync('dist/downloads/butter-v3.2.0-offline.zip'));
+  const files = unzipSync(readFileSync('dist/downloads/butter-v3.2.1-offline.zip'));
   const hashes = JSON.parse(new TextDecoder().decode(files['SHA256SUMS.json']));
   for (const [path, hash] of Object.entries(hashes))
     assert.equal(createHash('sha256').update(files[path]).digest('hex'), hash, path);
@@ -21,11 +21,11 @@ test('release ZIP contains self-contained public artifacts with matching checksu
     'schemas/verifications.schema.json',
     'docs/FEATURE_RESEARCH.md',
     'docs/REVIEW_RESEARCH.md',
-    'docs/XML_GUIDE_v3.2.0_2026-10-09.md',
-    'docs/LLM_PROMPTS_v3.2.0_2026-10-09.md',
-    'docs/BANK_DISCOVERIES_v3.2.0_2026-10-09.md',
-    'examples/scenario_example_2026-10-09_tool-v3.2.0.xml',
-    'data/banks_verified_2026-10-09_tool-v3.2.0.xml',
+    'docs/XML_GUIDE_v3.2.1_2026-10-10.md',
+    'docs/LLM_PROMPTS_v3.2.1_2026-10-10.md',
+    'docs/BANK_DISCOVERIES_v3.2.1_2026-10-10.md',
+    'examples/scenario_example_2026-10-09_tool-v3.2.1.xml',
+    'data/banks_verified_2026-10-09_tool-v3.2.1.xml',
   ])
     assert.ok(files[path], path);
   assert.ok(
@@ -36,7 +36,7 @@ test('release ZIP contains self-contained public artifacts with matching checksu
         !path.includes('node_modules'),
     ),
   );
-  const html = new TextDecoder().decode(files['hysa_comparator_v3.2.0_2026-10-09.html']);
+  const html = new TextDecoder().decode(files['hysa_comparator_v3.2.1_2026-10-10.html']);
   assert.doesNotMatch(html, /<script\b[^>]*\bsrc=|<link\b[^>]*\brel="stylesheet"/);
 });
 
@@ -52,7 +52,7 @@ test('standalone file works with networking disabled, imports XML and matches th
       if (/^https?:/.test(r.url())) network.push(r.url());
     });
     await page.goto(
-      pathToFileURL(resolve('dist/downloads/hysa_comparator_v3.2.0_2026-10-09.html')).href,
+      pathToFileURL(resolve('dist/downloads/hysa_comparator_v3.2.1_2026-10-10.html')).href,
     );
     assert.equal(await page.getByRole('region', { name: 'Comparison winner' }).count(), 0);
     await page.getByRole('button', { name: 'Reviews', exact: true }).click();
@@ -66,17 +66,17 @@ test('standalone file works with networking disabled, imports XML and matches th
     await page.getByRole('button', { name: 'Raw JSON' }).click();
     const download = await pending;
     const report = JSON.parse(readFileSync((await download.path())!, 'utf8'));
-    const s = readScenario(readFileSync('examples/working-person-v3.2.yaml', 'utf8'));
-    const c = readCatalog(readFileSync('data/banks-2026-10-09-v3.2.yaml', 'utf8'));
+    const s = readScenario(readFileSync('examples/working-person-v3.2.1.yaml', 'utf8'));
+    const c = readCatalog(readFileSync('data/banks-2026-10-09-v3.2-r2.yaml', 'utf8'));
     assert.deepEqual(report, compare(s, c));
     await page.getByRole('button', { name: 'Clear scenario' }).click();
     await page
       .getByLabel('Import scenario file')
-      .setInputFiles('examples/scenario_example_2026-10-09_tool-v3.2.0.xml');
+      .setInputFiles('examples/scenario_example_2026-10-09_tool-v3.2.1.xml');
     await page.getByRole('region', { name: 'Comparison winner' }).waitFor();
     await page
       .getByLabel('Import bank file')
-      .setInputFiles('data/banks_verified_2026-10-09_tool-v3.2.0.xml');
+      .setInputFiles('data/banks_verified_2026-10-09_tool-v3.2.1.xml');
     await page.getByRole('status').filter({ hasText: 'Loaded banks_verified' }).waitFor();
     const pendingXml = page.waitForEvent('download');
     await page.getByRole('button', { name: 'Save XML', exact: true }).click();

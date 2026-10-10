@@ -23,7 +23,10 @@ hearsay presented as personal experience, unrelated businesses and unrelated loa
    Use only public review attribution; do not collect account numbers or private identifiers.
 3. Store actual `accessedAt`, nullable exact `publishedOn` and `experienceOn`, and `dateText`
    as displayed. A relative age is not an exact date. Never substitute collection date for
-   posting date or invent dates. Record a blocked permalink even if its text was read on a
+   posting date or invent dates. Inspect the exact comment's DOM `time[datetime]`, timestamp
+   attributes or public JSON `created_utc` before declaring the date unknown. Match comment ID
+   and author; do not use the thread's date or an edit timestamp. Save the exact UTC timestamp,
+   metadata URL and verification date. Record a blocked permalink even if its text was read on a
    listing; retain both links and explain which one was actually accessible.
 4. Attach dated source records using `sourceIds`. `status` is always `reported`. A review's
    `rating` is that reviewer's 0–5 star rating or null, never a Reddit vote count. Platform
@@ -48,9 +51,9 @@ its original rights and may be edited, removed, moderated or unavailable later.
 ## Files and CLI
 
 ```sh
-npx tsx cli.ts reviews --banks data/banks-2026-10-09-v3.2.yaml --output outputs/reviews.json
-npx tsx cli.ts audit --banks data/banks-2026-10-09-v3.2.yaml
-npx tsx cli.ts banks --banks data/banks-2026-10-09-v3.2.yaml --format xml --output outputs/banks.xml
+npx tsx cli.ts reviews --banks data/banks-2026-10-09-v3.2-r2.yaml --output outputs/reviews.json
+npx tsx cli.ts audit --banks data/banks-2026-10-09-v3.2-r2.yaml
+npx tsx cli.ts banks --banks data/banks-2026-10-09-v3.2-r2.yaml --format xml --output outputs/banks.xml
 ```
 
 The `reviews` report requires no scenario and makes no network requests. It contains raw
@@ -72,6 +75,9 @@ an enrollment/access complaint and a mixed onboarding/funding report. The FAQ pe
 outgoing ACH but not outgoing wires; it does not publish the reported outbound cap.
 The simulator therefore keeps the ACH cap unknown. The selected Trustpilot comments also
 include praise for app reliability and a negative rate review describing a successful exit.
-These different experiences stay visible together. Exact Reddit dates were not captured.
+These different experiences stay visible together. On 2026-10-10 all six saved Reddit dates
+were corrected from exact comment metadata; the original collection date remains 2026-10-09.
+See `data/reddit-timestamps-2026-10-10.json`. Cards show only Collected; metadata and context
+are available under Details & sources and in exports. Disclaimers open on request.
 Yelp access was blocked and search did not yield a matching bank listing; no Yelp review
 was added. This is an open research gap, not a conclusion about the bank.

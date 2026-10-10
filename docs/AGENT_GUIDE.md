@@ -1,19 +1,19 @@
-# Butter agent interface — 3.2.0
+# Butter agent interface — 3.2.1
 
-Read the [XML guide](XML_GUIDE_v3.2.0_2026-10-09.md),
-[five task prompts](LLM_PROMPTS_v3.2.0_2026-10-09.md), [methodology](METHODOLOGY.md)
+Read the [XML guide](XML_GUIDE_v3.2.1_2026-10-10.md),
+[five task prompts](LLM_PROMPTS_v3.2.1_2026-10-10.md), [methodology](METHODOLOGY.md)
 and [tool manifest](../tool-manifest.json). Browser and CLI call the same deterministic engine.
 
 ## Run locally
 
 ```sh
 npm ci
-npx tsx cli.ts validate --scenario examples/working-person-v3.2.yaml --banks data/banks-2026-10-09-v3.2.yaml
-npx tsx cli.ts compare --scenario examples/working-person-v3.2.yaml --banks data/banks-2026-10-09-v3.2.yaml --as-of 2026-10-09 --output outputs/result.json --graph outputs/result.svg
-npx tsx cli.ts audit --banks data/banks-2026-10-09-v3.2.yaml --output outputs/audit.json
-npx tsx cli.ts discoveries --banks data/banks-2026-10-09-v3.2.yaml
-npx tsx cli.ts banks --banks data/banks-2026-10-09-v3.2.yaml --format xml --output outputs/banks.xml
-npx tsx cli.ts scenario --scenario examples/working-person-v3.2.yaml --format xml --output outputs/scenario.xml
+npx tsx cli.ts validate --scenario examples/working-person-v3.2.1.yaml --banks data/banks-2026-10-09-v3.2-r2.yaml
+npx tsx cli.ts compare --scenario examples/working-person-v3.2.1.yaml --banks data/banks-2026-10-09-v3.2-r2.yaml --as-of 2026-10-09 --output outputs/result.json --graph outputs/result.svg
+npx tsx cli.ts audit --banks data/banks-2026-10-09-v3.2-r2.yaml --output outputs/audit.json
+npx tsx cli.ts discoveries --banks data/banks-2026-10-09-v3.2-r2.yaml
+npx tsx cli.ts banks --banks data/banks-2026-10-09-v3.2-r2.yaml --format xml --output outputs/banks.xml
+npx tsx cli.ts scenario --scenario examples/working-person-v3.2.1.yaml --format xml --output outputs/scenario.xml
 ```
 
 `audit` and `discoveries` return the same evidence audit including missing fields,
@@ -69,3 +69,10 @@ Run `reviews --banks PATH` for comments, source context, sentiment/topic counts 
 questions. Read [REVIEW_RESEARCH.md](REVIEW_RESEARCH.md) before collecting or interpreting
 comments. Bank/scenario 3.0 and 3.1 imports migrate explicitly to 3.2; old source dates stay
 unchanged. Source checking is separate from authenticating a reviewer's experience.
+
+## UI and timestamp corrections
+
+Disclaimers are available on request. Keep ordinary pages concise; put provenance, context
+and coverage in source details, research logs and exports. Inspect comment-specific DOM or
+JSON timestamps before declaring a date unknown. Metadata checks have their own source
+access dates and never refresh bank financial terms. Patch 3.2.0 files remain compatible.

@@ -145,6 +145,8 @@ export function parseFile(text: string): unknown {
   return parseYaml(trimmed, { uniqueKeys: true, maxAliasCount: 0 });
 }
 function migrateV2(raw: any, kind: 'scenario' | 'banks') {
+  if (raw?.schemaVersion === '3.2' && raw.toolVersion === '3.2.0')
+    return { ...raw, toolVersion: VERSION }; // Patch compatibility; no input or source-date changes.
   if (['3.0', '3.1'].includes(raw?.schemaVersion)) {
     if (raw.toolVersion && !String(raw.toolVersion).startsWith(`${raw.schemaVersion}.`))
       throw new Error(`Incompatible tool version for schema ${raw.schemaVersion}`);

@@ -2310,18 +2310,44 @@
   }
 }
 
-.disclaimer {
-  margin: 18px 0;
-  padding: 13px 18px;
-  border: 1px solid #deded0;
-  border-radius: 10px;
-  background: #f6f5ec;
-  color: #606451;
-  font-size: 12px;
-  line-height: 1.7;
-}
-.disclaimer strong {
+.disclaimerDialog {
+  width: min(520px, calc(100vw - 36px));
+  max-height: calc(100dvh - 40px);
+  margin: auto;
+  padding: 26px;
+  border: 1px solid #dce2d5;
+  border-radius: 14px;
+  background: #fffef9;
   color: #3c4736;
+  box-shadow: 0 18px 60px #28382222;
+  white-space: normal;
+}
+.disclaimerDialog::backdrop {
+  background: #24311f55;
+}
+.disclaimerHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+.disclaimerHeading h2 {
+  margin: 0;
+  font-size: 20px;
+}
+.disclaimerDialog p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #606451;
+}
+.disclaimerDialog p:last-child {
+  margin-bottom: 0;
+}
+.footer .textButton {
+  font-size: inherit;
+  padding: 0;
+  margin-left: 12px;
 }
 .featureComparison {
   padding: 26px;
@@ -2387,12 +2413,23 @@
 }
 .featureDetail > summary {
   cursor: pointer;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 20px;
   gap: 14px;
   align-items: center;
   padding: 9px 0;
   font-size: 12px;
+  list-style: none;
+}
+.featureDetail > summary::-webkit-details-marker {
+  display: none;
+}
+.featureTable .featureDetail > summary {
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+}
+.featureDetail > summary > .featureBadge {
+  grid-column: 2;
+  justify-self: center;
 }
 .featureDetail {
   position: relative;
@@ -2400,11 +2437,15 @@
 .verification {
   position: relative;
 }
-.featureDetail > summary::before {
+.featureDetail > summary::after {
   content: '+';
   color: #788367;
+  grid-column: 3;
+  justify-self: end;
+  font-size: 18px;
+  line-height: 1;
 }
-.featureDetail[open] > summary::before {
+.featureDetail[open] > summary::after {
   content: '−';
 }
 .featureTable .featureDetail > summary > span:first-of-type {
