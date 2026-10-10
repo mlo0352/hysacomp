@@ -80,6 +80,18 @@ test('profiles reject duplicate permalinks, missing sources and community eviden
     reviewIdentity('https://www.yelp.com/biz/example?hrid=one'),
     reviewIdentity('https://www.yelp.com/biz/example?hrid=two'),
   );
+  assert.notEqual(
+    reviewIdentity('https://example.com/reviews?id=1'),
+    reviewIdentity('https://example.com/reviews?id=2'),
+  );
+  assert.notEqual(
+    reviewIdentity('https://example.com/thread#comment1'),
+    reviewIdentity('https://example.com/thread#comment2'),
+  );
+  assert.equal(
+    reviewIdentity('https://example.com/reviews?id=1&utm_source=test'),
+    reviewIdentity('https://example.com/reviews?id=1'),
+  );
 });
 test('multiple comments by one handle remain one public author and never imply independent customers', () => {
   const counts = reviewCounts([sample, { ...sample, id: 'followup' }]);

@@ -47,8 +47,15 @@ export function reviewIdentity(link: string) {
     u.pathname.match(/\/comment\/([a-z0-9]+)/i) ??
     u.pathname.match(/\/comments\/[^/]+\/[^/]+\/([a-z0-9]+)/i);
   if (host === 'reddit.com' && reddit) return `reddit:${reddit[1].toLowerCase()}`;
-  // Yelp uses a query parameter for an individual review. Preserve it when deduplicating.
-  return `${host}${u.pathname.replace(/\/+$/, '')}${u.searchParams.has('hrid') ? `?hrid=${u.searchParams.get('hrid')}` : ''}`;
+  // Keep functional query IDs and comment anchors used by app stores and forums.
+  // Yelp's hrid identifies a review independently of pagination or highlight options.
+  if (/(^|\.)yelp\.com$/.test(host) && u.searchParams.has('hrid'))
+    return `${host}:review:${u.searchParams.get('hrid')}`;
+  for (const key of [...u.searchParams.keys()])
+    if (/^utm_|^(fbclid|gclid|msclkid)$/i.test(key)) u.searchParams.delete(key);
+  u.searchParams.sort();
+  const query = u.searchParams.toString();
+  return `${host}${u.pathname.replace(/\/+$/, '')}${query ? `?${query}` : ''}${u.hash}`;
 }
 
 export const CustomerReviewSchema = z
