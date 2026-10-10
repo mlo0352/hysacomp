@@ -29,6 +29,7 @@ test('individual reports preserve attribution, context, unknown dates and full X
 test('comments reject fabricated verification, vote ratings, thread-only Reddit links and impossible dates', () => {
   for (const change of [
     { status: 'verified' },
+    { permalink: 'not-a-url' },
     { rating: 12 },
     { rating: 1 },
     { permalink: sample.threadUrl },

@@ -36,7 +36,12 @@ export const REVIEW_DISCLAIMER =
   'Selected public comments, not a representative survey or a bank safety score. Experiences are self-reported and may be incomplete, outdated or incorrect. Check the original conversation and current bank terms. A personal source check does not authenticate the events described. Reviews never change the earnings ranking.';
 
 export function reviewIdentity(link: string) {
-  const u = new URL(link);
+  let u: URL;
+  try {
+    u = new URL(link);
+  } catch {
+    return `invalid:${link}`;
+  } // Field validation reports malformed URLs without throwing from safeParse.
   const host = u.hostname.toLowerCase().replace(/^(www\.|old\.|new\.)/, '');
   const reddit =
     u.pathname.match(/\/comment\/([a-z0-9]+)/i) ??
